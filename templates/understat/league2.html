@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/league.css') }}">
+  <title>{{League[0].League.replace('_', ' ')}}</title>
+</head>
+<body>
+  <div class="grid-container">
+    <div class="grid-item item-1">
+        <!-- Top Left -->
+      <h1>{{League[0].League.replace('_', ' ')}}</h1>
+    </div>
+    <div class="grid-item item-2">
+        <!-- Top Right -->
+        <h1>Top Goalscorer</h1>
+        <table>
+            {% for players in Goals[0:5] %}
+                <tr>
+                    <td>{{players.player_name}}</td>
+                    <td></td>
+                    <td> Goals: {{players.goals}}</td>
+                </tr>
+            {% endfor %}
+    
+        </table>
+    </div>
+    <div class="grid-item item-3">
+        <!-- Bottom Left -->
+        <h1>League Table</h1>
+        <table class="league_table">
+            <tr>
+                <th>Team</th>
+                <th>M</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>PTS</th>
+                <th>xPTS</th>
+                <th>GF</th>
+                <th>GA</th>
+                <th>xG</th>
+                <th>NPxG</th>
+                <th>xGA</th>
+                <th>NPxGA</th>
+                <th>xG_diff</th>
+                <th>xGA_diff</th>
+                <th>PPDA</th>
+                <th>OPPDA</th>
+                <th>DC</th>
+                <th>ODC</th>
+            </tr>
+            <tbody>
+                {% for row in League %}
+                <tr>
+                    <td>
+                        <a href="{{url_for('teams', Team = row.Team)}} ">{{row.Team}}</a>
+                    </td>
+                    <td>{{row.M}}</td>
+                    <td>{{row.W}}</td>
+                    <td>{{row.D}}</td>
+                    <td>{{row.L}}</td>
+                    <td>{{row.PTS}}</td>
+                    <td>{{"%.2f"|format(row.xPTS)}}</td>
+                    <td>{{row.G}}</td>
+                    <td>{{row.GA}}</td>
+                    <td>{{"%.2f"|format(row.xG) }}</td>
+                    <td>{{"%.2f"|format(row.NPxG) }}</td>
+                    <td>{{"%.2f"|format(row.xGA)}}</td>
+                    <td>{{"%.2f"|format(row.NPxGA) }}</td>
+                    <td>{{"%.2f"|format(row.xG_diff)}}</td>
+                    <td>{{"%.2f"|format(row.xGA_diff)}}</td>
+                    <td>{{"%.2f"|format(row.PPDA)}}</td>
+                    <td>{{"%.2f"|format(row.OPPDA)}}</td>
+                    <td>{{row.DC}}</td>
+                    <td>{{row.ODC}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="grid-item item-4">
+      <!-- Bottom right -->
+      <h1>Team Statistics</h1>
+
+      <table>
+          <tr><td>Best Offense: {{bO.Team}} - {{bO.G}} Goals</td></tr>
+          <tr><td>Best Defense: {{bD.Team}} - {{bD.GA}} Conceded</td></tr>
+          <tr><td>Worst Offense: {{wO.Team}} - {{wO.G}} Goals</td></tr>
+          <tr><td>Worst Defense: {{wD.Team}} - {{wD.GA}} Conceded</td></tr>
+          <tr><td>Overachieved: {{overAchieved.Team}} - {{"%.2f"|format(overAchieved.xPTS_diff* -1)}} Points above predicted</td></tr>
+          <tr><td>Underachieved: {{underAchieved.Team}} - {{"%.2f"|format(underAchieved.xPTS_diff)}} Points below predicted</td></tr>
+      </table>
+
+
+    </div>
+    <div class="grid-item item-5">
+        <h1>Top Assists</h1>
+        <table>
+            {% for players in Assists[0:5] %}
+                <tr>
+                    <td>{{players.player_name}}</td>
+                    <td>Assists: {{players.assists}}</td>
+                </tr>
+            {% endfor %}
+    
+        </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+    <h1>{{Team.Team}} League Performance</h1>
+    <table class="team_stats">
+        <tr>
+            <th>Team</th>
+            <th>M</th>
+            <th>W</th>
+            <th>D</th>
+            <th>L</th>
+            <th>PTS</th>
+            <th>xPTS</th>
+            <th>GF</th>
+            <th>GA</th>
+            <th>xG</th>
+            <th>NPxG</th>
+            <th>xGA</th>
+            <th>NPxGA</th>
+            <th>xG_diff</th>
+            <th>xGA_diff</th>
+            <th>PPDA</th>
+            <th>OPPDA</th>
+            <th>DC</th>
+            <th>ODC</th>
+        </tr>
+        <tr>
+            <td>{{Team.Team}}</td>
+            <td>{{Team.M}}</td>
+            <td>{{Team.W}}</td>
+            <td>{{Team.D}}</td>
+            <td>{{Team.L}}</td>
+            <td>{{Team.PTS}}</td>
+            <td>{{"%.2f"|format(Team.xPTS)}}</td>
+            <td>{{Team.G}}</td>
+            <td>{{Team.GA}}</td>
+            <td>{{"%.2f"|format(Team.xG) }}</td>
+            <td>{{"%.2f"|format(Team.NPxG) }}</td>
+            <td>{{"%.2f"|format(Team.xGA)}}</td>
+            <td>{{"%.2f"|format(Team.NPxGA) }}</td>
+            <td>{{"%.2f"|format(Team.xG_diff)}}</td>
+            <td>{{"%.2f"|format(Team.xGA_diff)}}</td>
+            <td>{{"%.2f"|format(Team.PPDA)}}</td>
+            <td>{{"%.2f"|format(Team.OPPDA)}}</td>
+            <td>{{Team.DC}}</td>
+            <td>{{Team.ODC}}</td>
+        </tr>
+    </table>
+
+
+    <h1>Players</h4>
+    <table class="team_players">
+        <tr>
+            <th>Player</th>
+            
+            <th>Position</th>
+            <th>Minutes</th>
+            <th>Games</th>
+            <th>Goals</th>
+            <th>xG</th>
+            <th>Assists</th>
+            <th>xA</th>
+            <th>Shots</th>
+            <th>Key Passes</th>
+            <th>Yellow Cards</th>
+            <th>Red Cards</th>
+            <th>Non-Penalty Goals</th>
+            <th>NPxG</th>
+            <th>xGChain</th>
+            <th>xGBuildup</th>
+        </tr>
+        <tbody>
+            {% for row in Player%}
+                <tr>
+                    <td>{{row.player_name}}</td>
+                    
+                    <td>{{row.position}}</td>
+                    <td>{{row.time}}</td>
+                    <td>{{row.games}}</td>
+                    <td>{{row.goals}}</td>
+                    <td>{{ "%.2f"|format(row.xG)}}</td>
+                    <td>{{row.assists}}</td>
+                    <td>{{ "%.2f"|format(row.xA)}}</td>
+                    <td>{{row.shots}}</td>
+                    <td>{{row.key_passes}}</td>
+                    <td>{{row.yellow_cards}}</td>
+                    <td>{{row.red_cards}}</td>
+                    <td>{{row.npg}}</td>
+                    <td>{{ "%.2f"|format(row.npxG) }}</td>
+                    <td>{{ "%.2f"|format(row.xGChain) }}</td>
+                    <td>{{ "%.2f"|format(row.xGBuildup) }}</td>
+                </tr>
+            {% endfor %}
+        </tbody> 
+    </table>
+
+    <h1>Top Goalscorer</h1>
+    <table>
+        {% for player in Goals[0:5] %}
+        <tr>
+            <td>{{player.player_name}}</tr>
+            <td>Goals: {{player.goals}}</tr>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1>Top Assists</h1>
+    <table>
+        {% for player in Assists[0:5] %}
+        <tr>
+            <td>{{player.player_name}}</tr>
+            <td>Assists: {{player.assists}}</tr>
+        </tr>
+        {% endfor %}
+    </table>
+
+    
+{% endblock %} 
+

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/league.css') }}">
+  <!-- <script src="{{ url_for('static', filename='js/tablesort.js') }}"></script> -->
+  <title>{{League[0].League}}</title>
+</head>
+<body>
+  <div class="grid-container">
+    <div class="grid-item item-1">
+        <!-- Top Left -->
+      <h1>{{League[0].League}}</h1>
+      <!-- Make this flex list later w/ terms, graphs (goals, SCA, stuff) -->
+      <ul class="link_lst">
+        <li><a href="{{ url_for('index')}}"> Home </a></li>
+        <li><a href="{{ url_for('terms')}}" target="_blank"> Terms </a></li>
+        <li><a href="{{url_for('LeaguePlayers', League = League[0].League)}}" target="_blank"> All Players </a></li>
+        <li><a href="{{url_for('topplayers', League = League[0].League)}}"> Top Players </a></li>
+        <li><a href="{{url_for('topprospects', League = League[0].League)}}"> Top Prospects </a></li>
+      </ul>
+    </div>
+    <div class="grid-item item-2">
+        <!-- Top Right -->
+        <h1>Top Goalscorer</h1>
+        <table>
+            {% for players in Goals[0:5] %}
+                <tr>
+                    <td>{{players.Name}}</td>
+                    <td></td>
+                    <td> Goals: {{players.Gls}}</td>
+                </tr>
+            {% endfor %}
+    
+        </table>
+    </div>
+    <div class="grid-item item-3">
+        <!-- Bottom Left -->
+        <h1>League Table</h1>
+        
+        <table class="league_table">
+            <tr>
+                <th>Team</th>
+                <th>MP</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>PTS</th>
+                <th>GF</th>
+                <th>GA</th>
+                <th>xG</th>
+                <th>xGA</th>
+            </tr>
+            <tbody>
+                {% for row in League %}
+                <tr>
+                    <td>
+                        <a href="{{url_for('teams', Team = row.Team)}} ">{{row.Team}}</a>
+                    </td>
+                    <td>{{row.MP}}</td>
+                    <td>{{row.W}}</td>
+                    <td>{{row.D}}</td>
+                    <td>{{row.L}}</td>
+                    <td>{{row.Pts}}</td>
+                    <td>{{row.GF}}</td>
+                    <td>{{row.GA}}</td>
+                    <td>{{"%.2f"|format(row.xG)}}</td>
+                    <td>{{"%.2f"|format(row.xGA)}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="grid-item item-4">
+      <!-- Bottom right -->
+      <h1>Team Statistics</h1>
+
+      <table>
+          <tr><td>Best Offense: {{bO.Team}} - {{bO.G}} Goals</td></tr>
+          <tr><td>Best Defense: {{bD.Team}} - {{bD.GA}} Conceded</td></tr>
+          <tr><td>Worst Offense: {{wO.Team}} - {{wO.G}} Goals</td></tr>
+          <tr><td>Worst Defense: {{wD.Team}} - {{wD.GA}} Conceded</td></tr>
+          <tr><td>Biggest GD: {{hGD.Team}} - {{hGD.GD}} Goal Difference</td></tr>
+      </table>
+
+
+    </div>
+    <div class="grid-item item-5">
+        <h1>Top Assists</h1>
+        <table>
+            {% for players in Assists[0:5] %}
+                <tr>
+                    <td>{{players.Name}}</td>
+                    <td> Assists: {{players.Ast}}</td>
+                </tr>
+            {% endfor %}
+    
+        </table>
+    </div>
+  </div>
+
+</body>
+</html>

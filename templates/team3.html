@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/team.css') }}">
+    {% block head %}{% endblock %}
+    <title>{{Team.Team}}</title>
+    <!-- <h1>{{Team.Team}}</h1> -->
+</head>
+<body>
+    <h4>{{Team.Team}}</h4>
+    <div class="grid-container"> 
+
+        <div class="grid-item item-1">
+            <!-- 1 (Team & Stats) -->
+            <a class="nav" href="{{url_for('leagues', League=Team.League)}}">{{Team.League}}</a>
+            <a class="nav" href="{{url_for('graphs', Team = Team.Team)}}"> Graphs</a>
+            <a  class="nav" href="{{ url_for('terms')}}" target="_blank"> Terms </a>
+            <!-- Improve this bit later down the line, make it a league record -->
+            <table class="team_stats">
+                <tr>
+                    <!-- <th>Team</th> -->
+                    <th>M</th>
+                    <th>W</th>
+                    <th>D</th>
+                    <th>L</th>
+                    <th>PTS</th>
+                    <th>GF</th>
+                    <th>GA</th>
+                    <th>xG</th>
+                    <th>xGA</th>
+                    <th>PlayersUsed</th>
+                    <th>AvgAge</th>
+                    <th>Pos%</th>
+                    <th>GP90</th>
+                    <th>xGP90</th>
+                </tr>
+                <tr>
+                    <!-- <td>{{Team.Team}}</td> -->
+                    <td>{{Team.MP}}</td>
+                    <td>{{Team.W}}</td>
+                    <td>{{Team.D}}</td>
+                    <td>{{Team.L}}</td>
+                    <td>{{Team.Pts}}</td>
+                    <td>{{Team.GF}}</td>
+                    <td>{{Team.GA}}</td>
+                    <td>{{"%.2f"|format(Team.xG) }}</td>
+                    <td>{{"%.2f"|format(Team.xGA)}}</td>
+                    <td>{{tO.PlayersUsed}}</td>
+                    <td>{{"%.2f"|format(tO.Age)}}</td>
+                    <td>{{tO.Possession}}</td>
+                    <td>{{tO.GlsP90}}</td>
+                    <td>{{tO.xGP90}}</td>
+
+                </tr>
+                
+            </table>
+
+            
+            <!-- <ul class="link_lst">
+                <li><a href="{{url_for('graphs', Team = Team.Team)}}"> Graphs</a></li>
+                <li></li>
+            </ul> -->
+        </div>
+
+
+        <div class="grid-item item-2">
+            <!-- 2 (Player Table) -->
+            <!-- <h1>Players</h4> -->
+                <table class="team_players">
+                    <h1>Team Overview</h1>
+                    <tr>
+                        <th>Player</th>
+                        <th>Nation</th>
+                        <th>Position</th>
+                        <th>Age</th>
+                        <th>Minutes</th>
+                        <th>Games</th>
+                        <th>Goals</th>
+                        <th>xG</th>
+                        <th>Assists</th>
+                        <th>xA</th>
+                        <th>Yellow Cards</th>
+                        <th>Red Cards</th>
+                        <th>Non-Penalty Goals</th>
+                        <th>NPxG</th>
+                    </tr>
+                    <tbody>
+                        {% for row in Player%}
+                            <tr>
+                                <td>
+                                    <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                </td>
+                                <td>{{row.Country}}</td>
+                                <td>{{row.Position}}</td>
+                                <td>{{row.Age}}</td>
+                                <td>{{row.minutes|round|int}}</td>
+                                <td>{{row.Nineties}}</td>
+                                <td>{{row.Gls}}</td>
+                                <td>{{ "%.2f"|format(row.xG)}}</td>
+                                <td>{{row.Ast}}</td>
+                                <td>{{ "%.2f"|format(row.xA)}}</td>
+                                <td>{{row.YCrd}}</td>
+                                <td>{{row.RCrd}}</td>
+                                <td>{{row.nPG}}</td>
+                                <td>{{ "%.2f"|format(row.npxG) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody> 
+                </table>
+        </div>
+
+        <div class="grid-item item-3">
+            <!-- 3 (Attack Rec) -->
+            <table class="aSignings">
+                <!-- <h1>Attacking Recommendations</h1> -->
+                
+            {% if aSignings | length == 0 %}
+                No Recommendations
+            {% else %}
+                <h1>Attacking Recommendations</h1>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Age</th>
+                    <th>Team</th>
+                    <th>Goals Per 90</th>
+                </tr>
+                {% for player in aSignings %}
+                    <tr>
+                        <td><a href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
+                            <!-- {{player.Name}} -->
+                        </td>
+                        <td>{{player.Position}}</td>
+                        <td>{{player.Age}}</td>
+                        <td>{{player.Team}}</td>
+                        <td>{{ "%.2f"|format(player.GlsP90)}}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </table>
+        </div>
+
+
+
+        <div class="grid-item item-4">
+            <!-- 4 (Defense Rec) -->
+            <table class="dSignings">
+                <!-- <h1>Attacking Recommendations</h1> -->
+                
+            {% if dSignings | length == 0 %}
+                No Recommendations
+            {% else %}
+                <h1>Defensive Recommendations</h1>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Age</th>
+                    <th>Team</th>
+                    <th>Tkl%</th>
+                    <th>BlkP90</th>
+                    <th>ClrP90</th>
+                </tr>
+                {% for player in dSignings %}
+                    <tr>
+                        <td>
+                            <a href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
+                            <!-- {{player.Name}} -->
+                        </td>
+                        <td>{{player.Position}}</td>
+                        <td>{{player.Age}}</td>
+                        <td>{{player.Team}}</td>
+                        <td>{{ "%.2f"|format(player.TklRate)}}</td>
+                        <td>{{ "%.2f"|format(player.BlkP90)}}</td>
+                        <td>{{ "%.2f"|format(player.ClrP90)}}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </table>
+        </div>
+
+
+
+        <div class="grid-item item-5">
+            <ul class="GaA">
+                <ul class="goals">
+                    <h1>Top Goalscorer</h1>
+                    {% for player in Goals[0:5] %}
+                    <li>{{player.Name}} Goals: {{player.Gls}}</li>
+                    {% endfor %}
+                </ul>
+
+                
+                <ul class="assists">
+                    <h1>Top Assists</h1>
+                    {% for player in Assists[0:5] %}
+                    <li>{{player.Name}} Assists: {{player.Ast}}</li>
+                    {% endfor %}
+                </ul>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

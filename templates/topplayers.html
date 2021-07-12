@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{url_for('static', filename='css/js/playertabs.js')}}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/topleague.css') }}">
+    <title>{{League}} Best Players</title>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item item-1">
+            Top Players
+            <ul class="link-list">
+                <li class="link-item"><a class="nav" href="{{url_for('leagues', League=League)}}">Back</a></li>
+                <li class="link-item"></li><a  class="nav" href="{{ url_for('terms')}}" target="_blank"> Terms </a></li>
+            </ul>
+        </div>
+        <div class="grid-item item-2">
+            <ul class="tabs">
+                <li data-tab-target="#FW" class="active tab">FW</li>
+                <li data-tab-target="#MF" class="tab">MF</li>
+                <li data-tab-target="#DF" class="tab">DF</li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="FW" data-tab-content class="active">
+                    <!-- <h1>Best FWs</h1> -->
+                    <ul class="table-list">
+                        <li class="table-item">
+                            <h1>Most Lethal FW</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>Gls</th>
+                                    <th>GlsP90</th>
+                                    <th>xG</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in fwList[0] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{row.Gls}}</td>
+                                        <td>{{"%.2f"|format(row.GlsP90)}}</td>
+                                        <td>{{row.xG}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                        <li class="table-item">
+                            <h1>Most Creative FW</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>GCAP90</th>
+                                    <th>SCAP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in fwList[1] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.GCAP90)}}</td>
+                                        <td>{{"%.2f"|format(row.SCAP90)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                        <li class="table-item">
+                            <h1>Most Skillful FW</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>DribP90</th>
+                                    <th>DribSuccP</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in fwList[2] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.DribP90)}}</td>
+                                        <td>{{"%.2f"|format(row.DribSuccP)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="MF" data-tab-content>
+                    <!-- <h1>Best MFs</h1> -->
+                    <ul class="table-list">
+                        <li class="table-item">
+                            <h1>Best CAMs</h1> 
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>GCAP90</th>
+                                    <th>SCAP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in mfList[0] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.GCAP90)}}</td>
+                                        <td>{{"%.2f"|format(row.SCAP90)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+
+                        <li class="table-item">
+                            <h1>Best Passing MF</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>ProgP90</th>
+                                    <th>KPP90</th>
+                                    <th>FTP90</th>
+                                    <th>PassP</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in mfList[1] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.ProgP90)}}</td>
+                                        <td>{{"%.2f"|format(row.KPP90)}}</td>
+                                        <td>{{"%.2f"|format(row.FTP90)}}</td>
+                                        <td>{{"%.2f"|format(row.PassP)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+
+                        <li class="table-item">
+                            <h1>Best Defensive MF</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>TklIntP90</th>
+                                    <th>TklRate</th>
+                                    <th>PressurePct</th>
+                                    
+                                </tr>
+                                <tbody>
+                                    {% for row in mfList[2] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.TklIntP90)}}</td>
+                                        <td>{{"%.2f"|format(row.TklRate)}}</td>
+                                        <td>{{"%.2f"|format(row.PressurePct)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="DF" data-tab-content>
+                    <!-- <h1>Best DFs</h1> -->
+                    <ul class="table-list">
+                        <li class="table-item">
+                            <h1>Best Offensive DF</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>Gls</th>
+                                    <th>SoTP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in dfList[0] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{row.Gls}}</td>
+                                        <td>{{"%.2f"|format(row.SoTP90)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+
+                        <li class="table-item">
+                            <h1>Best Passing DF</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>LPP</th>
+                                    <th>FTP90</th>
+                                    <th>ProgP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in dfList[1] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.LPP)}}</td>
+                                        <td>{{"%.2f"|format(row.FTP90)}}</td>
+                                        <td>{{"%.2f"|format(row.ProgP90)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+
+                        <li class="table-item">
+                            <h1>Best No-Nonsense DF</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>TklRate</th>
+                                    <th>TklIntP90</th>
+                                    <th>BlkP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in dfList[2] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Nation}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.TklRate)}}</td>
+                                        <td>{{"%.2f"|format(row.TklIntP90)}}</td>
+                                        <td>{{"%.2f"|format(row.BlkP90)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

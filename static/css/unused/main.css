@@ -1,0 +1,158 @@
+head{
+    margin: 0;
+    font-family: arial;
+    text-align: center;
+    color:rgb(0, 0, 0);
+    font-size: x-large;
+    }
+
+
+body, html{
+    margin: 0;
+    font-family: Arial;
+    text-align: center;
+    color:rgb(0, 0, 0);
+    background-color: white;
+}
+
+td{
+    text-align: center;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.row {
+    font-weight: bold;
+    font-size: medium;
+    align-content: center;
+}
+
+table.cl_table {
+     border-collapse: collapse; 
+     margin: 25px 0;
+     font-size: 0.9em;
+     min-width: 400px;
+     max-width: 1000px;
+     margin-right: auto;
+     margin-left: auto;
+     border-radius: 5px 5px 0 0;
+     overflow:hidden;
+}
+
+table.cl_table tr th {
+    background-color: royalblue;
+    text-align: center;
+    font-weight: bold;
+}
+
+table.cl_table tr td{
+    padding: 12px 15px;
+    border-bottom: 1px solid #dddd;
+}
+
+table.cl_table tr:nth-of-type(even){
+    background-color: rgb(221, 221, 221);
+}
+
+table.cl_table tr:nth-of-type(odd){
+    background-color:rgb(134, 147, 160);
+}
+
+table.cl_table tr:last-of-type {
+    border-bottom: royalblue;
+}
+
+table.league_table {
+    border-collapse: collapse; 
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px 5px 0 0;
+    overflow:hidden;
+}
+
+table.league_table th {
+    background-color: royalblue;
+    text-align: center;
+    font-weight: bold;
+}
+
+table.league_table tr td{
+    padding: 12px 15px;
+    border-bottom: 1px solid #dddd;
+    font-weight: bolder;
+}
+
+table.league_table tr:nth-of-type(even){
+    background-color: rgb(221, 221, 221);
+}
+
+table.league_table tr:nth-of-type(odd){
+    background-color:rgb(134, 147, 160);
+}
+
+table.team_players {
+    border-collapse: collapse; 
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px 5px 0 0;
+    overflow:hidden;
+}
+
+table.team_players th  {
+    background-color: royalblue;
+    text-align: center;
+    font-weight: bold;
+}
+
+table.team_players tr td{
+    padding: 12px 15px;
+    border-bottom: 1px solid #dddd;
+    font-weight: bolder;
+}
+
+table.team_players tr:nth-of-type(even){
+    background-color: rgb(221, 221, 221);
+}
+
+table.team_players tr:nth-of-type(odd){
+    background-color:rgb(134, 147, 160);
+}
+
+table.team_stats {
+    border-collapse: collapse; 
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px 5px 0 0;
+    overflow:hidden;
+}
+
+table.team_stats th  {
+    background-color: royalblue;
+    text-align: center;
+    font-weight: bold;
+}
+
+table.team_stats tr td{
+    padding: 12px 15px;
+    border-bottom: 1px solid #dddd;
+    font-weight: bolder;
+}
+
+table.team_stats tr:nth-of-type(even){
+    background-color:rgb(134, 147, 160);
+}

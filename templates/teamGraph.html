@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{Team.Team}} Infographics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/teamGraph.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{url_for('static', filename='css/js/playertabs.js')}}" defer></script>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item item-1">
+            <h1>{{Team.Team}} Infographics</h1>
+            <ul class="link-list">
+                <li class="link-item"><a class="nav" href="{{url_for('teams', Team=Team.Team)}}">Back</a></li>
+                <li class="link-item"></li><a  class="nav" href="{{ url_for('terms')}}" target="_blank"> Terms </a></li>
+            </ul>
+        </div>
+        <div class="grid-item item-2">
+            <ul class="tabs">
+                <li data-tab-target="#Age" class="active tab">Age</li>
+                <li data-tab-target="#Min" class="tab">Min</li>
+                <li data-tab-target="#Starts" class="tab">Starts</li>
+                <li data-tab-target="#Stats" class="tab">Stats</li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="Age" data-tab-content class="active">
+                    <div class="grid-item graph-1">
+                        <h1>Age Distribution</h1>
+                        <canvas id="agebar" width="700" height="350"></canvas>
+                        <script>
+                            var ctx = document.getElementById("agebar").getContext("2d")
+                            var agebar = new Chart(ctx, {
+                                type: "bar",
+                                data: {
+                                    labels: {{ageLabels}},
+                                    datasets: [
+                                        {
+                                            label: "# of Players",
+                                            data: {{ageData}},
+                                            borderWidth: 2,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                                        }
+                                    ]
+            
+                                }
+                                ,
+                                options: {
+                                    responsive: false
+                                }
+                            })
+                        </script>
+                    </div>
+                </div>
+
+                <div id="Min" data-tab-content>
+                    <div class="grid-item graph-2">
+                        <h1>Minute Distribution</h1>
+                        <canvas id="minbar" width="700" height="350"></canvas>
+                        <script>
+                            var ctx = document.getElementById("minbar").getContext("2d")
+                            var minbar = new Chart(ctx, {
+                                type:"bar",
+                                data:{
+                                    labels: {{minLabels | safe}},
+                                    datasets: [
+                                        {
+                                            label:"Minutes",
+                                            data: {{minData | safe}},
+                                            borderWidth: 2,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                                        }
+                                    ]
+                                }
+                                ,
+                                options: {
+                                    responsive: false
+                                }
+                            })
+                        </script>
+                    </div>
+                </div>
+
+                <div id="Starts" data-tab-content>
+                    <div class="grid-item graph-3">
+                        <h1>Starts</h1>
+                        <canvas id="startbar" width="700" height="350"></canvas>
+                        <script>
+                            var ctx = document.getElementById("startbar").getContext("2d")
+                            var minbar = new Chart(ctx, {
+                                type:"bar",
+                                data:{
+                                    labels: {{startLabels | safe}},
+                                    datasets: [
+                                        {
+                                            label:"Starts",
+                                            data: {{startData | safe}},
+                                            borderWidth: 2,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                                        }
+                                    ]
+                                }
+                                ,
+                                options: {
+                                    responsive: false
+                                }
+                            })
+                        </script>
+                    </div>
+                </div>
+
+                <div id="Stats" data-tab-content>
+                    <div class="grid-item graph-4">
+                        <h1>Shot Data</h1>
+                        <canvas id="offenseRadar", width="700", height="350"></canvas>
+                        <script>
+                            var ctx = document.getElementById("offenseRadar").getContext("2d")
+                            var shotRadar = new Chart(ctx, {
+                                type: "radar",
+                                data: {
+                                    labels: {{teamLabels|safe}},
+                                    datasets: [
+                                        {
+                                            label: "Team Avg",
+                                            data: {{teamStats}},
+                                            fill: true,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                            borderColor: 'rgb(54, 162, 235)',
+                                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                                            pointBorderColor: '#fff',
+                                            pointHoverBackgroundColor: '#fff',
+                                            pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                        },{
+                                            label: "League Avg",
+                                            data: {{leagueStats}},
+                                            fill: true,
+                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                            borderColor: 'rgba(255, 99, 132)',
+                                            pointBackgroundColor: 'rgba(255, 99, 132)',
+                                            pointBorderColor: '#fff',
+                                            pointHoverBackgroundColor: '#fff',
+                                            pointHoverBorderColor: 'rgba(255, 99, 132)'
+                                        },{
+                                            label: "T1 Team Avg",
+                                            data: {{t1LeagueStats}},
+                                            fill: true,
+                                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                                            borderColor: 'rgba(255, 206, 86)',
+                                            pointBackgroundColor: 'rgba(255, 206, 86)',
+                                            pointBorderColor: '#fff',
+                                            pointHoverBackgroundColor: '#fff',
+                                            pointHoverBorderColor: 'rgba(255, 206, 86)'
+                                        }
+                                    ]
+                                }
+                                ,
+                                options: {
+                                    responsive: false
+                                }
+                            })
+                        </script>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

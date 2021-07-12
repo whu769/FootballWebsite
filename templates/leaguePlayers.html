@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/leaguePlayers.css') }}">
+
+    <!-- Things I took below  -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+
+    <title>{{lPlayers[0].League}} Players</title>
+</head>
+<body>
+    <!-- Insert table of literally everybody in the league here -->
+    <header>
+        <h1>{{lPlayers[0].League}} Players</h1>
+    </header>
+    <main>
+        <div>
+            <table class="lPlayers" id="data">
+
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Team</th>
+                        <th>Nation</th>
+                        <th>Position</th>
+                        <th>Age</th>
+                        <th>Minutes</th>
+                        <th>Games</th>
+                        <th>Goals</th>
+                        <th>xG</th>
+                        <th>Assists</th>
+                        <th>xA</th>
+                        <th>Yellow Cards</th>
+                        <th>Red Cards</th>
+                        <th>Non-Penalty Goals</th>
+                        <th>NPxG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in lPlayers %}
+                        <tr>
+                            <td>
+                                <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                            </td>
+                            <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                            <td>{{row.Country}}</td>
+                            <td>{{row.Position}}</td>
+                            <td>{{row.Age}}</td>
+                            <td>{{row.minutes|round|int}}</td>
+                            <td>{{row.Nineties}}</td>
+                            <td>{{row.Gls}}</td>
+                            <td>{{ "%.2f"|format(row.xG)}}</td>
+                            <td>{{row.Ast}}</td>
+                            <td>{{ "%.2f"|format(row.xA)}}</td>
+                            <td>{{row.YCrd}}</td>
+                            <td>{{row.RCrd}}</td>
+                            <td>{{row.nPG}}</td>
+                            <td>{{ "%.2f"|format(row.npxG) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <!-- More things I copied -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+
+    <script>
+        $(document).ready(function () {
+          $('#data').DataTable({
+              columns: [
+                  null,
+                  null,
+                  null,
+                  null,
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false},
+                  {searchable: false}],
+          });
+        });
+      </script>
+</body>
+</html>

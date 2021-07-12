@@ -1,0 +1,146 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 30px;
+  }
+
+head{
+    margin: 0;
+    font-family: arial;
+    text-align: center;
+    color:rgb(0, 0, 0);
+    font-size: x-large;
+    }
+
+
+body, html{
+    margin: 0;
+    font-family: Arial;
+    text-align: center;
+    color:rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+}
+
+.grid-container {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr 2fr 2fr;
+    grid-template-columns: repeat(3, 2fr);
+}
+
+.grid-item {
+    background-color: rgb(250, 250, 250);
+    border: 6px solid cornflowerblue;
+    /* rgb(247, 238, 164); */
+    padding: 20px;
+    overflow: auto;
+}
+
+.item-1{
+      grid-column: 1 / 4;
+}
+
+.item-2{
+    grid-row: 2 / 4;
+    grid-column: 1 / 4;
+}
+
+table {
+    border-collapse: collapse; 
+    
+    font-size: 0.9em;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px 5px 0 0;
+}
+
+table th  {
+    background-color: royalblue;
+    text-align: center;
+    font-size: small;
+}
+
+table tr td{
+    padding: 12px 15px;
+    border-bottom: 1px solid #dddd;
+    font-size: small;
+}
+
+table tr td a{
+    font-size: small;
+}
+
+table tr td{
+    text-align: center;
+}
+
+table tr:nth-of-type(even){
+    background-color: rgb(221, 221, 221);
+}
+
+table tr:nth-of-type(odd){
+    background-color:rgb(134, 147, 160);
+}
+
+h1{
+    font-size: large;
+}
+
+.table-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    margin-bottom: 0;
+}
+
+.table-item{
+    margin: 10px;
+}
+
+[data-tab-content]{
+    display:none;
+}
+
+.active[data-tab-content]{
+    display:block
+}
+
+.tabs{
+    display: flex;
+    justify-content: space-around;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 5px solid cornflowerblue;
+}
+
+.tab{
+    cursor: pointer;
+    padding: 10px;
+}
+
+.tab:hover{
+    background-color: #AAA;
+}
+
+.tab.active{
+    background-color: #CCC;
+}
+
+.link-list{
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.link-item{
+    margin: 0 10px;
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/player.css') }}">
+    <title>{{pO.Name}}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item item-1">
+            <h1>{{pO.Name}}</h1>
+        </div>
+
+
+        <div class="grid-item item-2">
+            <h1>Background Info</h1>
+            <a href="{{ url_for('terms')}}" target="_blank"> Terms </a>
+            <ul class="player_stats">
+                <li class="stat">Age: {{pO.Age}} </li>
+                <li class="stat">Nation: {{pO.Country}} </li>
+                <li class="stat">Position: {{pO.Position}} </li>
+                <li class="stat">Minutes: {{ "%.2f"|format(pO.minutes)}}</li>
+                <li class="stat"><a href="{{url_for('teams', Team = pO.Team)}} ">{{pO.Team}}</a></li>
+            </ul>
+        </div>
+
+        <div class="grid-item item-3">
+            <h1>Passing Stats</h1>
+            <canvas id="passDoughnut" width="500" height="700"></canvas>
+            <script>
+                var ctx = document.getElementById("passDoughnut").getContext("2d")
+                var agebar = new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: {{gkPassLabels | safe}},
+                        datasets: [
+                            {
+                                data: {{gkPassData | safe}},
+                                borderWidth: 2,
+                                backgroundColor: [
+                                'rgb(54, 162, 235)',
+                                'rgba(255, 99, 132)',
+                                'rgba(255, 206, 86)'
+                                ]
+                            }
+                        ]
+
+                    }
+                    ,
+                    options: {
+                        responsive: false
+                    }
+                })
+            </script>
+        </div>
+        <div class="grid-item item-4">
+            <h1>Shot Blocking Stats</h1>
+            <canvas id="shotBar" width="500" height="700"></canvas>
+            <script>
+                var ctx = document.getElementById("shotBar").getContext("2d")
+                var agebar = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: {{gkShotLabels | safe}},
+                        datasets: [
+                            {
+                                label: "Player Stats",
+                                data: {{gkShotData | safe}},
+                                borderWidth: 2,
+                                backgroundColor:'rgb(54, 162, 235)'
+                            },
+                            {
+                                label: "GK's Stats",
+                                data: {{oppgkShotData | safe}},
+                                borderWidth: 2,
+                                backgroundColor:'rgba(255, 99, 132)'
+                            },
+                            {
+                                label: "T1 GK's Stats",
+                                data: {{oppT1ShotData | safe}},
+                                borderWidth: 2,
+                                backgroundColor:'rgba(255, 206, 86)'
+                            }
+                        ]
+
+                    }
+                    ,
+                    options: {
+                        responsive: false
+                    }
+                })
+            </script>
+        </div>
+        <div class="grid-item item-5">
+            <h1>Misc Stats </h1>
+            <canvas id="miscBar" width="500" height="700"></canvas>
+            <script>
+                var ctx = document.getElementById("miscBar").getContext("2d")
+                var agebar = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: {{gkMiscLabels | safe}},
+                        datasets: [
+                            {
+                                label: "Player Stats",
+                                data: {{gkMiscData | safe}},
+                                borderWidth: 2,
+                                backgroundColor:'rgb(54, 162, 235)'
+                            },
+                            {
+                                label: "GK's Stats",
+                                data: {{oppgkMiscData | safe}},
+                                borderWidth: 2,
+                                backgroundColor:'rgba(255, 99, 132)'
+                            },
+                            {
+                                label: "T1 GK's Stats",
+                                data: {{oppT1MiscData | safe}},
+                                borderWidth: 2,
+                                backgroundColor:'rgba(255, 206, 86)'
+                            }
+                        ]
+
+                    }
+                    ,
+                    options: {
+                        responsive: false
+                    }
+                })
+            </script>
+        </div>
