@@ -11,3 +11,5 @@ a pandas dataframe and converted into a db file.
 
 With this db file, I then created a simple flask application to visualize the data. The website has a home page, links to the separate leagues, links
 to the separate teams, and finally links to the separate players. 
+
+You can visit this website at: https://wh-fbstats.herokuapp.com/ and enjoy!
