@@ -11,17 +11,30 @@ class FbrefTeam:
     tier4 = [15, 16, 17, 18, 19, 20]
     tiers = [tier1, tier2, tier3, tier4]
 
-    def __init__(self, link, position, leagueName):
+    def __init__(self, link, position, leagueName, season):
         self.link = link
+        #(self.link)
         nameStr = self.link.rsplit('/', 1)[-1].split('-')
         self.team = ' '.join(nameStr[0:len(nameStr) - 1])
         self.leagueName = leagueName
+        #print(self.leagueName)
+        self.season = season
+
+        #fix the links
+        # newlink = self.link.rsplit('/', 1)
+        # nLP1 = newlink[0]
+        # nLP2 = newlink[1]
+        # self.link = (nLP1 + f'/{self.season}/'+nLP2)
+        # print(self.link)
         #tier bit
         self.position = position
         for i in range(len(FbrefTeam.tiers)):
             tier = FbrefTeam.tiers[i]
             if self.position in tier:
                 self.tier = (i+1)
+
+        print(self.team)
+        #print("Scraping")
         self.scrape_site()
 
         self.makeStandardTable()
@@ -32,7 +45,7 @@ class FbrefTeam:
         self.makeGSCreationTable()
         self.makePossessionTable()
 
-        print(self.team)
+
         self.leagueData = []
         self.squadData = []
 
@@ -42,6 +55,9 @@ class FbrefTeam:
         soup = BeautifulSoup(source, "lxml")
         # print(soup)
         tables = soup.find_all("table")
+        # if(self.getTeamName() == "Wolfsburg"):
+        #     #print(soup)
+        #     print(tables)
         self.tables = tables
 
     def getTeamName(self):
@@ -88,6 +104,9 @@ class FbrefTeam:
         pd_table = pd_table.assign(team = team_col)
         pd_table = pd_table.assign(tier = tier_col)
         pd_table = pd_table.assign(minutes = minutes_col)
+
+        season_col = [self.season for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(season = season_col)
 
         #print(pd_table)
         self.standardTable = pd_table
@@ -152,6 +171,9 @@ class FbrefTeam:
         league_col = [self.leagueName for i in range(teamDefenseDF.shape[0])]
         teamDefenseDF = teamDefenseDF.assign(league=league_col)
 
+        season_col = [self.season for i in range(teamDefenseDF.shape[0])]
+        teamDefenseDF = teamDefenseDF.assign(season=season_col)
+
         self.teamDefDF = teamDefenseDF
         #print(self.teamDF)
 
@@ -201,6 +223,9 @@ class FbrefTeam:
         pd_table = pd_table.assign(minutes=minutes_col)
         league_col = [self.leagueName for i in range(pd_table.shape[0])]
         pd_table = pd_table.assign(league=league_col)
+
+        season_col = [self.season for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(season=season_col)
 
         self.offensiveTable = pd_table
 
@@ -254,6 +279,9 @@ class FbrefTeam:
         pd_table = pd_table.assign(minutes=minutes_col)
         league_col = [self.leagueName for i in range(pd_table.shape[0])]
         pd_table = pd_table.assign(league=league_col)
+
+        season_col = [self.season for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(season=season_col)
 
         #(pd_table)
         self.passTable = pd_table
@@ -313,6 +341,9 @@ class FbrefTeam:
         league_col = [self.leagueName for i in range(pd_table.shape[0])]
         pd_table = pd_table.assign(league=league_col)
 
+        season_col = [self.season for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(season=season_col)
+
         #print(pd_table)
         self.GKTable = pd_table
 
@@ -358,6 +389,10 @@ class FbrefTeam:
         pd_table = pd_table.assign(minutes=minutes_col)
         league_col = [self.leagueName for i in range(pd_table.shape[0])]
         pd_table = pd_table.assign(league=league_col)
+
+        season_col = [self.season for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(season=season_col)
+
         #print(pd_table)
         self.GSCreationTable = pd_table
 
@@ -416,6 +451,9 @@ class FbrefTeam:
         pd_table = pd_table.assign(minutes=minutes_col)
         league_col = [self.leagueName for i in range(pd_table.shape[0])]
         pd_table = pd_table.assign(league=league_col)
+
+        season_col = [self.season for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(season=season_col)
 
         self.possessionTable = pd_table
 
@@ -477,6 +515,7 @@ class FbrefTeam:
     def generateAttackingSignings(self, otherDF):
         # check xG diff for potenatial attacking players
         #print(self.xG_diff)
+        otherDF = otherDF[otherDF.get("season") == self.season]
         if (self.xG_diff < 0): #signings
             if(self.tier == 1):
                 upperAgeBound = self.squadAge + 2
@@ -514,6 +553,7 @@ class FbrefTeam:
 
     def generateDefensiveSignings(self, otherDF):
         #print(self.xGA_diff)
+        otherDF = otherDF[otherDF.get("season") == self.season]
         if (self.xGA_diff < 0):
             #buy some defenders
             upperAgeBound = self.squadAge + 3
@@ -566,3 +606,7 @@ class FbrefTeam:
 # chels.setupAssessment()
 
 #x = FbrefTeamClass("https://fbref.com/en/squads/acbb6a5b/RB-Leipzig-Stats")
+
+# z = FbrefTeam("https://fbref.com/en/squads/1d2fe027/2019-2020/SPAL-Stats", 20, "Serie A", "2019-2020")
+# print(z.link)
+

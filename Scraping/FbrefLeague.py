@@ -7,16 +7,24 @@ import FbrefTeam as FbT
 class FbrefLeague:
     baseLink = "https://fbref.com"
 
-    def __init__(self, link):
+    def __init__(self, link, year):
         self.link = link
+
         leagueStr = self.link.rsplit('/', 1)[-1].split('-')
-        self.leagueName = ' '.join(leagueStr[0:len(leagueStr) - 1])
+        if(len(leagueStr) > 3):
+            self.leagueName = ' '.join(leagueStr[2:len(leagueStr) - 1])
+        else:
+            self.leagueName = ' '.join(leagueStr[0:len(leagueStr) - 1])
+        #print(self.leagueName)
+        self.season = year
         #print(self.link)
         #print(self.leagueName)
         #self.teams LIST OF ALL FBREFTEAM CLASSES EXIST
         self.scrape_league_site()
         self.makeLeagueTableDF()
         self.makeSquadStatsTable()
+
+        print(self.leagueName)
 
     #method opens the link and obtains a table of all the tables so future methods can be added to scrape the other tables
     # later down the line
@@ -42,7 +50,7 @@ class FbrefLeague:
         for i in range(len(linkLst)):
             x = linkLst[i].find("a", href=True)
             #print(x['href'])
-            league_teams.append(FbT.FbrefTeam(FbrefLeague.baseLink + x['href'], i+1, self.leagueName))
+            league_teams.append(FbT.FbrefTeam(FbrefLeague.baseLink + x['href'], i+1, self.leagueName, self.season))
 
         self.teams = league_teams
 
@@ -79,6 +87,9 @@ class FbrefLeague:
 
         league_col = [self.leagueName for i in range(league_table_DF.shape[0])]
         league_table_DF = league_table_DF.assign(league=league_col)
+
+        season_col = [self.season for i in range(league_table_DF.shape[0])]
+        league_table_DF = league_table_DF.assign(season=season_col)
         #print(league_table_DF)
         self.league_table = league_table_DF
 
@@ -118,6 +129,10 @@ class FbrefLeague:
         squadStatsPD = pd.DataFrame(pd_table_list, columns=col_names)
         league_col = [self.leagueName for i in range(squadStatsPD.shape[0])]
         squadStatsPD = squadStatsPD.assign(league = league_col)
+
+        season_col = [self.season for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(season=season_col)
+
         #print(squadStatsPD)
         self.squadStatsDF = squadStatsPD
 
@@ -136,7 +151,7 @@ class FbrefLeague:
 
 
 
-# test = FbrefLeague("https://fbref.com/en/comps/9/Premier-League-Stats")
+# test = FbrefLeague("https://fbref.com/en/comps/9/Premier-League-Stats", "2019-2020")
 # #test.makeSquadStatsTable()
 # print("###############################################")
 # print("Creating teamDF's")

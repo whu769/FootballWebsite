@@ -14,6 +14,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
 
+viewed_season = "2020-2021"
+
 #The various classes for the sql_tables in the db file
 
 # class CombinedLeague(db.Model):
@@ -189,6 +191,7 @@ class combinedLeagues(db.Model):
     xGD = db.Column(db.Float)
     xGDP90 = db.Column(db.Float)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 class teamOverview(db.Model):
     __tablename__ = 'team_overview'
@@ -220,6 +223,8 @@ class teamOverview(db.Model):
     npxGP90 = db.Column(db.Float)
     npxGaAP90 = db.Column(db.Float)
     league = db.Column(db.Text)
+    season = db.Column(db.Text)
+
     
 class playerOverview(db.Model):
     __tablename__ = 'player_overview'
@@ -256,6 +261,7 @@ class playerOverview(db.Model):
     tier = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 class playerOffensive(db.Model):
     __tablename__ = 'player_offensive'
@@ -287,6 +293,7 @@ class playerOffensive(db.Model):
     tier = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 class playerDefensive(db.Model):
     __tablename__ = 'player_defensive'
@@ -327,6 +334,7 @@ class playerDefensive(db.Model):
     minutes = db.Column(db.Integer)
     tier = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 class playerPassing(db.Model):
     __tablename__ = 'player_passing'
@@ -364,6 +372,7 @@ class playerPassing(db.Model):
     tier = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 class goalkeeping(db.Model):
     __tablename__ = 'goalkeeping'
@@ -398,6 +407,7 @@ class goalkeeping(db.Model):
     tier = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 class gsCreation(db.Model):
     __tablename__ = 'goal_shot_creation'
@@ -427,6 +437,7 @@ class gsCreation(db.Model):
     tier = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 class possession(db.Model):
     __tablename__ = 'possession'
@@ -469,6 +480,7 @@ class possession(db.Model):
     tier = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
 
 
 class offenseRec(db.Model):
@@ -501,6 +513,7 @@ class offenseRec(db.Model):
     tier = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
     recommendedTeam = db.Column(db.Text)
 
 class defenseRec(db.Model):
@@ -542,6 +555,7 @@ class defenseRec(db.Model):
     minutes = db.Column(db.Integer)
     tier = db.Column(db.Integer)
     League = db.Column(db.Text)
+    season = db.Column(db.Text)
     recommendedTeam = db.Column(db.Text)
 
 
@@ -570,9 +584,11 @@ def index():
     #this effort is ALL FBREF STUFF
     #try:
         #WHAT IS WRONG WITH THIS LINE?
-    players = playerOverview.query.order_by(playerOverview.Gls.desc()).limit(20)
+    players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
     #print(players)
-    cL = combinedLeagues.query.order_by(combinedLeagues.Pts.desc()).limit(20)
+    # for player in players:
+    #     print(player.season)
+    cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
     print(type(cL))
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
     return render_template("index3.html", combinedLeague = cL, Leagues = leagues, Player = players)
@@ -598,15 +614,15 @@ def leagues(League):
         # return render_template('league2.html', League=Leagues, Team = Teams, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively,
         # wO = worstOffensively, wD = worstDefensively, overAchieved = overAchieved, underAchieved = underAchieved)
 
-        Leagues = combinedLeagues.query.filter_by(League = League).order_by(combinedLeagues.Pts.desc()).all()
-        Goals = playerOverview.query.filter_by(League = League).order_by(playerOverview.Gls.desc()).all()
-        Assists = playerOverview.query.filter_by(League = League).order_by(playerOverview.Ast.desc()).all()
+        Leagues = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).all()
+        Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).all()
+        Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
 
-        bestOffensively = combinedLeagues.query.filter_by(League = League).order_by(combinedLeagues.GF.desc()).first()
-        bestDefensively = combinedLeagues.query.filter_by(League = League).order_by(combinedLeagues.GA).first()
-        worstDefensively = combinedLeagues.query.filter_by(League = League).order_by(combinedLeagues.GA.desc()).first()
-        worstOffensively = combinedLeagues.query.filter_by(League = League).order_by(combinedLeagues.GF).first()
-        highestGD = combinedLeagues.query.filter_by(League = League).order_by(combinedLeagues.GD.desc()).first()
+        bestOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF.desc()).first()
+        bestDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA).first()
+        worstDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA.desc()).first()
+        worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
+        highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
         return render_template('league3.html', League = Leagues, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively, 
         wO = worstOffensively, wD = worstDefensively, hGD = highestGD)
     except Exception as e:
@@ -633,13 +649,13 @@ def teams(Team):
         # # dSignings = defenseSignings
         # return render_template('team2.html', Team = team, Player = players, Goals = goals, Assists = assists, aSignings = attackingSignings, dSignings = defenseSignings)
 
-        team = combinedLeagues.query.filter_by(Team = Team).first()
-        tAdvanced = teamOverview.query.filter_by(Team = Team).first()
-        players = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.minutes != 0).order_by(playerOverview.minutes.desc()).all()
-        goals = playerOffensive.query.filter_by(Team = Team).order_by(playerOffensive.Gls.desc()).all()
-        assists = playerOverview.query.filter_by(Team = Team).order_by(playerOverview.Ast.desc()).all()
-        aSignings = offenseRec.query.filter_by(recommendedTeam = Team).all()
-        dSignings = defenseRec.query.filter_by(recommendedTeam = Team).all()
+        team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+        tAdvanced = teamOverview.query.filter(teamOverview.Team == Team, combinedLeagues.season == viewed_season).first()
+        players = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.minutes != 0, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()
+        goals = playerOffensive.query.filter(playerOffensive.Team == Team, playerOffensive.season == viewed_season).order_by(playerOffensive.Gls.desc()).all()
+        assists = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
+        aSignings = offenseRec.query.filter(offenseRec.recommendedTeam == Team, offenseRec.season == viewed_season).all()
+        dSignings = defenseRec.query.filter(defenseRec.recommendedTeam == Team, defenseRec.season == viewed_season).all()
 
         
         return render_template("team3.html", Team = team, tO = tAdvanced, Player = players, Goals = goals, Assists = assists, aSignings = aSignings, dSignings = dSignings)
@@ -674,17 +690,18 @@ def obtainTeamAvgStats(teams):
 def graphs(Team):
     try:
         #print("The page is working")
-        team = teamOverview.query.filter_by(Team = Team).first()
-        teams = teamOverview.query.filter(teamOverview.Team != Team, teamOverview.league == team.league).all()
+        team = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+        teams = teamOverview.query.filter(teamOverview.Team != Team, 
+                    teamOverview.league == team.league, teamOverview.season == viewed_season).all()
         
-        t1Teams = combinedLeagues.query.filter(combinedLeagues.League == team.league).limit(4)
+        t1Teams = combinedLeagues.query.filter(combinedLeagues.League == team.league, combinedLeagues.season == viewed_season).limit(4)
         t1TLst = []
         for x in t1Teams:
             if(x.Team != team.Team):
                 t1TLst.append(x.Team)
         t1teams = teamOverview.query.filter(teamOverview.Team.in_(t1TLst)).all()
         
-        teamPlayers = playerOverview.query.filter_by(Team = Team).all()
+        teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
         #print(type(teamPlayers))
         ageList = []
         ageDict = dict()
@@ -881,16 +898,18 @@ def players(Player):
     try:
         #print("The page is working")
         pO2 = playerOverview.query.filter_by(Name = Player).first()
-        pO = playerOverview.query.filter_by(Name = Player).order_by(playerOverview.minutes.desc()).all()[0]
+        pO = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()[0]
+        print(pO.Team)
+        print(pO2.Team)
         # for player in pO2:
         #     print(player.Gls)
         primaryPosition = pO.Position.split(",")[0]
         positions = pO.Position.split(",")
         if primaryPosition != "GK":
-            pOffense = playerOffensive.query.filter(playerOffensive.Name == Player, playerOffensive.Team == pO.Team).first()
-            pDefense = playerDefensive.query.filter(playerDefensive.Name == Player, playerDefensive.Team == pO.Team).first()
-            pPass = playerPassing.query.filter(playerPassing.Name == Player, playerPassing.Team == pO.Team).first()
-            pGSCreation = gsCreation.query.filter(gsCreation.Name == Player, gsCreation.Team == pO.Team).first()
+            pOffense = playerOffensive.query.filter(playerOffensive.Name == Player, playerOffensive.Team == pO.Team, playerOffensive.season == viewed_season).first()
+            pDefense = playerDefensive.query.filter(playerDefensive.Name == Player, playerDefensive.Team == pO.Team, playerDefensive.season == viewed_season).first()
+            pPass = playerPassing.query.filter(playerPassing.Name == Player, playerPassing.Team == pO.Team, playerPassing.season == viewed_season).first()
+            pGSCreation = gsCreation.query.filter(gsCreation.Name == Player, gsCreation.Team == pO.Team, gsCreation.season == viewed_season).first()
             #print(pGSCreation.Name)
             
             #No longer used
@@ -898,18 +917,26 @@ def players(Player):
             teamAtt = playerOffensive.query.filter_by(Team = pO.Team).all()
             teamPass = playerPassing.query.filter_by(Team = pO.Team).all()
             
-            t1Def = playerDefensive.query.filter(playerDefensive.tier == 1, playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8)
-            t1Att = playerOffensive.query.filter(playerOffensive.tier == 1, playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8)
-            t1Pass = playerPassing.query.filter(playerPassing.tier == 1, playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8)
-            t1GSC = gsCreation.query.filter(gsCreation.tier == 1, gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8)
+            t1Def = playerDefensive.query.filter(playerDefensive.tier == 1, playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
+                    playerDefensive.season == viewed_season)
+            t1Att = playerOffensive.query.filter(playerOffensive.tier == 1, playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
+                    playerOffensive.season == viewed_season)
+            t1Pass = playerPassing.query.filter(playerPassing.tier == 1, playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
+                    playerPassing.season == viewed_season)
+            t1GSC = gsCreation.query.filter(gsCreation.tier == 1, gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
+                    gsCreation.season == viewed_season)
             # for player in t1GSC:
             #     print(player.Name)
 
             
-            oppDef = playerDefensive.query.filter(playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8)
-            oppAtt = playerOffensive.query.filter(playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8)
-            oppPass = playerPassing.query.filter(playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8)
-            oppGSC = gsCreation.query.filter(gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8)
+            oppDef = playerDefensive.query.filter(playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
+                    playerDefensive.season == viewed_season)
+            oppAtt = playerOffensive.query.filter(playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
+                    playerOffensive.season == viewed_season)
+            oppPass = playerPassing.query.filter(playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
+                    playerPassing.season == viewed_season)
+            oppGSC = gsCreation.query.filter(gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
+                    gsCreation.season == viewed_season)
             
             playerData = obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation)
             #teamData = obtainAvgStats(teamDef, teamAtt, teamPass)
@@ -924,9 +951,9 @@ def players(Player):
             oPPData = oppData[2][0:4], oPPData2 = oppData[2][4:], pGSCLabels = playerData[4][0], pGSCData = playerData[4][1], pGSCT1Data = t1Data[3]
             , oppGSCData = oppData[3])
         else:
-            GKStats = goalkeeping.query.filter_by(Name = pO.Name).first()
-            oppGKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name)
-            oppT1GKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.tier == 1)
+            GKStats = goalkeeping.query.filter(goalkeeping.Name == pO.Name, goalkeeping.season == viewed_season).first()
+            oppGKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.season == viewed_season)
+            oppT1GKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.tier == 1, goalkeeping.season == viewed_season)
             # for player in oppGKStats:
             #     print(player.Name)
             GKData = obtainGKStats(GKStats)
@@ -959,7 +986,7 @@ def terms():
 @app.route('/<League>/LeaguePlayers')
 def LeaguePlayers(League):
     try:
-        leaguePlayers = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0).all()
+        leaguePlayers = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
     
         return render_template("leaguePlayers.html", lPlayers = leaguePlayers)
     except Exception as e:
@@ -971,7 +998,7 @@ def findBestFW(League, age, tier, minutes):
     #print("finding FW")
     #Shots/Goals Type FW
     fwOStats = playerOffensive.query.filter(playerOffensive.League == League, playerOffensive.Position.contains("FW"), playerOffensive.minutes >= minutes,
-                playerOffensive.Age <= age, playerOffensive.tier >= tier)
+                playerOffensive.Age <= age, playerOffensive.tier >= tier, playerOffensive.season == viewed_season)
     #print(type(fwOStats))
     fwOPlayers = fwOStats.order_by(playerOffensive.Gls.desc(), playerOffensive.GlsP90.desc(), playerOffensive.xG.desc()).limit(10)
     # for player in fwOPlayers:
@@ -979,7 +1006,7 @@ def findBestFW(League, age, tier, minutes):
     
     #Creative stuff
     fwCStats = gsCreation.query.filter(gsCreation.League == League, gsCreation.Position.contains("FW"), gsCreation.minutes >= minutes,
-                gsCreation.Age <= age, gsCreation.tier >= tier)
+                gsCreation.Age <= age, gsCreation.tier >= tier, gsCreation.season == viewed_season)
     fwCPlayers = fwCStats.order_by(gsCreation.GCAP90.desc(), gsCreation.SCAP90.desc()).limit(10)
     # for player in fwCPlayers:
     #     print(player.Name)
@@ -987,7 +1014,7 @@ def findBestFW(League, age, tier, minutes):
 
     #Haven't implemented the ball carrying stuff
     fwDStats = possession.query.filter(possession.League == League, possession.Position.contains("FW"), possession.minutes >= minutes,
-                possession.Age <= age, possession.tier >= tier)
+                possession.Age <= age, possession.tier >= tier, possession.season == viewed_season)
     fwDPlayers = fwDStats.order_by(possession.DribP90.desc(), possession.DribSuccP.desc(), possession.TAPP90.desc(), possession.CarriesCPAP90.desc()).limit(10)
     # for player in fwDPlayers:
     #     print(player.Name)
@@ -997,17 +1024,17 @@ def findBestMF(League, age, tier, minutes):
     #print("finding MF")
     #CAM section
     mfCStats = gsCreation.query.filter(gsCreation.League == League, gsCreation.Position.contains("MF"), gsCreation.minutes >= minutes,
-                    gsCreation.Age <= age, gsCreation.tier >= tier)
+                    gsCreation.Age <= age, gsCreation.tier >= tier, gsCreation.season == viewed_season)
     mfCPlayers = mfCStats.order_by(gsCreation.GCAP90.desc(), gsCreation.SCAP90.desc()).limit(10)
 
     #Passing MF
     mfPStats = playerPassing.query.filter(playerPassing.League == League, playerPassing.Position.contains("MF"), playerPassing.minutes >= minutes,
-                    playerPassing.Age <= age, playerPassing.tier >= tier)
+                    playerPassing.Age <= age, playerPassing.tier >= tier, playerPassing.season == viewed_season)
     mfPPlayers = mfPStats.order_by(playerPassing.ProgP90.desc(), playerPassing.KPP90.desc(), playerPassing.FTP90.desc(), playerPassing.PassP.desc()).limit(10)
 
     #Defensive MF
     mfDStats = playerDefensive.query.filter(playerDefensive.League == League, playerDefensive.Position.contains("MF"), playerDefensive.minutes >= minutes,
-                playerDefensive.Age <= age, playerDefensive.tier >= 1)
+                playerDefensive.Age <= age, playerDefensive.tier >= 1, playerDefensive.season == viewed_season)
     mfDPlayers = mfDStats.order_by(playerDefensive.TklIntP90.desc(), playerDefensive.TklRate.desc(), playerDefensive.PressurePct.desc()).limit(10)
     
     return [mfCPlayers, mfPPlayers, mfDPlayers]
@@ -1016,14 +1043,14 @@ def findBestDF(League, age, tier, minutes):
     #print("Finding DF")
     #offensive df
     dfOStats = playerOffensive.query.filter(playerOffensive.League == League, playerOffensive.Position == "DF", playerOffensive.minutes >= minutes
-                , playerOffensive.Age <= age, playerOffensive.tier >= tier)
+                , playerOffensive.Age <= age, playerOffensive.tier >= tier, playerOffensive.season == viewed_season)
     dfOPlayers = dfOStats.order_by(playerOffensive.Gls.desc(), playerOffensive.SoTP90.desc()).limit(10)
     # for player in dfOPlayers:
     #     print(player.Name)
     
     #Passing DF LPP90, 
     dfPStats = playerPassing.query.filter(playerPassing.League == League, playerPassing.Position == "DF", playerPassing.minutes >= minutes,
-                playerPassing.Age <= age, playerPassing.tier >= tier)
+                playerPassing.Age <= age, playerPassing.tier >= tier, playerPassing.season == viewed_season)
     dfPPlayers = dfPStats.order_by(playerPassing.LPP.desc(), playerPassing.FTP90.desc(), playerPassing.ProgP90.desc()).limit(10)
     # for player in dfPPlayers:
     #     print(player.Name)
@@ -1031,7 +1058,7 @@ def findBestDF(League, age, tier, minutes):
     #Not REALLY Satisfied with this one, data could be updated. Seems to be that 
     #defensive df
     dfDStats = playerDefensive.query.filter(playerDefensive.League == League, playerDefensive.Position == "DF", playerDefensive.minutes >= minutes,
-                playerDefensive.Age <= age, playerDefensive.tier >= tier)
+                playerDefensive.Age <= age, playerDefensive.tier >= tier, playerDefensive.season == viewed_season)
     dfDPlayers = dfDStats.order_by(playerDefensive.TklRate.desc(), playerDefensive.TklIntP90.desc(), playerDefensive.BlkP90.desc(), playerDefensive.tier,).limit(10)
     # for player in dfDPlayers:
     #     print(player.Name)

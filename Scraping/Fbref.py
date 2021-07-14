@@ -7,12 +7,12 @@ import FbrefLeague as FL
 class Fbref:
     baseLink = "https://fbref.com"
     compLink = "https://fbref.com/en/comps/"
-    year = "2020-2021"
+    years = ["2018-2019", "2019-2020", "2020-2021"]
 
     def __init__(self):
         print("Initializing Fbref")
         self.obtainLeagueLinks()
-        self.scrapeFbref()
+        #self.scrapeFbref()
 
     def obtainLeagueLinks(self):
         leagueLinks = []
@@ -29,7 +29,7 @@ class Fbref:
         for item in topLeagueHistories:
             historyEndings.append(item.find('a', href=True)["href"])
 
-        print(historyEndings)
+        #print(historyEndings)
 
         for ending in historyEndings:
             linkSource = urllib.request.urlopen(Fbref.baseLink+ending)
@@ -37,24 +37,46 @@ class Fbref:
             #print(soup)
             tbody = soup.find("tbody")
             trs = soup.find_all("tr")[1:]
+            lst = []
             #print(trs)
-            for tr in trs:
-                a = tr.find('a', href=True)
-                if(a.text == Fbref.year):
-                    #print("TRUE")
-                    print(a["href"])
-                    leagueLinks.append(Fbref.baseLink+a["href"])
-                    break
+            for year in Fbref.years:
+                #print(year)
+                for tr in trs:
+                    a = tr.find('a', href=True)
+                    if(a.text == year):
+                        #print("TRUE")
+                        #print(a["href"])
+                        lst.append(Fbref.baseLink+a["href"])
+                        break
+            leagueLinks.append(lst)
         #print(leagueLinks)
         self.leagueLinks = leagueLinks
+        #print(self.leagueLinks)
 
-    def scrapeFbref(self):
-        Leagues = []
-        for lLink in self.leagueLinks:
+    def scrapeFbref(self, year):
+        index = 0
+        for i in range(len(self.years)):
+            if year == self.years[i]:
+                index = i
+                break
+
+        year = Fbref.years[index]
+        print(year)
+        league = []
+        for j in range(5):
+            league.append(self.leagueLinks[j][index])
+        print(league)
+        print(len(league))
+        print("SEASON: " + year)
+        leagueLst = []
+        for link in league:
             print("###################################################################################################")
-            Leagues.append(FL.FbrefLeague(lLink))
+            print(link)
+            print("###################################################################################################")
+            leagueLst.append(FL.FbrefLeague(link, year))
 
-        self.LeagueLst = Leagues
+        print("DONE")
+        self.LeagueLst = leagueLst
 
     # def createMegaDefDF(self):
     #     lstDF = []
@@ -165,4 +187,11 @@ class Fbref:
     #print("##################################################################")
 
 # f = Fbref()
+# f.scrapeFbref("2018-2019")
+# f.createMegaTeamDFs()
+# f.createRecommendorDFs()
+# f.scrapeFbref("2019-2020")
+# f.scrapeFbref("2020-2021")
 # lst = f.createMegaTeamDFs()
+
+#Running into issue where prolonged scraping breaks the program, need to try setting a timer? like 5 min break or do them separately
