@@ -67,6 +67,22 @@ footer {
 
 .league_item {
     margin: 0 10px;
+    position: relative;
+}
+
+.league_item .seasons{
+    display: none;
+    position: absolute;
+    background-color: cornflowerblue;
+    list-style: none;
+}
+
+.league_item:hover .seasons{
+    display: block;
+}
+
+.league_item .seasons li a:hover{
+    background-color: white;
 }
 
 .league_item a {
