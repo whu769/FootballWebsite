@@ -2,6 +2,8 @@ import requests
 import urllib.request
 import pandas as pd
 from bs4 import BeautifulSoup
+import time
+import random
 
 
 class FbrefTeam:
@@ -51,6 +53,7 @@ class FbrefTeam:
 
 
     def scrape_site(self):
+        # time.sleep(random.randint(5, 10))
         source = urllib.request.urlopen(self.link)
         soup = BeautifulSoup(source, "lxml")
         # print(soup)

@@ -3,6 +3,8 @@ import urllib.request
 import pandas as pd
 from bs4 import BeautifulSoup
 import FbrefLeague as FL
+import time
+import random
 
 class Fbref:
     baseLink = "https://fbref.com"
@@ -73,6 +75,7 @@ class Fbref:
             print("###################################################################################################")
             print(link)
             print("###################################################################################################")
+            time.sleep(random.randint(0,5))
             leagueLst.append(FL.FbrefLeague(link, year))
 
         print("DONE")
@@ -98,10 +101,14 @@ class Fbref:
         megaTeamGKStats = []
         megaTeamGSCStats = []
         megaTeamPossessionStats = []
+        megaLeagueGSCStats = []
+        megaLeaguePassingStats = []
 
         for league in self.LeagueLst:
             megaLeagueTable.append(league.getLeagueTable())
             megaSquadStats.append(league.getSquadStatsTable())
+            megaLeagueGSCStats.append(league.getSquadGSCTable())
+            megaLeaguePassingStats.append(league.getSquadPassingTable())
             for team in league.teams:
                 megaTeamStandardStats.append(team.getStandardStats())
                 megaTeamDefenseStats.append(team.getDefensiveStats())
@@ -120,6 +127,8 @@ class Fbref:
         MTGKS = pd.concat(megaTeamGKStats).reset_index(drop=True)
         MTGSCS = pd.concat(megaTeamGSCStats).reset_index(drop=True)
         MTPOSS = pd.concat(megaTeamPossessionStats).reset_index(drop=True)
+        MLGSC = pd.concat(megaLeagueGSCStats).reset_index(drop=True)
+        MLPS = pd.concat(megaLeaguePassingStats).reset_index(drop=True)
 
         self.MLT = MLT
         self.MSS = MSS
@@ -130,6 +139,8 @@ class Fbref:
         self.MTGKS = MTGKS
         self.MTGSCS = MTGSCS
         self.MTPOSS = MTPOSS
+        self.MLGSC = MLGSC
+        self.MLPS = MLPS
 
     def createRecommendorDFs(self):
         offenseLst = []
@@ -158,6 +169,9 @@ class Fbref:
     def getMSS(self):
         return self.MSS
 
+    def getMLGSC(self):
+        return self.MLGSC
+
     def getMTSS(self):
         return self.MTSS
 
@@ -178,6 +192,9 @@ class Fbref:
 
     def getMTPOSS(self):
         return self.MTPOSS
+
+    def getMLPS(self):
+        return self.MLPS
 
     def getOffenseRec(self):
         return self.offenseRec

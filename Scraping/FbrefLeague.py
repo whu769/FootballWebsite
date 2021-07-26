@@ -3,6 +3,8 @@ import urllib.request
 import pandas as pd
 from bs4 import BeautifulSoup
 import FbrefTeam as FbT
+import time
+import random
 
 class FbrefLeague:
     baseLink = "https://fbref.com"
@@ -20,9 +22,14 @@ class FbrefLeague:
         #print(self.link)
         #print(self.leagueName)
         #self.teams LIST OF ALL FBREFTEAM CLASSES EXIST
+
         self.scrape_league_site()
+        #print(self.tables)
         self.makeLeagueTableDF()
         self.makeSquadStatsTable()
+        self.makeSquadGSCTable()
+        self.makeSquadShootingTable()
+        self.makeSquadPassingTable()
 
         print(self.leagueName)
 
@@ -136,11 +143,170 @@ class FbrefLeague:
         #print(squadStatsPD)
         self.squadStatsDF = squadStatsPD
 
+    def makeSquadGSCTable(self):
+        table = self.tables[14]
+        #print(table)
+        tbody = table.find("tbody")
+        teamOrder = self.league_table.sort_values(by="Team").reset_index(drop=True)[
+            "Team"].to_list()  # Team names in alphabetical order
+        #print(teamOrder)
+        # print(len(teamOrder))
+        rows = tbody.find_all("tr")
+        pd_table_list = []
+        for x in range(len(rows)):
+            rowData = []
+            rowData.append(teamOrder[x])
+            tds = rows[x].find_all("td")
+            # print(tds)
+            for i in range(len(tds)):
+                val = tds[i].get_text()
+                #print(val)
+                if i in [0, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17]:
+                    rowData.append(int(val))
+                elif i in [1, 3, 11]:
+                    rowData.append(float(val))
+                else:
+                    continue
+
+            # print(x)
+            tName = teamOrder[x]
+            team = self.findTeam(tName)
+            team.insertSquadData(rowData)
+            pd_table_list.append(rowData)
+
+        col_names = ["Team", "PlayersUsed", "Nineties", "SCA", "SCA90", "SCAPL", "SCAPD", "SCADrib", "SCASh", "SCAFld"
+            , "SCADef", "GCA", "GCA90", "GCAPL", "GCAPD", "GCADrib", "GCASh", "GCAFld", "GCADef"]
+
+        squadStatsPD = pd.DataFrame(pd_table_list, columns=col_names)
+
+        league_col = [self.leagueName for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(league=league_col)
+
+        season_col = [self.season for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(season=season_col)
+        #print(squadStatsPD)
+
+        self.squadGSCDF = squadStatsPD
+
+    def makeSquadShootingTable(self):
+        table = self.tables[8]
+        # print(table)
+        tbody = table.find("tbody")
+        teamOrder = self.league_table.sort_values(by="Team").reset_index(drop=True)[
+            "Team"].to_list()  # Team names in alphabetical order
+        # print(teamOrder)
+        # print(len(teamOrder))
+        rows = tbody.find_all("tr")
+        pd_table_list = []
+        for x in range(len(rows)):
+            rowData = []
+            rowData.append(teamOrder[x])
+            tds = rows[x].find_all("td")
+            # print(tds)
+            for i in range(len(tds)):
+                val = tds[i].get_text()
+                # print(val)
+                if i in [0,2,3,4,11,12,13]:
+                    rowData.append(int(val))
+                elif i in [1,5,6,7,8,9,10, 14, 15, 16, 17,18]:
+                    rowData.append(float(val))
+                else:
+                    continue
+
+            # print(x)
+            tName = teamOrder[x]
+            team = self.findTeam(tName)
+            team.insertSquadData(rowData)
+            pd_table_list.append(rowData)
+
+        col_names = ["Team", "PlayersUsed", "Nineties", "Gls", "Sh", "SoT", "SoTP", "SoTP90", "SoTP90", "GPSh", "GPSoT",
+                     'Dist', 'FK', 'PKMade', 'PKAtt','xG', 'npxG', 'npxGPSh', 'xG_diff', 'npxG_diff']
+
+        squadStatsPD = pd.DataFrame(pd_table_list, columns=col_names)
+
+        league_col = [self.leagueName for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(league=league_col)
+
+        season_col = [self.season for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(season=season_col)
+        # print(squadStatsPD)
+        self.squadShootingDF = squadStatsPD
+
+    def makeSquadPassingTable(self):
+        table = self.tables[10]
+        #print(table)
+        tbody = table.find("tbody")
+        teamOrder = self.league_table.sort_values(by="Team").reset_index(drop=True)[
+            "Team"].to_list()  # Team names in alphabetical order
+        # print(teamOrder)
+        # print(len(teamOrder))
+        rows = tbody.find_all("tr")
+        pd_table_list = []
+        for x in range(len(rows)):
+            rowData = []
+            rowData.append(teamOrder[x])
+            tds = rows[x].find_all("td")
+            # print(tds)
+            for i in range(len(tds)):
+                val = tds[i].get_text()
+                # print(val)
+                if i in [0,2,3,5,6,7,8,10,11,13, 14, 16,19,20,21,22,23]:
+                    rowData.append(int(val))
+                elif i in [1,4,9,12,15,17,18]:
+                    rowData.append(float(val))
+                else:
+                    continue
+
+            # print(x)
+            tName = teamOrder[x]
+            team = self.findTeam(tName)
+            team.insertSquadData(rowData)
+            pd_table_list.append(rowData)
+
+        col_names = ["Team", "PlayersUsed", "Nineties", "CmpPasses", "AttPasses", "CmpP", "TotDist", "PrgDist", "ShortCmp",
+                     "ShortAtt", "ShortCmpP", "MedCmp", "MedAtt", "MedCmpP", "LongCmp", "LongAtt", "LongCmpP",
+                     "Ast", "xA", "xA_diff", "KP", "FinalThird", "PPA", "CrsPA", "Prog"]
+
+        squadStatsPD = pd.DataFrame(pd_table_list, columns=col_names)
+        #print(squadStatsPD)
+
+        passP = squadStatsPD["CmpPasses"] / squadStatsPD["AttPasses"]
+        KPP90 = squadStatsPD["KP"] / squadStatsPD["Nineties"]
+        FTP90 = squadStatsPD["FinalThird"] / squadStatsPD["Nineties"]
+        PPAP90 = squadStatsPD["PPA"] / squadStatsPD["Nineties"]
+        CrsPAP90 = squadStatsPD["CrsPA"] / squadStatsPD["Nineties"]
+        ProgP90 = squadStatsPD["Prog"] / squadStatsPD["Nineties"]
+        squadStatsPD = squadStatsPD.assign(passP = passP)
+        squadStatsPD = squadStatsPD.assign(KPP90 = KPP90)
+        squadStatsPD = squadStatsPD.assign(FTP90 = FTP90)
+        squadStatsPD = squadStatsPD.assign(PPAP90 = PPAP90)
+        squadStatsPD = squadStatsPD.assign(CrsPAP90 = CrsPAP90)
+        squadStatsPD = squadStatsPD.assign(ProgP90 = ProgP90)
+
+
+
+        league_col = [self.leagueName for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(league=league_col)
+
+        season_col = [self.season for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(season=season_col)
+        #print(squadStatsPD)
+        self.squadPassingDF = squadStatsPD
+
     def getLeagueTable(self):
         return self.league_table
 
     def getSquadStatsTable(self):
         return self.squadStatsDF
+
+    def getSquadGSCTable(self):
+        return self.squadGSCDF
+
+    def getSquadShootingTable(self):
+        return self.squadShootingDF
+
+    def getSquadPassingTable(self):
+        return self.squadPassingDF
 
     def findTeam(self, teamName):
         for team in self.teams:
@@ -151,7 +317,10 @@ class FbrefLeague:
 
 
 
-# test = FbrefLeague("https://fbref.com/en/comps/9/Premier-League-Stats", "2019-2020")
+# test = FbrefLeague("https://fbref.com/en/comps/9/Premier-League-Stats", "2020-2021")
+# test.makeSquadPassingTable()
+# test.makeSquadShootingTable()
+# test.makeSquadGSCTable()
 # #test.makeSquadStatsTable()
 # print("###############################################")
 # print("Creating teamDF's")

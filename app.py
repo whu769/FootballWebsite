@@ -14,7 +14,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
 
-viewed_season = "2020-2021"
+# viewed_season = "2020-2021"
+current_season = '2020-2021'
 
 #The various classes for the sql_tables in the db file
 
@@ -558,9 +559,10 @@ class defenseRec(db.Model):
     season = db.Column(db.Text)
     recommendedTeam = db.Column(db.Text)
 
-
-@app.route('/')
-def index():
+@app.route("/", defaults={'viewed_season':'2020-2021'})
+@app.route('/<viewed_season>')
+def index(viewed_season):
+    #print(viewed_season)
     #Good tester code to see if the db works
     # try:
     #     combinedLeague = combinedLeagues.query.filter_by(league='Premier League').order_by( combinedLeagues.Pts.desc()).all()
@@ -589,13 +591,15 @@ def index():
     # for player in players:
     #     print(player.season)
     cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
-    print(type(cL))
+    #print(type(cL))
+
+    
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
-    return render_template("index3.html", combinedLeague = cL, Leagues = leagues, Player = players)
+    return render_template("index3.html", combinedLeague = cL, Leagues = leagues, Player = players, season = viewed_season)
  
 
 @app.route('/league/<League>')
-def leagues(League):
+def leagues(League, viewed_season = current_season):
     try:
         # Leagues = CombinedLeague.query.filter_by(League=League).order_by(CombinedLeague.PTS.desc()).all()
         # Teams = CombinedLeague.query.with_entities(CombinedLeague.Team).distinct()
@@ -631,7 +635,7 @@ def leagues(League):
         return hed + error_text
 
 @app.route('/team/<Team>')
-def teams(Team):
+def teams(Team, viewed_season = current_season):
     try:
         #print(Team)
         # team = CombinedLeague.query.filter_by(Team = Team).first()
@@ -650,7 +654,7 @@ def teams(Team):
         # return render_template('team2.html', Team = team, Player = players, Goals = goals, Assists = assists, aSignings = attackingSignings, dSignings = defenseSignings)
 
         team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-        tAdvanced = teamOverview.query.filter(teamOverview.Team == Team, combinedLeagues.season == viewed_season).first()
+        tAdvanced = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
         players = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.minutes != 0, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()
         goals = playerOffensive.query.filter(playerOffensive.Team == Team, playerOffensive.season == viewed_season).order_by(playerOffensive.Gls.desc()).all()
         assists = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
@@ -687,12 +691,16 @@ def obtainTeamAvgStats(teams):
     return lstAvg
 
 @app.route('/team/<Team>/graphs')
-def graphs(Team):
+def graphs(Team, viewed_season = current_season):
     try:
         #print("The page is working")
         team = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
         teams = teamOverview.query.filter(teamOverview.Team != Team, 
                     teamOverview.league == team.league, teamOverview.season == viewed_season).all()
+
+        teamSeasons = teamOverview.query.filter(teamOverview.Team == Team).all()
+        print(len(teamSeasons))
+        # the db is messed up, indices are WRONG
         
         t1Teams = combinedLeagues.query.filter(combinedLeagues.League == team.league, combinedLeagues.season == viewed_season).limit(4)
         t1TLst = []
@@ -894,7 +902,7 @@ def obtainAvgGKStats(oppGKStats):
     return [gkAvgShotData, gkAvgMiscData]
 
 @app.route('/player/<Player>')
-def players(Player):
+def players(Player, viewed_season = current_season):
     try:
         #print("The page is working")
         pO2 = playerOverview.query.filter_by(Name = Player).first()
@@ -984,7 +992,7 @@ def terms():
         return hed + error_text
 
 @app.route('/<League>/LeaguePlayers')
-def LeaguePlayers(League):
+def LeaguePlayers(League, viewed_season = current_season):
     try:
         leaguePlayers = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
     
@@ -994,7 +1002,7 @@ def LeaguePlayers(League):
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
-def findBestFW(League, age, tier, minutes):
+def findBestFW(League, age, tier, minutes, viewed_season):
     #print("finding FW")
     #Shots/Goals Type FW
     fwOStats = playerOffensive.query.filter(playerOffensive.League == League, playerOffensive.Position.contains("FW"), playerOffensive.minutes >= minutes,
@@ -1020,7 +1028,7 @@ def findBestFW(League, age, tier, minutes):
     #     print(player.Name)
     return [fwOPlayers, fwCPlayers, fwDPlayers]
 
-def findBestMF(League, age, tier, minutes):
+def findBestMF(League, age, tier, minutes, viewed_season):
     #print("finding MF")
     #CAM section
     mfCStats = gsCreation.query.filter(gsCreation.League == League, gsCreation.Position.contains("MF"), gsCreation.minutes >= minutes,
@@ -1039,7 +1047,7 @@ def findBestMF(League, age, tier, minutes):
     
     return [mfCPlayers, mfPPlayers, mfDPlayers]
 
-def findBestDF(League, age, tier, minutes):
+def findBestDF(League, age, tier, minutes, viewed_season):
     #print("Finding DF")
     #offensive df
     dfOStats = playerOffensive.query.filter(playerOffensive.League == League, playerOffensive.Position == "DF", playerOffensive.minutes >= minutes
@@ -1064,15 +1072,15 @@ def findBestDF(League, age, tier, minutes):
     #     print(player.Name)
     return [dfOPlayers, dfPPlayers, dfDPlayers]
 @app.route('/<League>/TopPlayers')
-def topplayers(League):
+def topplayers(League, viewed_season = current_season):
     try:
         players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0).all()
         # Three methods, forwards, midfielders, defenders
 
         #age under 50, tier 1 or higher, at least 1000 minutes
-        fwList = findBestFW(League, 50, 1, 1000)
-        mfList = findBestMF(League, 50, 1, 1000)
-        dfList = findBestDF(League, 50, 1, 1000)
+        fwList = findBestFW(League, 50, 1, 1000, viewed_season)
+        mfList = findBestMF(League, 50, 1, 1000, viewed_season)
+        dfList = findBestDF(League, 50, 1, 1000, viewed_season)
 
         return render_template("topplayers.html", League = players[0].League, fwList = fwList, mfList = mfList, dfList = dfList)
     except Exception as e:
@@ -1081,15 +1089,15 @@ def topplayers(League):
         return hed + error_text
 
 @app.route('/<League>/TopProspects')
-def topprospects(League):
+def topprospects(League, viewed_season = current_season):
     try:
-        players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0).all()
+        players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
         # Three methods, forwards, midfielders, defenders
 
         #age under 50, tier 1 or higher, at least 1000 minutes
-        fwList = findBestFW(League, 23, 2, 700)
-        mfList = findBestMF(League, 23, 2, 700)
-        dfList = findBestDF(League, 23, 2, 700)
+        fwList = findBestFW(League, 23, 2, 700, viewed_season)
+        mfList = findBestMF(League, 23, 2, 700, viewed_season)
+        dfList = findBestDF(League, 23, 2, 700, viewed_season)
 
         return render_template("topprospects.html", League = players[0].League, fwList = fwList, mfList = mfList, dfList = dfList)
     except Exception as e:
