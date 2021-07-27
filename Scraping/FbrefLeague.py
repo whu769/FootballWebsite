@@ -30,8 +30,9 @@ class FbrefLeague:
         self.makeSquadGSCTable()
         self.makeSquadShootingTable()
         self.makeSquadPassingTable()
+        self.makeSquadDefenseTable()
 
-        print(self.leagueName)
+        #print(self.leagueName)
 
     #method opens the link and obtains a table of all the tables so future methods can be added to scrape the other tables
     # later down the line
@@ -41,6 +42,7 @@ class FbrefLeague:
         #print(soup)
         tables = soup.find_all("table")
         self.tables = tables
+        #print(self.tables)
 
     def makeLeagueTableDF(self):
         league_teams = []
@@ -293,6 +295,64 @@ class FbrefLeague:
         #print(squadStatsPD)
         self.squadPassingDF = squadStatsPD
 
+    def makeSquadDefenseTable(self):
+        table = self.tables[16]
+        #print(table)
+        tbody = table.find("tbody")
+        teamOrder = self.league_table.sort_values(by="Team").reset_index(drop=True)[
+            "Team"].to_list()  # Team names in alphabetical order
+        # print(teamOrder)
+        # print(len(teamOrder))
+        rows = tbody.find_all("tr")
+        pd_table_list = []
+        for x in range(len(rows)):
+            rowData = []
+            rowData.append(teamOrder[x])
+            tds = rows[x].find_all("td")
+            # print(tds)
+            for i in range(len(tds)):
+                val = tds[i].get_text()
+                # print(val)
+                if i in [0,2,3,4,5,6,7,8,10,11,12,14,15,16,17,18,19,20,21,22,23,24]:
+                    rowData.append(int(val))
+                elif i in [1,9,13]:
+                    rowData.append(float(val))
+                else:
+                    continue
+            
+            # print(x)
+            tName = teamOrder[x]
+            team = self.findTeam(tName)
+            team.insertSquadData(rowData)
+            pd_table_list.append(rowData)
+        
+        col_names = ["Team", "PlayersUsed", "Nineties", "TklTot", "TklW", "TklD3", "TklM3", "TklA3", "TklDribTot",
+                     "TklDribAtt", "TklDribP", "TklDribFail", "PressTot", "PressSucc", "PressP", "PressD3", "PressM3",
+                     "PressA3", "BlkTot", "BlkSh", "BlkShSv", "BlkPass", "Int", "IntTkl", "Clr", "Err"]
+        squadStatsPD = pd.DataFrame(pd_table_list, columns=col_names)
+        
+
+        TklTotalP = squadStatsPD["TklW"] / squadStatsPD["TklTot"]
+        PressD3P = squadStatsPD["PressD3"] / squadStatsPD["PressTot"]
+        PressM3P = squadStatsPD["PressM3"] / squadStatsPD["PressTot"]
+        PressA3P = squadStatsPD["PressA3"] / squadStatsPD["PressTot"]
+        ErrP90 = squadStatsPD["Err"] / squadStatsPD["Nineties"]
+        squadStatsPD = squadStatsPD.assign(TklTotalP = TklTotalP)
+        squadStatsPD = squadStatsPD.assign(PressD3P = PressD3P)
+        squadStatsPD = squadStatsPD.assign(PressM3P = PressM3P)
+        squadStatsPD = squadStatsPD.assign(PressA3P = PressA3P)
+        squadStatsPD = squadStatsPD.assign(ErrP90 = ErrP90)
+
+        league_col = [self.leagueName for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(league=league_col)
+
+        season_col = [self.season for i in range(squadStatsPD.shape[0])]
+        squadStatsPD = squadStatsPD.assign(season=season_col)
+
+        #print(squadStatsPD)
+        self.squadDefenseDF = squadStatsPD
+
+    #Getter methods
     def getLeagueTable(self):
         return self.league_table
 
@@ -307,6 +367,9 @@ class FbrefLeague:
 
     def getSquadPassingTable(self):
         return self.squadPassingDF
+    
+    def getSquadDefenseTable(self):
+        return self.squadDefenseDF
 
     def findTeam(self, teamName):
         for team in self.teams:
@@ -318,6 +381,7 @@ class FbrefLeague:
 
 
 # test = FbrefLeague("https://fbref.com/en/comps/9/Premier-League-Stats", "2020-2021")
+# test.makeSquadDefenseTable()
 # test.makeSquadPassingTable()
 # test.makeSquadShootingTable()
 # test.makeSquadGSCTable()
