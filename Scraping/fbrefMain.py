@@ -74,6 +74,7 @@ for i in range(len(seasonlst)):
         fbref.getMLGSC().to_sql('team_gsc', engine, if_exists='replace')
         fbref.getMLPS().to_sql('team_passing', engine, if_exists='replace')
         fbref.getMLDS().to_sql('team_defense', engine, if_exists='replace')
+        fbref.getMLSS().to_sql('team_shooting', engine, if_exists='replace')
     else:
         fbref.getMLT().to_sql("combined_leagues", engine, if_exists='append')
         fbref.getMSS().to_sql("team_overview", engine, if_exists='append')
@@ -89,7 +90,7 @@ for i in range(len(seasonlst)):
         fbref.getMLGSC().to_sql('team_gsc', engine, if_exists='append')
         fbref.getMLPS().to_sql('team_passing', engine, if_exists='append')
         fbref.getMLDS().to_sql('team_defense', engine, if_exists='append')
-    
+        fbref.getMLSS().to_sql('team_shooting', engine, if_exists='append')
     
 
 
@@ -137,3 +138,6 @@ team_passing.to_sql('team_passing', engine, if_exists='replace')
 
 team_defense = pd.read_sql('team_defense', engine).drop(columns=['index']).reset_index(drop=True)
 team_defense.to_sql('team_defense', engine, if_exists='replace')
+
+team_shooting = pd.read_sql('team_shooting', engine).drop(columns=['index']).reset_index(drop=True)
+team_shooting.to_sql('team_shooting', engine, if_exists='replace')
