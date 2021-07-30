@@ -194,7 +194,8 @@ class teamShooting(db.Model):
     xG = db.Column(db.Float)
     npxG = db.Column(db.Float)
     npxGPSh = db.Column(db.Float)
-    xG_Diff = db.Column(db.Float)
+    xG_diff = db.Column(db.Float)
+    npxG_diff = db.Column(db.Float)
     league = db.Column(db.Text)
     season = db.Column(db.Text)
     
@@ -598,6 +599,9 @@ def leagues(League, viewed_season = current_season):
         worstDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA.desc()).first()
         worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
         highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
+
+        
+
         return render_template('league3.html', League = Leagues, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively, 
         wO = worstOffensively, wD = worstDefensively, hGD = highestGD)
     except Exception as e:
@@ -632,7 +636,9 @@ def teams(Team, viewed_season = current_season):
         aSignings = offenseRec.query.filter(offenseRec.recommendedTeam == Team, offenseRec.season == viewed_season).all()
         dSignings = defenseRec.query.filter(defenseRec.recommendedTeam == Team, defenseRec.season == viewed_season).all()
 
-        #Test if the new classes work
+        #test analyzeTeam method
+        #analyzeTeam(Team)
+
         
         
         return render_template("team3.html", Team = team, tO = tAdvanced, Player = players, Goals = goals, Assists = assists, aSignings = aSignings, dSignings = dSignings)
@@ -640,6 +646,73 @@ def teams(Team, viewed_season = current_season):
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
+
+#method to look through the team's general stats GSC, Defense, Passing, shooting and categorizes them
+def analyzeTeam(Team):
+    #obtain the team's overall stats from all the past seasons as well
+    #classify them?
+
+    team_overview = teamOverview.query.filter(teamOverview.Team == Team).all()
+    team_gsc = teamGSC.query.filter(teamGSC.Team == Team).all()
+    team_defense = teamDefense.query.filter(teamDefense.Team == Team).all()
+    team_passing = teamPassing.query.filter(teamPassing.Team == Team).all()
+    team_shooting = teamShooting.query.filter(teamShooting.Team == Team).all()
+    createLeagueAvgs(team_gsc[0].league)
+    
+
+def createLeagueAvgs(League):
+    # given the current season, compile all of the 20 teams in the league and create averages 
+    # sort the GCA's, SCA's and create the parameters. 
+    
+    league_gsc = teamGSC.query.filter(teamGSC.league == League, teamGSC.season == current_season)
+    league_gca = league_gsc.order_by(teamGSC.GCA90).all()
+    league_sca = league_gsc.order_by(teamGSC.SCA90).all()
+
+    gsc_dict = dict()
+    for x in league_gca:
+        # print(f'{x.Team} : {x.GCA90}')
+        # print(f'{x.Team} : {x.SCA90}')
+        # print(f'{x.Team} : {x.GCA90 / x.SCA90}')
+        gsc_dict[x.Team] = [x.GCA90, x.SCA90, (x.GCA90/x.SCA90)]
+    
+    # for k, v in gsc_dict.items():
+    #     print(f'{k}: GCA-{v[0]} SCA-{v[1]} Proportion-{v[2]}')
+
+    #Defense, pressures
+    league_GA = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == current_season).order_by(
+        combinedLeagues.GA).all()
+    league_defense = teamDefense.query.filter(teamDefense.league == League, teamGSC.season == current_season)
+
+    defense_dict = dict()
+    for team in league_GA:
+        t = league_defense.filter(teamDefense.Team == team.Team).first()
+        defense_dict[team.Team] = [t.TklTotalP, t.PressD3P, t.PressM3P, t.PressA3P, t.ErrP90]
+
+    # for k, v in defense_dict.items():
+    #     print(f'{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]}')
+
+    #league shooting
+    league_shooting = teamShooting.query.filter(teamShooting.league == League, teamShooting.season == current_season).order_by(teamShooting.Gls).all()
+    shooting_dict = dict()
+    for team in league_shooting:
+        # print(team.SoTP90)
+        shooting_dict[team.Team] = [team.Gls, team.xG, team.npxG, team.SoTP90, team.xG_diff, team.npxG_diff]
+
+    # for k, v in shooting_dict.items():
+    #     print(f'{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]} {v[5]}')
+
+    league_passing = teamPassing.query.filter(teamPassing.league == League, teamPassing.season == current_season).order_by(teamPassing.CmpP.desc()).all()
+    passing_dict = dict()
+
+    for team in league_passing:
+        passing_dict[team.Team] = [team.KPP90, team.FTP90, team.PPAP90, team.CrsPAP90, team.ProgP90]
+    
+    # for k, v in passing_dict.items():
+    #     print(f'{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]}')
+
+    dict_list = [gsc_dict, defense_dict, passing_dict, shooting_dict]
+
+    return dict_list
 
 def obtainTeamStats(team):
     teamDataList = []
@@ -1077,6 +1150,54 @@ def topprospects(League, viewed_season = current_season):
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
+
+@app.route('/<League>/Stats')
+def leaguestats(League):
+
+    league_stats = createLeagueAvgs(League)
+    gsc_dict = league_stats[0]
+    shooting_dict = league_stats[3]
+    passing_dict = league_stats[2]
+    defense_dict = league_stats[1]
+
+   
+    #Goal Shot Creation Things
+    gca_lst = [x[0] for x in gsc_dict.values()]
+    sca_lst = [x[1] for x in gsc_dict.values()]
+    gsprop_lst = [x[2] * 100 for x in gsc_dict.values()]
+
+    #Shooting Things
+    gls_lst = [x[0] for x in shooting_dict.values()]
+    xG_lst = [x[1] for x in shooting_dict.values()]
+    xG_diff_lst = [x[4] for x in shooting_dict.values()]
+    # print(gls_lst)
+    # print(test_list)
+    # print(gsc_dict.keys())
+
+    #Passing
+    kp_lst = [x[0] for x in passing_dict.values()]
+    ftp_lst = [x[1] for x in passing_dict.values()]
+    ppa_lst = [x[2] for x in passing_dict.values()]
+    crspa_lst = [x[3] for x in passing_dict.values()]
+    #print(kp_lst)
+
+    #Defense
+    #t.TklTotalP, t.PressD3P, t.PressM3P, t.PressA3P
+    tklP_lst = [x[0] for x in defense_dict.values()]
+    d3pP_lst = [x[1] for x in defense_dict.values()]
+    m3pP_lst = [x[2] for x in defense_dict.values()]
+    a3pP_lst = [x[3] for x in defense_dict.values()]
+
+
+    gsc_lists = [gca_lst , sca_lst, gsprop_lst]
+    shot_lists = [gls_lst, xG_lst, xG_diff_lst]
+    pass_lists = [kp_lst, ftp_lst, ppa_lst, crspa_lst]
+    defense_lists = [tklP_lst, d3pP_lst, m3pP_lst, a3pP_lst]
+    
+    return render_template('leaguestats.html', League = League, gscLabels = list(gsc_dict.keys()), gcaData = gsc_lists[0], scaData = gsc_lists[1], gspropData = gsc_lists[2],
+                            shotLabels = list(shooting_dict.keys()), glsData = shot_lists[0], xGData = shot_lists[1], xGDiffData = shot_lists[2]
+                            , passLabels = list(passing_dict.keys()), kpData = pass_lists[0], ftpData = pass_lists[1], ppaData = pass_lists[2], crsData = pass_lists[3]
+                            , defenseLabels = list(defense_dict.keys()), tklPData = defense_lists[0], d3pData = defense_lists[1], m3pData = defense_lists[2], a3pData = defense_lists[3])
 
 if __name__ == "__main__":
     app.run(debug=True)
