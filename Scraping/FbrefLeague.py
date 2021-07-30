@@ -100,7 +100,28 @@ class FbrefLeague:
         season_col = [self.season for i in range(league_table_DF.shape[0])]
         league_table_DF = league_table_DF.assign(season=season_col)
         #print(league_table_DF)
+        
+        
+        #make a dict w/ teamname as keys and the tier as values, implement into all of the other tables
+        tier_dict = dict()
+        for i in range(len(self.teams)):
+            if i in range(0,4):
+                tier_dict[self.teams[i].getTeamName()] = 1
+            elif i in range(4, 8):
+                tier_dict[self.teams[i].getTeamName()] = 2
+            elif i in range(8, 14):
+                tier_dict[self.teams[i].getTeamName()] = 3
+            else:
+                tier_dict[self.teams[i].getTeamName()] = 4
+        
+        self.tier_dict = tier_dict
+        
+        #print(list(tier_dict.values()))
+        tier_col = list(tier_dict.values())
+        league_table_DF = league_table_DF.assign(tier = tier_col)
         self.league_table = league_table_DF
+        # for team in self.teams:
+        #     print(team.getTeamName())
 
     def makeSquadStatsTable(self):
         table = self.tables[2]
@@ -142,6 +163,13 @@ class FbrefLeague:
         season_col = [self.season for i in range(squadStatsPD.shape[0])]
         squadStatsPD = squadStatsPD.assign(season=season_col)
 
+        # print(squadStatsPD["Team"].to_list())
+        tier_col = []
+        for team in squadStatsPD["Team"].to_list():
+            tier_col.append(self.tier_dict[team])
+        
+        squadStatsPD = squadStatsPD.assign(tier = tier_col)
+        #print(tier_col)
         #print(squadStatsPD)
         self.squadStatsDF = squadStatsPD
 
@@ -188,6 +216,12 @@ class FbrefLeague:
         squadStatsPD = squadStatsPD.assign(season=season_col)
         #print(squadStatsPD)
 
+        tier_col = []
+        for team in squadStatsPD["Team"].to_list():
+            tier_col.append(self.tier_dict[team])
+        
+        squadStatsPD = squadStatsPD.assign(tier = tier_col)
+
         self.squadGSCDF = squadStatsPD
 
     def makeSquadShootingTable(self):
@@ -232,6 +266,13 @@ class FbrefLeague:
         season_col = [self.season for i in range(squadStatsPD.shape[0])]
         squadStatsPD = squadStatsPD.assign(season=season_col)
         # print(squadStatsPD)
+
+        tier_col = []
+        for team in squadStatsPD["Team"].to_list():
+            tier_col.append(self.tier_dict[team])
+        
+        squadStatsPD = squadStatsPD.assign(tier = tier_col)
+
         self.squadShootingDF = squadStatsPD
 
     def makeSquadPassingTable(self):
@@ -293,6 +334,14 @@ class FbrefLeague:
         season_col = [self.season for i in range(squadStatsPD.shape[0])]
         squadStatsPD = squadStatsPD.assign(season=season_col)
         #print(squadStatsPD)
+
+        tier_col = []
+        for team in squadStatsPD["Team"].to_list():
+            tier_col.append(self.tier_dict[team])
+        
+        squadStatsPD = squadStatsPD.assign(tier = tier_col)
+
+
         self.squadPassingDF = squadStatsPD
 
     def makeSquadDefenseTable(self):
@@ -348,6 +397,12 @@ class FbrefLeague:
 
         season_col = [self.season for i in range(squadStatsPD.shape[0])]
         squadStatsPD = squadStatsPD.assign(season=season_col)
+
+        tier_col = []
+        for team in squadStatsPD["Team"].to_list():
+            tier_col.append(self.tier_dict[team])
+        
+        squadStatsPD = squadStatsPD.assign(tier = tier_col)
 
         #print(squadStatsPD)
         self.squadDefenseDF = squadStatsPD

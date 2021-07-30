@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text, func
 import sqlite3
+import numpy as np
 
 
 app = Flask(__name__)
@@ -40,6 +41,7 @@ class combinedLeagues(db.Model):
     xGDP90 = db.Column(db.Float)
     League = db.Column(db.Text)
     season = db.Column(db.Text)
+    tier = db.Column(db.Integer)
 
 class teamOverview(db.Model):
     __tablename__ = 'team_overview'
@@ -72,6 +74,7 @@ class teamOverview(db.Model):
     npxGaAP90 = db.Column(db.Float)
     league = db.Column(db.Text)
     season = db.Column(db.Text)
+    tier = db.Column(db.Integer)
 
 class teamDefense(db.Model):
     __tablename__ = 'team_defense'
@@ -109,6 +112,7 @@ class teamDefense(db.Model):
     ErrP90 = db.Column(db.Float)
     league = db.Column(db.Text)
     season = db.Column(db.Text)
+    tier = db.Column(db.Integer)
 
 
 
@@ -136,6 +140,7 @@ class teamGSC(db.Model):
     GCADef = db.Column(db.Integer)
     league = db.Column(db.Text)
     season = db.Column(db.Text)
+    tier = db.Column(db.Integer)
 
 class teamPassing(db.Model):
     __tablename__ = 'team_passing'
@@ -173,6 +178,7 @@ class teamPassing(db.Model):
     ProgP90 = db.Column(db.Float)
     league = db.Column(db.Text)
     season = db.Column(db.Text)
+    tier = db.Column(db.Integer)
 
 class teamShooting(db.Model):
     __tablename__ = 'team_shooting'
@@ -198,6 +204,7 @@ class teamShooting(db.Model):
     npxG_diff = db.Column(db.Float)
     league = db.Column(db.Text)
     season = db.Column(db.Text)
+    tier = db.Column(db.Integer)
     
 class playerOverview(db.Model):
     __tablename__ = 'player_overview'
@@ -637,7 +644,7 @@ def teams(Team, viewed_season = current_season):
         dSignings = defenseRec.query.filter(defenseRec.recommendedTeam == Team, defenseRec.season == viewed_season).all()
 
         #test analyzeTeam method
-        #analyzeTeam(Team)
+        analyzeTeam(Team)
 
         
         
@@ -649,15 +656,52 @@ def teams(Team, viewed_season = current_season):
 
 #method to look through the team's general stats GSC, Defense, Passing, shooting and categorizes them
 def analyzeTeam(Team):
-    #obtain the team's overall stats from all the past seasons as well
+    #obtain the team's overall stats from the season
     #classify them?
+    
+    team_overview = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == current_season).all()
+    team_gsc = teamGSC.query.filter(teamGSC.Team == Team, teamGSC.season == current_season).all()
+    team_defense = teamDefense.query.filter(teamDefense.Team == Team, teamDefense.season == current_season).all()
+    team_passing = teamPassing.query.filter(teamPassing.Team == Team, teamPassing.season == current_season).all()
+    team_shooting = teamShooting.query.filter(teamShooting.Team == Team, teamShooting.season == current_season).all()
+    league = team_gsc[0].league
+    # NEED TO ADD TIER COLUMN TO ALL OF THE TEAM TABLES
+    # tier = team_gsc[0].Tier
+    lst_of_league_data = createLeagueAvgs(league)
+    # print(tier)
+    
+    # def determineRange(tier):
+    #     if(tier == 1):
+    #         return [tier]
+    #     else:
+    #         return [tier - 1, tier]
 
-    team_overview = teamOverview.query.filter(teamOverview.Team == Team).all()
-    team_gsc = teamGSC.query.filter(teamGSC.Team == Team).all()
-    team_defense = teamDefense.query.filter(teamDefense.Team == Team).all()
-    team_passing = teamPassing.query.filter(teamPassing.Team == Team).all()
-    team_shooting = teamShooting.query.filter(teamShooting.Team == Team).all()
-    createLeagueAvgs(team_gsc[0].league)
+    #generate percentiles 
+    gsc_dict = lst_of_league_data[0]
+    sca_lst = []
+    gca_lst = []
+    gsp_lst = [] #goal shot percentage list
+    team_gsc_vals = [team_gsc[0].GCA90, team_gsc[0].SCA90, (team_gsc[0].GCA90/team_gsc[0].SCA90)]
+    league_gsc_vals = []
+
+    for k, v in gsc_dict.items():
+        if k != Team:
+            gca_lst.append(v[0])
+            sca_lst.append(v[1])
+            gsp_lst.append(v[2])
+    
+    league_gsc_vals = [gca_lst, sca_lst, gsp_lst]
+    gsc_percentiles = []
+    
+    # print(gca_lst)
+    # print(sca_lst)
+    # print(gsp_lst)
+    # print(team_gsc[0].season)
+    # for i in range(len(league_gsc_vals)):
+    #     gsc_percentiles.append(np.percentile(league_gsc_vals[0], ))
+
+
+
     
 
 def createLeagueAvgs(League):
@@ -953,8 +997,8 @@ def players(Player, viewed_season = current_season):
         #print("The page is working")
         pO2 = playerOverview.query.filter_by(Name = Player).first()
         pO = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()[0]
-        print(pO.Team)
-        print(pO2.Team)
+        # print(pO.Team)
+        # print(pO2.Team)
         # for player in pO2:
         #     print(player.Gls)
         primaryPosition = pO.Position.split(",")[0]
@@ -1117,6 +1161,7 @@ def findBestDF(League, age, tier, minutes, viewed_season):
     # for player in dfDPlayers:
     #     print(player.Name)
     return [dfOPlayers, dfPPlayers, dfDPlayers]
+
 @app.route('/<League>/TopPlayers')
 def topplayers(League, viewed_season = current_season):
     try:
