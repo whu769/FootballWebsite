@@ -906,10 +906,196 @@ def analyzeTeam(Team):
         team_pass_vals = [team_passing[0].passP, team_passing[0].KPP90, team_passing[0].FTP90]
         print(f'{team_passing[0].Team} values: {team_pass_vals}')
 
+        passP_lst = []
+        kp_lst = []
+        ftp_lst = []
 
+        tier_passing = opp_passing_query.filter(teamPassing.tier == tier)
+        tier_passP_avg = tier_passing.with_entities(func.sum(teamPassing.passP).label('passSum')).first().passSum / len(tier_passing.all())
+        tier_kpp_avg = tier_passing.with_entities(func.sum(teamPassing.KPP90).label("kpSum")).first().kpSum / len(tier_passing.all())
+        tier_ftp_avg = tier_passing.with_entities(func.sum(teamPassing.FTP90).label("ftpSum")).first().ftpSum / len(tier_passing.all())
+
+        #print(tier_passP_avg)
+        #print(tier_kpp_avg)
+
+        #print("Tier avg")
+        if(tier_passP_avg > team_pass_vals[0]):
+            passP_lst.append(-1)
+        elif(tier_passP_avg < team_pass_vals[0]):
+            passP_lst.append(1)
+        else:
+            passP_lst.append(0)
+
+
+        if(tier_kpp_avg > team_pass_vals[1]):
+            kp_lst.append(-1)
+        elif(tier_kpp_avg < team_pass_vals[1]):
+            kp_lst.append(1)
+        else:
+            kp_lst.append(0)
+
+        if(tier_ftp_avg > team_pass_vals[2]):
+            ftp_lst.append(-1)
+        elif(tier_ftp_avg < team_pass_vals[2]):
+            ftp_lst.append(1)
+        else:
+            ftp_lst.append(0)
+        
+        for team in tier_passing.all():
+            #print(team.Team)
+
+            if(team.passP > team_pass_vals[0]):
+                passP_lst.append(-1)
+            elif(team.passP < team_pass_vals[0]):
+                passP_lst.append(1)
+            else:
+                passP_lst.append(0)
+
+            if(team.KPP90 > team_pass_vals[1]):
+                kp_lst.append(-1)
+            elif(team.KPP90 < team_pass_vals[1]):
+                kp_lst.append(1)
+            else:
+                kp_lst.append(0)
+            
+            if(team.FTP90 > team_pass_vals[2]):
+                ftp_lst.append(-1)
+            elif(team.FTP90 < team_pass_vals[2]):
+                ftp_lst.append(1)
+            else:
+                ftp_lst.append(0)
+        
+        #print("League avg")
+        opp_passP_avg = opp_passing_query.with_entities(func.sum(teamPassing.passP).label('passSum')).first().passSum / len(opp_passing_query.all())
+        opp_kpp_avg = opp_passing_query.with_entities(func.sum(teamPassing.KPP90).label('kpSum')).first().kpSum / len(opp_passing_query.all())
+        opp_ftp_avg = opp_passing_query.with_entities(func.sum(teamPassing.FTP90).label('ftpSum')).first().ftpSum / len(opp_passing_query.all())
+        #print(opp_passP_avg)
+        
+        if(opp_passP_avg > team_pass_vals[0]):
+            passP_lst.append(-1)
+        elif(opp_passP_avg < team_pass_vals[0]):
+            passP_lst.append(1)
+        else:
+            passP_lst.append(0)
+
+        if(opp_kpp_avg > team_pass_vals[1]):
+            kp_lst.append(-1)
+        elif(opp_kpp_avg < team_pass_vals[1]):
+            kp_lst.append(1)
+        else:
+            kp_lst.append(0)
+
+        if(opp_ftp_avg > team_pass_vals[2]):
+            ftp_lst.append(-1)
+        elif(opp_ftp_avg < team_pass_vals[2]):
+            ftp_lst.append(1)
+        else:
+            ftp_lst.append(0)
+        
+        # print(passP_lst)
+        # print(kp_lst)
+        # print(ftp_lst)
+        print([sum(passP_lst), sum(kp_lst), sum(ftp_lst)])
+
+    def assessShooting(team_shooting, opp_shooting_query, tier):
+        team_shot_vals = [team_shooting[0].SoTP90, team_shooting[0].GPSoT, team_shooting[0].xG_diff]
+        print(f'{team_shooting[0].Team} values: {team_shot_vals}')
+
+        sotp_lst = []
+        gpsot_lst = []
+        xgd_lst = []
+
+        tier_shooting = opp_shooting_query.filter(teamShooting.tier == tier)
+        tier_sotp_avg = tier_shooting.with_entities(func.sum(teamShooting.SoTP90).label('sotpSum')).first().sotpSum / len(tier_shooting.all())
+        tier_gpsot_avg = tier_shooting.with_entities(func.sum(teamShooting.GPSoT).label('gpsotSum')).first().gpsotSum / len(tier_shooting.all())
+        tier_xgd_avg = tier_shooting.with_entities(func.sum(teamShooting.xG_diff).label('xgdSum')).first().xgdSum / len(tier_shooting.all())
+        # print(tier_sotp_avg)
+        # print(tier_gpsot_avg)
+
+        if(tier_sotp_avg < team_shot_vals[0]):
+            sotp_lst.append(1)
+        elif(tier_sotp_avg > team_shot_vals[0]):
+            sotp_lst.append(-1)
+        else:
+            sotp_lst.append(0)
+        
+        if(tier_gpsot_avg < team_shot_vals[1]):
+            gpsot_lst.append(1)
+        elif(tier_gpsot_avg > team_shot_vals[1]):
+            gpsot_lst.append(-1)
+        else:
+            gpsot_lst.append(0)
+        
+        if(tier_xgd_avg < team_shot_vals[2]):
+            xgd_lst.append(1)
+        elif(tier_xgd_avg > team_shot_vals[2]):
+            xgd_lst.append(-1)
+        else:
+            xgd_lst.append(0)
+        
+        for team in tier_shooting.all():
+            #print(team.Team)
+            # print(team.SoTP90)
+
+            if(team.SoTP90 < team_shot_vals[0]):
+                sotp_lst.append(1)
+            elif(team.SoTP90 > team_shot_vals[0]):
+                sotp_lst.append(-1)
+            else:
+                sotp_lst.append(0)
+            
+            if(team.GPSoT < team_shot_vals[1]):
+                gpsot_lst.append(1)
+            elif(team.GPSoT > team_shot_vals[1]):
+                gpsot_lst.append(-1)
+            else:
+                gpsot_lst.append(0)
+            
+            if(team.xG_diff < team_shot_vals[2]):
+                xgd_lst.append(1)
+            elif(team.xG_diff > team_shot_vals[2]):
+                xgd_lst.append(-1)
+            else:
+                xgd_lst.append(0)
+        
+        lg_sotp_avg = opp_shooting_query.with_entities(func.sum(teamShooting.SoTP90).label('sotpSum')).first().sotpSum / len(opp_shooting_query.all())
+        lg_gpsot_avg = opp_shooting_query.with_entities(func.sum(teamShooting.GPSoT).label('gpsotSum')).first().gpsotSum / len(opp_shooting_query.all())
+        lg_xgd_avg = opp_shooting_query.with_entities(func.sum(teamShooting.xG_diff).label('xgdSum')).first().xgdSum / len(opp_shooting_query.all())
+        # print(lg_sotp_avg)
+        # print(lg_gpsot_avg)
+        # print(lg_xgd_avg)
+        
+        
+        if(lg_sotp_avg < team_shot_vals[0]):
+            sotp_lst.append(1)
+        elif(lg_sotp_avg > team_shot_vals[0]):
+            sotp_lst.append(-1)
+        else:
+            lg_lst.append(0)
+        
+        if(lg_gpsot_avg < team_shot_vals[1]):
+            gpsot_lst.append(1)
+        elif(lg_gpsot_avg > team_shot_vals[1]):
+            gpsot_lst.append(-1)
+        else:
+            gpsot_lst.append(0)
+        
+        if(lg_xgd_avg < team_shot_vals[2]):
+            xgd_lst.append(1)
+        elif(lg_xgd_avg > team_shot_vals[2]):
+            xgd_lst.append(-1)
+        else:
+            xgd_lst.append(0)
+
+        # print(sotp_lst)
+        # print(gpsot_lst)
+        # print(xgd_lst)
+        print([sum(sotp_lst), sum(gpsot_lst), sum(xgd_lst)])
+        
     assessGSC(team_gsc, opp_gsc_query, tier)
     assessDefense(team_standard, team_defense, opp_defense_query, opp_team_overview, tier)
     assessPassing(team_passing, opp_passing_query, tier)
+    assessShooting(team_shooting, opp_shooting_query, tier)
    
 
 
