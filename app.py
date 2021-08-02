@@ -39,6 +39,10 @@ class combinedLeagues(db.Model):
     GD = db.Column(db.Integer)
     xGD = db.Column(db.Float)
     xGDP90 = db.Column(db.Float)
+    GFP90 = db.Column(db.Float)
+    GAP90 = db.Column(db.Float)
+    xGP90 = db.Column(db.Float)
+    xGAP90 = db.Column(db.Float)
     League = db.Column(db.Text)
     season = db.Column(db.Text)
     tier = db.Column(db.Integer)
@@ -656,49 +660,257 @@ def teams(Team, viewed_season = current_season):
 
 #method to look through the team's general stats GSC, Defense, Passing, shooting and categorizes them
 def analyzeTeam(Team):
-    #obtain the team's overall stats from the season
-    #classify them?
+    #Later on, possibly separate into 4 inner methods for passing, gsc, defense, shooting
     
+    #Obtain all information regarding specifically the team
+    team_standard = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).all()
     team_overview = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == current_season).all()
     team_gsc = teamGSC.query.filter(teamGSC.Team == Team, teamGSC.season == current_season).all()
     team_defense = teamDefense.query.filter(teamDefense.Team == Team, teamDefense.season == current_season).all()
     team_passing = teamPassing.query.filter(teamPassing.Team == Team, teamPassing.season == current_season).all()
     team_shooting = teamShooting.query.filter(teamShooting.Team == Team, teamShooting.season == current_season).all()
-    league = team_gsc[0].league
-    # NEED TO ADD TIER COLUMN TO ALL OF THE TEAM TABLES
-    # tier = team_gsc[0].Tier
-    lst_of_league_data = createLeagueAvgs(league)
-    # print(tier)
-    
-    # def determineRange(tier):
-    #     if(tier == 1):
-    #         return [tier]
-    #     else:
-    #         return [tier - 1, tier]
 
-    #generate percentiles 
-    gsc_dict = lst_of_league_data[0]
-    sca_lst = []
-    gca_lst = []
-    gsp_lst = [] #goal shot percentage list
-    team_gsc_vals = [team_gsc[0].GCA90, team_gsc[0].SCA90, (team_gsc[0].GCA90/team_gsc[0].SCA90)]
-    league_gsc_vals = []
+    league = team_gsc[0].league #league the team is in
+    tier = team_gsc[0].tier #tier the team is in
+    team = team_gsc[0].Team
 
-    for k, v in gsc_dict.items():
-        if k != Team:
-            gca_lst.append(v[0])
-            sca_lst.append(v[1])
-            gsp_lst.append(v[2])
+    #Opponent information (Same tier competitors, AVG tier, and everyone else)
+    opp_gsc_query = teamGSC.query.filter(teamGSC.Team != Team, teamGSC.season == current_season, teamGSC.league == league)
+    opp_defense_query = teamDefense.query.filter(teamDefense.Team != Team, teamDefense.season == current_season, teamDefense.league == league)
+    opp_passing_query = teamPassing.query.filter(teamPassing.Team != Team, teamPassing.season == current_season, teamPassing.league == league)
+    opp_shooting_query = teamShooting.query.filter(teamShooting.Team != Team, teamShooting.season == current_season, teamShooting.league == league)
+    opp_team_overview = combinedLeagues.query.filter(combinedLeagues.Team != Team, combinedLeagues.season == current_season, combinedLeagues.League == league)
     
-    league_gsc_vals = [gca_lst, sca_lst, gsp_lst]
-    gsc_percentiles = []
     
-    # print(gca_lst)
-    # print(sca_lst)
-    # print(gsp_lst)
-    # print(team_gsc[0].season)
-    # for i in range(len(league_gsc_vals)):
-    #     gsc_percentiles.append(np.percentile(league_gsc_vals[0], ))
+    #print("Tier: " + str(tier))
+    def assessGSC(team_gsc, opp_gsc_query, tier):
+        team_gsc_vals = [team_gsc[0].GCA90, team_gsc[0].SCA90, (team_gsc[0].GCA90/team_gsc[0].SCA90)]
+        print(f'{team_gsc[0].Team} values: {team_gsc_vals}')
+        #T1 gsc (tier avg, individual tier, everyone else)
+        gca_lst = [] #list to compare all of the things mentioned above
+        sca_lst = []
+        gsp_lst = []
+        tier_opp_gsc = opp_gsc_query.filter(teamGSC.tier == tier)
+        tier_opp_gca_avg = (tier_opp_gsc.with_entities(func.sum(teamGSC.GCA90).label("GCA90Sum")).first().GCA90Sum) / len(tier_opp_gsc.all())
+        tier_opp_sca_avg = (tier_opp_gsc.with_entities(func.sum(teamGSC.SCA90).label("SCA90Sum")).first().SCA90Sum) / len(tier_opp_gsc.all())
+        tier_opp_gsp_avg = (tier_opp_gsc.with_entities(func.sum(teamGSC.GCA90 / teamGSC.SCA90).label("GSPSum")).first().GSPSum) / len(tier_opp_gsc.all())
+
+        
+        #appends gca_lst 
+        if(tier_opp_gca_avg > team_gsc[0].GCA90):
+            gca_lst.append(-1)
+        elif(tier_opp_gca_avg < team_gsc[0].GCA90):
+            gca_lst.append(1)
+        else:
+            gca_lst.append(0)
+
+        #appends sca_lst
+        if(tier_opp_sca_avg > team_gsc[0].SCA90):
+            sca_lst.append(-1)
+        elif(tier_opp_sca_avg < team_gsc[0].SCA90):
+            sca_lst.append(1)
+        else:
+            sca_lst.append(0)
+        
+        if(tier_opp_gsp_avg > team_gsc_vals[2]):
+            gsp_lst.append(-1)
+        elif(tier_opp_gsp_avg < team_gsc_vals[2]):
+            gsp_lst.append(1)
+        else:
+            gsp_lst.append(0)
+
+        #print("Tier Avg")
+        for team in tier_opp_gsc.all():
+            # print(team.Team)
+            opp_gca = team.GCA90
+            opp_sca = team.SCA90
+            opp_gsp = opp_gca / opp_sca
+            if(opp_gca > team_gsc[0].GCA90):
+                gca_lst.append(-1)
+            elif(opp_gca < team_gsc[0].GCA90):
+                gca_lst.append(1)
+            else:
+                gca_lst.append(0)
+
+            if(opp_sca > team_gsc[0].SCA90):
+                sca_lst.append(-1)
+            elif(opp_sca < team_gsc[0].SCA90):
+                sca_lst.append(1)
+            else:
+                sca_lst.append(0)
+            
+            if(opp_gsp > team_gsc_vals[2]):
+                gsp_lst.append(-1)
+            elif(opp_gsp < team_gsc_vals[2]):
+                gsp_lst.append(1)
+            else:
+                gsp_lst.append(0)
+
+        #print("League Avg")
+        league_opp_gca_avg = (opp_gsc_query.with_entities(func.sum(teamGSC.GCA90).label("GCA90Sum")).first().GCA90Sum) / len(opp_gsc_query.all())
+        league_opp_sca_avg = (opp_gsc_query.with_entities(func.sum(teamGSC.SCA90).label("SCA90Sum")).first().SCA90Sum) / len(opp_gsc_query.all())
+        league_opp_gsp_avg = (opp_gsc_query.with_entities(func.sum(teamGSC.GCA90 / teamGSC.SCA90).label("GSPSum")).first().GSPSum) / len(opp_gsc_query.all())
+        
+        if(league_opp_gca_avg > team_gsc[0].GCA90):
+            gca_lst.append(-1)
+        elif(league_opp_gca_avg < team_gsc[0].GCA90):
+            gca_lst.append(1)
+        else:
+            gca_lst.append(0)
+        
+        if(league_opp_sca_avg > team_gsc[0].SCA90):
+            sca_lst.append(-1)
+        elif(league_opp_sca_avg < team_gsc[0].SCA90):
+            sca_lst.append(1)
+        else:
+            sca_lst.append(0)
+        
+        if(league_opp_gsp_avg > team_gsc_vals[2]):
+            gsp_lst.append(-1)
+        elif(league_opp_gsp_avg < team_gsc_vals[2]):
+            gsp_lst.append(1)
+        else:
+            gsp_lst.append(0)
+        
+        # print(gca_lst)
+        # print(sca_lst)
+        # print(gsp_lst)
+        print([sum(gca_lst) , sum(sca_lst) , sum(gsp_lst)])
+    
+    def assessDefense(team_standard, team_defense, opp_defense_query, opp_team_overview,tier):
+        # t.TklTotalP, t.ErrP90, GAP90, xGAP90
+        team_def_vals = [team_defense[0].TklTotalP, team_defense[0].ErrP90, team_standard[0].GAP90, team_standard[0].xGAP90]
+        print(f'{team_standard[0].Team} values: {team_def_vals}')
+
+        tklP_lst = []
+        err_lst = []
+        ga_lst = []
+        xga_lst = []
+
+        tier_opp_defense = opp_defense_query.filter(teamDefense.tier == tier)
+        tier_opp_tkl_avg = (tier_opp_defense.with_entities(func.sum(teamDefense.TklTotalP).label("TklSum")).first().TklSum) / (len(tier_opp_defense.all()))
+        tier_opp_err_avg = (tier_opp_defense.with_entities(func.sum(teamDefense.ErrP90).label("ErrSum")).first().ErrSum) / (len(tier_opp_defense.all()))
+
+        tier_opp_ga = opp_team_overview.filter(combinedLeagues.tier == tier)
+        tier_opp_ga_avg = tier_opp_ga.with_entities(func.sum(combinedLeagues.GAP90).label('GASum')).first().GASum / len(tier_opp_ga.all())
+        tier_opp_xga_avg = tier_opp_ga.with_entities(func.sum(combinedLeagues.xGAP90).label('xGASum')).first().xGASum / len(tier_opp_ga.all())
+        
+        # print(len(tier_opp_defense.all()))
+        # print(tier_opp_tkl_avg)
+        #print("Tier avg")
+        if(tier_opp_tkl_avg > team_def_vals[0]):
+            tklP_lst.append(1)
+        elif(tier_opp_tkl_avg < team_def_vals[0]):
+            tklP_lst.append(-1)
+        else:
+            tklP_lst.append(0)
+
+        if(tier_opp_err_avg > team_def_vals[1]):
+            err_lst.append(1)
+        elif(tier_opp_err_avg < team_def_vals[1]):
+            err_lst.append(-1)
+        else:
+            err_lst.append(0)
+        
+        if(tier_opp_ga_avg > team_def_vals[2]):
+            ga_lst.append(1)
+        elif(tier_opp_ga_avg < team_def_vals[2]):
+            ga_lst.append(-1)
+        else:
+            ga_lst.append(0)
+        
+        if(tier_opp_xga_avg > team_def_vals[3]):
+            xga_lst.append(1)
+        elif(tier_opp_xga_avg < team_def_vals[3]):
+            xga_lst.append(-1)
+        else:
+            xga_lst.append(0)
+        
+        for team in tier_opp_defense.all():
+            #print(team.Team)
+
+            if(team.TklTotalP > team_def_vals[0]):
+                tklP_lst.append(1)
+            elif(team.TklTotalP < team_def_vals[0]):
+                tklP_lst.append(-1)
+            else:
+                tklP_lst.append(0)
+            
+            if(team.ErrP90 > team_def_vals[1]):
+                err_lst.append(1)
+            elif(team.ErrP90 < team_def_vals[1]):
+                err_lst.append(-1)
+            else:
+                err_lst.append(0)
+        
+        for team in tier_opp_ga.all():
+            # print(team.Team)
+            if(team.GAP90 > team_def_vals[2]):
+                ga_lst.append(1)
+            elif(team.GAP90 < team_def_vals[2]):
+                ga_lst.append(-1)
+            else:
+                ga_lst.append(0)
+
+            if(team.xGAP90 > team_def_vals[3]):
+                xga_lst.append(1)
+            elif(team.xGAP90 < team_def_vals[3]):
+                xga_lst.append(-1)
+            else:
+                xga_lst.append(0)
+
+
+        # print("League avg")
+        opp_tkl_avg = (opp_defense_query.with_entities(func.sum(teamDefense.TklTotalP).label("TklSum")).first().TklSum) / (len(opp_defense_query.all()))
+        opp_err_avg = (opp_defense_query.with_entities(func.sum(teamDefense.ErrP90).label('ErrSum')).first().ErrSum) / (len(opp_defense_query.all()))
+        opp_ga_avg = opp_team_overview.with_entities(func.sum(combinedLeagues.GAP90).label('GASum')).first().GASum / len(opp_team_overview.all())
+        opp_xga_avg = opp_team_overview.with_entities(func.sum(combinedLeagues.xGAP90).label('xGASum')).first().xGASum / len(opp_team_overview.all())
+        #print(opp_tkl_avg)
+        if (opp_tkl_avg > team_def_vals[0]):
+            tklP_lst.append(1)
+        elif(opp_tkl_avg < team_def_vals[0]):
+            tklP_lst.append(-1)
+        else:
+            tklP_lst.append(0)
+        
+        if(opp_err_avg > team_def_vals[1]):
+            err_lst.append(1)
+        elif(opp_err_avg < team_def_vals[1]):
+            err_lst.append(-1)
+        else:
+            err_lst.append(0)
+        
+        if(opp_ga_avg > team_def_vals[2]):
+            ga_lst.append(1)
+        elif(opp_ga_avg < team_def_vals[2]):
+            ga_lst.append(-1)
+        else:
+            ga_lst.append(0)
+        
+        if(opp_xga_avg > team_def_vals[3]):
+            xga_lst.append(1)
+        elif(opp_xga_avg < team_def_vals[3]):
+            xga_lst.append(-1)
+        else:
+           xga_lst.append(0)
+
+
+
+        # print(tklP_lst)
+        # print(err_lst)
+        # print(ga_lst)
+        # print(xga_lst)
+        print([sum(tklP_lst), sum(err_lst), sum(ga_lst), sum(xga_lst)])
+    
+    def assessPassing(team_passing, opp_passing_query, tier):
+        team_pass_vals = [team_passing[0].passP, team_passing[0].KPP90, team_passing[0].FTP90]
+        print(f'{team_passing[0].Team} values: {team_pass_vals}')
+
+
+    assessGSC(team_gsc, opp_gsc_query, tier)
+    assessDefense(team_standard, team_defense, opp_defense_query, opp_team_overview, tier)
+    assessPassing(team_passing, opp_passing_query, tier)
+   
 
 
 

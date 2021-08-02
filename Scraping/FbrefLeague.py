@@ -93,6 +93,14 @@ class FbrefLeague:
         league_table_DF = league_table_DF.assign(xGD = xgdSeries)
         xgdp90 = league_table_DF["xGD"] / league_table_DF["MP"]
         league_table_DF = league_table_DF.assign(xGDP90 = xgdp90)
+        GFP90 = league_table_DF["GF"] / league_table_DF["MP"]
+        GAP90 = league_table_DF["GA"] / league_table_DF["MP"]
+        xGP90 = league_table_DF["xG"] / league_table_DF["MP"]
+        xGAP90 = league_table_DF["xGA"] / league_table_DF["MP"]
+        league_table_DF = league_table_DF.assign(GFP90 = GFP90)
+        league_table_DF = league_table_DF.assign(GAP90 = GAP90)
+        league_table_DF = league_table_DF.assign(xGP90 = xGP90)
+        league_table_DF = league_table_DF.assign(xGAP90 = xGAP90)
 
         league_col = [self.leagueName for i in range(league_table_DF.shape[0])]
         league_table_DF = league_table_DF.assign(league=league_col)
