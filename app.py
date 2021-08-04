@@ -466,6 +466,37 @@ class possession(db.Model):
     League = db.Column(db.Text)
     season = db.Column(db.Text)
 
+class playerPlaytime(db.Model):
+    __tablename__ = 'player_playtime'
+    index = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.Text)
+    Country = db.Column(db.Text)
+    Position = db.Column(db.Text)
+    Age = db.Column(db.Integer)
+    MP = db.Column(db.Integer)
+    MNpMP = db.Column(db.Integer)
+    MinP = db.Column(db.Float)
+    Nineties = db.Column(db.Float)
+    Starts = db.Column(db.Integer)
+    MNpStarts = db.Column(db.Integer)
+    Subs = db.Column(db.Integer)
+    MNpSubs = db.Column(db.Integer)
+    unSub = db.Column(db.Integer)
+    PPM = db.Column(db.Float)
+    onG = db.Column(db.Integer)
+    onGA = db.Column(db.Integer)
+    onxG = db.Column(db.Float)
+    onxGA = db.Column(db.Float)
+    onGP90 = db.Column(db.Float)
+    onGAP90 = db.Column(db.Float)
+    onxGP90 = db.Column(db.Float)
+    onxGAP90 = db.Column(db.Float)
+    team = db.Column(db.Text)
+    tier = db.Column(db.Integer)
+    minutes = db.Column(db.Integer)
+    League = db.Column(db.Text)
+    season = db.Column(db.Text)
+
 
 class offenseRec(db.Model):
     __tablename__ = "offense_rec"
