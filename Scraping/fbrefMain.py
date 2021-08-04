@@ -75,6 +75,7 @@ for i in range(len(seasonlst)):
         fbref.getMLPS().to_sql('team_passing', engine, if_exists='replace')
         fbref.getMLDS().to_sql('team_defense', engine, if_exists='replace')
         fbref.getMLSS().to_sql('team_shooting', engine, if_exists='replace')
+        fbref.getMTPTS().to_sql('player_playtime', engine, if_exists='replace')
     else:
         fbref.getMLT().to_sql("combined_leagues", engine, if_exists='append')
         fbref.getMSS().to_sql("team_overview", engine, if_exists='append')
@@ -91,6 +92,7 @@ for i in range(len(seasonlst)):
         fbref.getMLPS().to_sql('team_passing', engine, if_exists='append')
         fbref.getMLDS().to_sql('team_defense', engine, if_exists='append')
         fbref.getMLSS().to_sql('team_shooting', engine, if_exists='append')
+        fbref.getMTPTS().to_sql('player_playtime', engine, if_exists='append')
     
 
 
@@ -123,6 +125,9 @@ goal_shot_creation.to_sql('goal_shot_creation', engine, if_exists='replace')
 
 possession = pd.read_sql('possession', engine).drop(columns=['index']).reset_index(drop=True)
 possession.to_sql('possession', engine, if_exists='replace')
+
+player_playtime = pd.read_sql('player_playtime', engine).drop(columns = ['index']).reset_index(drop=True)
+player_playtime.to_sql('player_playtime', engine, if_exists='replace')
 
 offense_rec = pd.read_sql('offense_rec', engine).drop(columns=['index']).reset_index(drop=True)
 offense_rec.to_sql('offense_rec', engine, if_exists='replace')

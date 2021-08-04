@@ -105,6 +105,7 @@ class Fbref:
         megaLeaguePassingStats = []
         megaLeagueDefenseStats = []
         megaLeagueShootingStats = []
+        megaTeamPlaytimeStats = []
 
         for league in self.LeagueLst:
             megaLeagueTable.append(league.getLeagueTable())
@@ -121,6 +122,7 @@ class Fbref:
                 megaTeamGKStats.append(team.getGKStats())
                 megaTeamGSCStats.append(team.getGSCreationStats())
                 megaTeamPossessionStats.append(team.getPossessionStats())
+                megaTeamPlaytimeStats.append(team.getPlaytimeStats())
 
         MLT = pd.concat(megaLeagueTable).reset_index(drop=True)
         MSS = pd.concat(megaSquadStats).reset_index(drop= True)
@@ -135,6 +137,7 @@ class Fbref:
         MLPS = pd.concat(megaLeaguePassingStats).reset_index(drop=True)
         MLDS = pd.concat(megaLeagueDefenseStats).reset_index(drop=True)
         MLSS = pd.concat(megaLeagueShootingStats).reset_index(drop=True)
+        MTPTS = pd.concat(megaTeamPlaytimeStats).reset_index(drop=True)
 
         self.MLT = MLT
         self.MSS = MSS
@@ -149,6 +152,7 @@ class Fbref:
         self.MLPS = MLPS
         self.MLDS = MLDS
         self.MLSS = MLSS
+        self.MTPTS = MTPTS
 
     def createRecommendorDFs(self):
         offenseLst = []
@@ -209,6 +213,9 @@ class Fbref:
     
     def getMLSS(self):
         return self.MLSS
+    
+    def getMTPTS(self):
+        return self.MTPTS
 
     def getOffenseRec(self):
         return self.offenseRec

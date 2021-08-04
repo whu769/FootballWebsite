@@ -46,6 +46,7 @@ class FbrefTeam:
         self.makeGKTable()
         self.makeGSCreationTable()
         self.makePossessionTable()
+        self.makePlaytimeTable()
 
 
         self.leagueData = []
@@ -459,7 +460,64 @@ class FbrefTeam:
         pd_table = pd_table.assign(season=season_col)
 
         self.possessionTable = pd_table
+    
+    def makePlaytimeTable(self):
+        table = self.tables[10]
+        tbody = table.find("tbody")
+        # print(tbody)
+        trs = tbody.find_all("tr")
+        # print(tbody)
+        teamStats = []
+        for row in trs:
+            playerStats = []
+            name = row.find("a").find_all(text=True)[0]
+            playerStats.append(name)
+            # print(name)
+            tds = row.find_all("td")
+            for i in range(len(tds)):
+                val = tds[i].get_text()
+                #print(val)
 
+                if (val == ""):
+                    val = "0"
+
+                #SKIP 4, 10
+                if i in [0,1]:
+                    playerStats.append(val)
+                elif i in [2,3,5,8,9,11,12,13,15,16]:
+                    playerStats.append(int(val))
+                elif i in [6,7,14,20,21]:
+                    playerStats.append(float(val))
+            teamStats.append(playerStats)
+        col_names = ["Name", "Country", "Position", "Age", "MP", "MNpMP", "MinP", "Nineties", "Starts", "MNpStarts", "Subs", "MNpSubs",
+                        "unSub", "PPM", "onG", "onGA", "onxG", "onxGA"]
+        
+        pd_table = pd.DataFrame(teamStats, columns=col_names)
+
+        onGP90 = pd_table["onG"] / pd_table["Nineties"]
+        onGAP90 = pd_table["onGA"] / pd_table["Nineties"]
+        onxGP90 = pd_table["onxG"] / pd_table["Nineties"]
+        onxGAP90 = pd_table["onxGA"] / pd_table["Nineties"]
+        pd_table = pd_table.assign(onGP90=onGP90)
+        pd_table = pd_table.assign(onGAP90=onGAP90)
+        pd_table = pd_table.assign(onxGP90=onxGP90)
+        pd_table = pd_table.assign(onxGAP90=onxGAP90)
+
+
+        team_col = [self.team for i in range(pd_table.shape[0])]
+        tier_col = [self.tier for i in range(pd_table.shape[0])]
+        minutes_col = pd_table["Nineties"] * 90
+        pd_table = pd_table.assign(team=team_col)
+        pd_table = pd_table.assign(tier=tier_col)
+        pd_table = pd_table.assign(minutes=minutes_col)
+        league_col = [self.leagueName for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(league=league_col)
+
+        season_col = [self.season for i in range(pd_table.shape[0])]
+        pd_table = pd_table.assign(season=season_col)
+
+        self.playtimeTable = pd_table
+            
 #--------------------------------------------------------------GETTER METHODS-------------------------------------------------
     def getStandardStats(self):
         return self.standardTable
@@ -481,6 +539,9 @@ class FbrefTeam:
 
     def getPossessionStats(self):
         return self.possessionTable
+    
+    def getPlaytimeStats(self):
+        return self.playtimeTable
 
     def insertLeagueData(self, lstOfInfo):
         self.leagueData = lstOfInfo
@@ -600,7 +661,8 @@ class FbrefTeam:
         return defenders
 
 
-# chels = FbrefTeam("https://fbref.com/en/squads/cff3d9bb/Chelsea-Stats", 4, "Premier League")
+# chels = FbrefTeam("https://fbref.com/en/squads/cff3d9bb/Chelsea-Stats", 4, "Premier League", "2020-2021")
+# chels.makePlaytimeTable()
 # chels.makePossessionTable()
 # chels.makeGSCreationTable()
 # chels.makeGKTable()

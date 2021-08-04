@@ -648,8 +648,15 @@ def teams(Team, viewed_season = current_season):
         dSignings = defenseRec.query.filter(defenseRec.recommendedTeam == Team, defenseRec.season == viewed_season).all()
 
         #test analyzeTeam method
-        analyzeTeam(Team)
+        analysis_lst = analyzeTeam(Team)
+        analysis_pts = analysis_lst[0]
+        analysis_indices = analysis_lst[1]
 
+        print(analysis_lst)
+        # priority: high, med, low
+        # recommendGSC(team.Team, "low")
+        # recommendStriker(team.Team, "low")
+        recommendMF(team.Team, "low")
         
         
         return render_template("team3.html", Team = team, tO = tAdvanced, Player = players, Goals = goals, Assists = assists, aSignings = aSignings, dSignings = dSignings)
@@ -685,7 +692,7 @@ def analyzeTeam(Team):
     #print("Tier: " + str(tier))
     def assessGSC(team_gsc, opp_gsc_query, tier):
         team_gsc_vals = [team_gsc[0].GCA90, team_gsc[0].SCA90, (team_gsc[0].GCA90/team_gsc[0].SCA90)]
-        print(f'{team_gsc[0].Team} values: {team_gsc_vals}')
+        #print(f'{team_gsc[0].Team} values: {team_gsc_vals}')
         #T1 gsc (tier avg, individual tier, everyone else)
         gca_lst = [] #list to compare all of the things mentioned above
         sca_lst = []
@@ -775,12 +782,14 @@ def analyzeTeam(Team):
         # print(gca_lst)
         # print(sca_lst)
         # print(gsp_lst)
-        print([sum(gca_lst) , sum(sca_lst) , sum(gsp_lst)])
+        # print([sum(gca_lst) , sum(sca_lst) , sum(gsp_lst)])
+        results_lst = [sum(gca_lst) , sum(sca_lst) , sum(gsp_lst)]
+        return results_lst
     
     def assessDefense(team_standard, team_defense, opp_defense_query, opp_team_overview,tier):
         # t.TklTotalP, t.ErrP90, GAP90, xGAP90
         team_def_vals = [team_defense[0].TklTotalP, team_defense[0].ErrP90, team_standard[0].GAP90, team_standard[0].xGAP90]
-        print(f'{team_standard[0].Team} values: {team_def_vals}')
+        #print(f'{team_standard[0].Team} values: {team_def_vals}')
 
         tklP_lst = []
         err_lst = []
@@ -900,11 +909,13 @@ def analyzeTeam(Team):
         # print(err_lst)
         # print(ga_lst)
         # print(xga_lst)
-        print([sum(tklP_lst), sum(err_lst), sum(ga_lst), sum(xga_lst)])
+        # print([sum(tklP_lst), sum(err_lst), sum(ga_lst), sum(xga_lst)])
+        results_lst = [sum(tklP_lst), sum(err_lst), sum(ga_lst), sum(xga_lst)]
+        return results_lst
     
     def assessPassing(team_passing, opp_passing_query, tier):
         team_pass_vals = [team_passing[0].passP, team_passing[0].KPP90, team_passing[0].FTP90]
-        print(f'{team_passing[0].Team} values: {team_pass_vals}')
+        # print(f'{team_passing[0].Team} values: {team_pass_vals}')
 
         passP_lst = []
         kp_lst = []
@@ -995,11 +1006,13 @@ def analyzeTeam(Team):
         # print(passP_lst)
         # print(kp_lst)
         # print(ftp_lst)
-        print([sum(passP_lst), sum(kp_lst), sum(ftp_lst)])
+        # print([sum(passP_lst), sum(kp_lst), sum(ftp_lst)])
+        results_lst = [sum(passP_lst), sum(kp_lst), sum(ftp_lst)]
+        return results_lst
 
     def assessShooting(team_shooting, opp_shooting_query, tier):
         team_shot_vals = [team_shooting[0].SoTP90, team_shooting[0].GPSoT, team_shooting[0].xG_diff]
-        print(f'{team_shooting[0].Team} values: {team_shot_vals}')
+        # print(f'{team_shooting[0].Team} values: {team_shot_vals}')
 
         sotp_lst = []
         gpsot_lst = []
@@ -1090,16 +1103,143 @@ def analyzeTeam(Team):
         # print(sotp_lst)
         # print(gpsot_lst)
         # print(xgd_lst)
-        print([sum(sotp_lst), sum(gpsot_lst), sum(xgd_lst)])
+        # print([sum(sotp_lst), sum(gpsot_lst), sum(xgd_lst)])
+        results_lst = [sum(sotp_lst), sum(gpsot_lst), sum(xgd_lst)]
+        return results_lst
         
-    assessGSC(team_gsc, opp_gsc_query, tier)
-    assessDefense(team_standard, team_defense, opp_defense_query, opp_team_overview, tier)
-    assessPassing(team_passing, opp_passing_query, tier)
-    assessShooting(team_shooting, opp_shooting_query, tier)
-   
+    gsc_lst = assessGSC(team_gsc, opp_gsc_query, tier)
+    shot_lst = assessShooting(team_shooting, opp_shooting_query, tier)
+    pass_lst = assessPassing(team_passing, opp_passing_query, tier)
+    def_lst = assessDefense(team_standard, team_defense, opp_defense_query, opp_team_overview, tier)
 
+    overall_lst = [sum(gsc_lst), sum(shot_lst), sum(pass_lst), sum(def_lst)] #ORDER: GSC, SHOT, PASS, DEF
+    #print(overall_lst)
 
+    def createIndexLst(overall_lst):
+        overall_copy = [val for val in overall_lst]
+        overall_copy = list(set(overall_copy))
+        overall_copy.sort()
+        overall_copy.reverse()
+        #print(overall_copy)
 
+        index_lst = []
+        for val in overall_copy:
+            
+            for i in range(len(overall_lst)):
+                if overall_lst[i] == val:
+                    index_lst.append(i)
+
+        # print(index_lst)
+        return index_lst
+    
+    index_lst = createIndexLst(overall_lst)
+    teamDict = {0 : 'Goal Shot Creation', 1 : 'Shooting', 2 : 'Passing', 3 : 'Defense'}
+    best_category = teamDict[index_lst[0]]
+    worst_category = teamDict[index_lst[len(index_lst) - 1]]
+    print(f'Best category: {best_category}')
+    print(f'Worst category: {worst_category}')
+    
+    #need to return overall list, index list which will ultimately set up a more personalized recommendor
+    return [overall_lst, index_lst]
+
+def recommendGSC(Team, priority):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+    #Want two options. If GSC is not a priority fix, find prospects. If it is, find proven good players. All tiers balls to the wall
+    gsc_players = gsCreation.query.filter(gsCreation.Team != Team, gsCreation.season == current_season)
+    players = []
+    if priority == "high": #Find the best CAM/Winger/Creative player <32yrs, >1000min
+        potential_signings = gsc_players.filter(gsCreation.Age <= 32, gsCreation.minutes >= 1000, gsCreation.tier >= team.tier)
+        cams = potential_signings.filter(gsCreation.Position.contains("MF"))
+        cams = cams.order_by(gsCreation.GCAP90.desc(), gsCreation.SCAP90.desc()).limit(10)
+        fws = potential_signings.filter(gsCreation.Position.contains("FW"))
+        fws = fws.order_by(gsCreation.GCAP90.desc(), gsCreation.SCAP90.desc()).limit(10)
+        players = [cams, fws]
+    elif priority == "med": #Find good player tier below age cap, <28yrs >1000min
+        potential_signings = gsc_players.filter(gsCreation.Age <= 28, gsCreation.minutes >= 1000, gsCreation.tier > team.tier)
+        cams = potential_signings.filter(gsCreation.Position.contains("MF"))
+        cams = cams.order_by(gsCreation.GCAP90.desc(), gsCreation.SCAP90.desc()).limit(10)
+        fws = potential_signings.filter(gsCreation.Position.contains("FW"))
+        fws = fws.order_by(gsCreation.GCAP90.desc(), gsCreation.SCAP90.desc()).limit(10)
+        players = [cams, fws]
+    else: #find an upcoming prospect <24yrs <700min
+        potential_signings = gsc_players.filter(gsCreation.Age <= 24, gsCreation.minutes >= 700, gsCreation.tier > team.tier)
+        cams = potential_signings.filter(gsCreation.Position.contains("MF"))
+        cams = cams.order_by(gsCreation.SCAP90.desc(), gsCreation.GCAP90.desc()).limit(10)
+        fws = potential_signings.filter(gsCreation.Position.contains("FW"))
+        fws = fws.order_by(gsCreation.SCAP90.desc(), gsCreation.GCAP90.desc()).limit(10)
+        players = [cams, fws]
+    
+    # for lst in players:
+    #     print("-------------------------------------------------------")
+    #     for player in lst:
+    #         print(player.Name)
+    return players
+
+def recommendStriker(Team, priority):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+
+    strikers = playerOffensive.query.filter(playerOffensive.Team != Team, playerOffensive.season == current_season)
+    players = []
+    
+    if priority == "high": #<32yrs, >1000min
+        potential_signings = strikers.filter(playerOffensive.Age <= 32, playerOffensive.minutes >= 1000, playerOffensive.tier >= team.tier)
+        st = potential_signings.order_by(playerOffensive.Gls.desc(), playerOffensive.GlsP90.desc(), playerOffensive.xG.desc()).limit(10)
+        players.append(st)
+    elif priority == "med": #Find good player tier below age cap, <28yrs >1000min
+        potential_signings = strikers.filter(playerOffensive.Age <= 28, playerOffensive.minutes >= 1000, playerOffensive.tier > team.tier)
+        st = potential_signings.order_by(playerOffensive.GlsP90.desc(), playerOffensive.xG.desc(), playerOffensive.Gls.desc()).limit(10)
+        players.append(st)
+    else: #find an upcoming prospect <24yrs <700min
+        potential_signings = strikers.filter(playerOffensive.Age <= 24, playerOffensive.minutes >= 700, playerOffensive.tier > team.tier)
+        st = potential_signings.order_by(playerOffensive.ShP90.desc(), playerOffensive.SoTP90.desc(), playerOffensive.xG.desc()).limit(10)
+        players.append(st)
+    
+    for player in players[0]:
+        print(player.Name)
+    
+    return players
+
+def recommendMF(Team, priority):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+    
+    mf = playerPassing.query.filter(playerPassing.Team != Team, playerPassing.season == current_season, playerPassing.Position.contains("MF"))
+    players = []
+
+    if priority == "high": # <32yrs, >1000min
+        potential_signings = mf.filter(playerPassing.tier >= team.tier, playerPassing.Age <= 32, playerPassing.minutes >= 1000)
+        mfs = potential_signings.order_by(playerPassing.ProgP90.desc(), playerPassing.KPP90.desc(), playerPassing.FTP90.desc(), playerPassing.PassP.desc()).limit(10)
+        players.append(mfs)
+    elif priority == "med": #Find good player tier below age cap, <28yrs >1000min
+        potential_signings = mf.filter(playerPassing.tier > team.tier, playerPassing.Age <= 28, playerPassing.minutes >= 1000)
+        mfs = potential_signings.order_by(playerPassing.ProgP90.desc(), playerPassing.KPP90.desc(), playerPassing.FTP90.desc(), playerPassing.PassP.desc()).limit(10)
+        players.append(mfs)
+    else: #find an upcoming prospect <24yrs <700min
+        potential_signings = mf.filter(playerPassing.tier > team.tier, playerPassing.Age <= 24, playerPassing.minutes >= 700)
+        mfs = potential_signings.order_by(playerPassing.ProgP90.desc(), playerPassing.KPP90.desc(), playerPassing.FTP90.desc(), playerPassing.PassP.desc()).limit(10)
+        players.append(mfs)
+    
+    for player in players[0]:
+        print(player.Name)
+    
+    return players
+
+def recommendDef(Team):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+    
+    cdms = playerDefensive.query.filter(playerDefensive.Team != Team, playerDefensive.season == current_season, playerDefensive.Position.contains("MF"))
+    dfs = playerDefensive.query.filter(playerDefensive.Team != Team, playerDefensive.season == current_season, playerDefensive.Position.contains("DF"))
+    #split between cdm and a df probably
+    if priority == "high": # <32yrs, >1000min
+        cdms = cdms.filter(playerDefensive.tier >= team.tier, playerDefensive.Age <= 32, playerDefensive.minutes >= 1000)
+        cdms = cdms.order_by(playerDefensive.TklIntP90.desc(), playerDefensive.TklRate.desc(), playerDefensive.PressurePct.desc()).limit(10)
+        # dfs = dfs.filter(playerDefensive.tier >= team.tier, playerDefensive.Age <= 32, playerDefensive.minutes >= 1000)
+        # dfs = dfs.order_by(playerDefensive.)
+    elif priority == "med": #Find good player tier below age cap, <28yrs >1000min
+        print("med")
+    else: #find an upcoming prospect <24yrs <700min
+        print("low")
+
+    #Scrape the playing time table
     
 
 def createLeagueAvgs(League):
