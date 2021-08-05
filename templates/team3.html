@@ -116,30 +116,8 @@
             <!-- 3 (Attack Rec) -->
             <table class="aSignings">
                 <!-- <h1>Attacking Recommendations</h1> -->
-                
-            {% if aSignings | length == 0 %}
-                No Recommendations
-            {% else %}
-                <h1>Attacking Recommendations</h1>
-                <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Age</th>
-                    <th>Team</th>
-                    <th>Goals Per 90</th>
-                </tr>
-                {% for player in aSignings %}
-                    <tr>
-                        <td><a href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
-                            <!-- {{player.Name}} -->
-                        </td>
-                        <td>{{player.Position}}</td>
-                        <td>{{player.Age}}</td>
-                        <td>{{player.Team}}</td>
-                        <td>{{ "%.2f"|format(player.GlsP90)}}</td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+                <h1>Strengths</h1>
+                <h1 class="procon">{{bc}} - {{bc_msg}}</h1>
             </table>
         </div>
 
@@ -149,35 +127,8 @@
             <!-- 4 (Defense Rec) -->
             <table class="dSignings">
                 <!-- <h1>Attacking Recommendations</h1> -->
-                
-            {% if dSignings | length == 0 %}
-                No Recommendations
-            {% else %}
-                <h1>Defensive Recommendations</h1>
-                <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Age</th>
-                    <th>Team</th>
-                    <th>Tkl%</th>
-                    <th>BlkP90</th>
-                    <th>ClrP90</th>
-                </tr>
-                {% for player in dSignings %}
-                    <tr>
-                        <td>
-                            <a href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
-                            <!-- {{player.Name}} -->
-                        </td>
-                        <td>{{player.Position}}</td>
-                        <td>{{player.Age}}</td>
-                        <td>{{player.Team}}</td>
-                        <td>{{ "%.2f"|format(player.TklRate)}}</td>
-                        <td>{{ "%.2f"|format(player.BlkP90)}}</td>
-                        <td>{{ "%.2f"|format(player.ClrP90)}}</td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+                <h1>Weaknesses</h1>
+                <h1 class="procon">{{wc}} - {{wc_msg}}</h1>
             </table>
         </div>
 

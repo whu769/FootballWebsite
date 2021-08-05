@@ -675,22 +675,50 @@ def teams(Team, viewed_season = current_season):
         players = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.minutes != 0, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()
         goals = playerOffensive.query.filter(playerOffensive.Team == Team, playerOffensive.season == viewed_season).order_by(playerOffensive.Gls.desc()).all()
         assists = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
-        aSignings = offenseRec.query.filter(offenseRec.recommendedTeam == Team, offenseRec.season == viewed_season).all()
-        dSignings = defenseRec.query.filter(defenseRec.recommendedTeam == Team, defenseRec.season == viewed_season).all()
+        # aSignings = offenseRec.query.filter(offenseRec.recommendedTeam == Team, offenseRec.season == viewed_season).all()
+        # dSignings = defenseRec.query.filter(defenseRec.recommendedTeam == Team, defenseRec.season == viewed_season).all()
 
         #test analyzeTeam method
+        # analysis_lst = analyzeTeam(Team)
+        # analysis_pts = analysis_lst[0]
+        # analysis_indices = analysis_lst[1]
+
+        # print(analysis_lst)
+        #generateSignings(Team)
+        
         analysis_lst = analyzeTeam(Team)
         analysis_pts = analysis_lst[0]
         analysis_indices = analysis_lst[1]
+        teamDict = analysis_lst[2]
 
-        print(analysis_lst)
-        # priority: high, med, low
-        # recommendGSC(team.Team, "low")
-        # recommendStriker(team.Team, "low")
-        recommendMF(team.Team, "low")
+        best_category = teamDict[analysis_indices[0]]
+        worst_category = teamDict[analysis_indices[len(analysis_indices)-1]]
+        bc_val = analysis_pts[analysis_indices[0]]
+        wc_val = analysis_pts[analysis_indices[len(analysis_indices)-1]]
+
+        def genMsg(val, category):
+            if val in range(-2,3):
+                return f"{category} is at or hovering around their competitors"
+            elif val < -2 and val > -5:
+                return f"{category} is below their competitors and could use improvements"
+            elif val < -5:
+                return f"{category} is considerably below their competitors and need improvement"
+            elif val > 2 and val < 5:
+                return f"{category} is above their competitors"
+            else:
+                return f"{category} is considerably above their competitors"
         
+        bc_msg = genMsg(bc_val, best_category)
+        wc_msg = genMsg(wc_val, worst_category)
+        print(bc_msg)
+        print(wc_msg)
+        # print(best_category)
+        # print(worst_category)
+        #should write method that based off category shows some stats compared to other teams
+
         
-        return render_template("team3.html", Team = team, tO = tAdvanced, Player = players, Goals = goals, Assists = assists, aSignings = aSignings, dSignings = dSignings)
+        return render_template("team3.html", Team = team, tO = tAdvanced, Player = players, Goals = goals, Assists = assists, bc = best_category, wc = worst_category,
+                                bc_msg = bc_msg, wc_msg = wc_msg)
     except Exception as e:
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
@@ -1164,14 +1192,14 @@ def analyzeTeam(Team):
         return index_lst
     
     index_lst = createIndexLst(overall_lst)
-    teamDict = {0 : 'Goal Shot Creation', 1 : 'Shooting', 2 : 'Passing', 3 : 'Defense'}
-    best_category = teamDict[index_lst[0]]
-    worst_category = teamDict[index_lst[len(index_lst) - 1]]
-    print(f'Best category: {best_category}')
-    print(f'Worst category: {worst_category}')
+    teamDict = {0 : 'Goal Shot Creation', 1 : 'Shooting', 2 : 'Passing', 3 : 'Defense'} #legend
+    # best_category = teamDict[index_lst[0]]
+    # worst_category = teamDict[index_lst[len(index_lst) - 1]]
+    # print(f'Best category: {best_category}')
+    # print(f'Worst category: {worst_category}')
     
     #need to return overall list, index list which will ultimately set up a more personalized recommendor
-    return [overall_lst, index_lst]
+    return [overall_lst, index_lst, teamDict]
 
 def recommendGSC(Team, priority):
     team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
@@ -1204,6 +1232,7 @@ def recommendGSC(Team, priority):
     #     print("-------------------------------------------------------")
     #     for player in lst:
     #         print(player.Name)
+    
     return players
 
 def recommendStriker(Team, priority):
@@ -1225,8 +1254,8 @@ def recommendStriker(Team, priority):
         st = potential_signings.order_by(playerOffensive.ShP90.desc(), playerOffensive.SoTP90.desc(), playerOffensive.xG.desc()).limit(10)
         players.append(st)
     
-    for player in players[0]:
-        print(player.Name)
+    # for player in players[0]:
+    #     print(player.Name)
     
     return players
 
@@ -1249,28 +1278,89 @@ def recommendMF(Team, priority):
         mfs = potential_signings.order_by(playerPassing.ProgP90.desc(), playerPassing.KPP90.desc(), playerPassing.FTP90.desc(), playerPassing.PassP.desc()).limit(10)
         players.append(mfs)
     
-    for player in players[0]:
-        print(player.Name)
+    # for player in players[0]:
+    #     print(player.Name)
     
     return players
 
-def recommendDef(Team):
+def recommendDef(Team, priority):
     team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
     
     cdms = playerDefensive.query.filter(playerDefensive.Team != Team, playerDefensive.season == current_season, playerDefensive.Position.contains("MF"))
-    dfs = playerDefensive.query.filter(playerDefensive.Team != Team, playerDefensive.season == current_season, playerDefensive.Position.contains("DF"))
+    defs = playerPlaytime.query.filter(playerPlaytime.team != Team, playerPlaytime.season == current_season, playerPlaytime.Position == ("DF"))
+    players = []
+
     #split between cdm and a df probably
     if priority == "high": # <32yrs, >1000min
         cdms = cdms.filter(playerDefensive.tier >= team.tier, playerDefensive.Age <= 32, playerDefensive.minutes >= 1000)
         cdms = cdms.order_by(playerDefensive.TklIntP90.desc(), playerDefensive.TklRate.desc(), playerDefensive.PressurePct.desc()).limit(10)
-        # dfs = dfs.filter(playerDefensive.tier >= team.tier, playerDefensive.Age <= 32, playerDefensive.minutes >= 1000)
-        # dfs = dfs.order_by(playerDefensive.)
+        defs = defs.filter(playerPlaytime.tier >= team.tier, playerPlaytime.Age <= 32, playerPlaytime.minutes >= 1000)
+        defs = defs.order_by(playerPlaytime.onGAP90, playerPlaytime.onxGAP90).limit(10)
+        players = [defs, cdms]
     elif priority == "med": #Find good player tier below age cap, <28yrs >1000min
-        print("med")
+        cdms = cdms.filter(playerDefensive.tier > team.tier, playerDefensive.Age <= 28, playerDefensive.minutes >= 1000)
+        cdms = cdms.order_by(playerDefensive.TklIntP90.desc(), playerDefensive.TklRate.desc(), playerDefensive.PressurePct.desc()).limit(10)
+        defs = defs.filter(playerPlaytime.tier > team.tier, playerPlaytime.Age <= 28, playerPlaytime.minutes >= 1000)
+        defs = defs.order_by(playerPlaytime.onGAP90, playerPlaytime.onxGAP90).limit(10)
+        players = [defs, cdms]
     else: #find an upcoming prospect <24yrs <700min
-        print("low")
+        cdms = cdms.filter(playerDefensive.tier > team.tier, playerDefensive.Age <= 24, playerDefensive.minutes >= 700)
+        cdms = cdms.order_by(playerDefensive.TklIntP90.desc(), playerDefensive.TklRate.desc(), playerDefensive.PressurePct.desc()).limit(10)
+        defs = defs.filter(playerPlaytime.tier > team.tier, playerPlaytime.Age <= 24, playerPlaytime.minutes >= 700)
+        defs = defs.order_by(playerPlaytime.onGAP90, playerPlaytime.onxGAP90).limit(10)
+        players = [defs, cdms]
 
-    #Scrape the playing time table
+    # for lst in players:
+    #     print("-------------------------------------------------------")
+    #     for player in lst:
+    #         print(player.Name)
+
+    return players
+
+def generateSignings(Team):
+    analysis_lst = analyzeTeam(Team)
+    #print(analysis_lst)
+    analysis_pts = analysis_lst[0]
+    analysis_indices = analysis_lst[1]
+    teamDict = analysis_lst[2]
+
+    def determineRecommender(Team, index, val):
+        priority_lst = ["high", "med", "low"]
+        priority = ""
+
+        if val < -2:
+            priority = priority_lst[0]
+        elif val > 5:
+            priority = priority_lst[2]
+        else:
+            priority = priority_lst[1]
+        
+        #print(priority)
+        
+        if index == 0:
+            #print("GSC")
+            lst = recommendGSC(Team , priority)
+        elif index == 1:
+            #print("STRIKER")
+            lst = recommendStriker(Team, priority)
+        elif index == 2:
+            #print("MF")
+            lst = recommendMF(Team, priority)
+        else:
+            #print("DF")
+            lst = recommendDef(Team, priority)
+        
+        return lst
+
+    
+    rec_dict = dict()
+    for i in range(len(analysis_indices)):
+        rec_dict[i] = determineRecommender(Team, i, analysis_pts[i])
+
+    #0, 1, 2, 3 for keys, players as vals
+    #print(rec_dict)
+    return rec_dict
+    
     
 
 def createLeagueAvgs(League):
