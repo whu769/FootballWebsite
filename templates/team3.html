@@ -17,6 +17,7 @@
             <!-- 1 (Team & Stats) -->
             <a class="nav" href="{{url_for('leagues', League=Team.League)}}">{{Team.League}}</a>
             <a class="nav" href="{{url_for('graphs', Team = Team.Team)}}"> Graphs</a>
+            <a class="nav" href="{{url_for('recSignings', Team = Team.Team)}}"> Recommend Signings</a>
             <a  class="nav" href="{{ url_for('terms')}}" target="_blank"> Terms </a>
             <!-- Improve this bit later down the line, make it a league record -->
             <table class="team_stats">
@@ -118,6 +119,9 @@
                 <!-- <h1>Attacking Recommendations</h1> -->
                 <h1>Strengths</h1>
                 <h1 class="procon">{{bc}} - {{bc_msg}}</h1>
+
+                <h1 class="note">Strength is the best aspect of the team
+                </h1>
             </table>
         </div>
 
@@ -129,6 +133,10 @@
                 <!-- <h1>Attacking Recommendations</h1> -->
                 <h1>Weaknesses</h1>
                 <h1 class="procon">{{wc}} - {{wc_msg}}</h1>
+
+                <h1 class="note">Weakness is the weakest aspect of the team,
+                    it can still be very good
+                </h1>
             </table>
         </div>
 

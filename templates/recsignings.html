@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{url_for('static', filename='css/js/playertabs.js')}}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/topleague.css') }}">
+    <title>{{Team}} Recommended Signings</title>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item item-1">
+            {{Team}} Recommended Signings
+            <ul class="link-list">
+                <li class="link-item"><a class="nav" href="{{url_for('teams', Team=Team)}}">Back</a></li>
+                <li class="link-item"></li><a  class="nav" href="{{ url_for('terms')}}" target="_blank"> Terms </a></li>
+            </ul>
+        </div>
+        <div class="grid-item item-2">
+            <ul class="tabs">
+                <li data-tab-target="#GSC" class="active tab">GSC</li>
+                <li data-tab-target="#Shot" class="tab">ST</li>
+                <li data-tab-target="#Passing" class="tab">MF</li>
+                <li data-tab-target="#Defense" class="tab">DF</li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="GSC" data-tab-content class="active">
+                    <h1>Priority: {{gsc_prio}}</h1>
+                    <ul class="table-list">
+                        <li class="table-item">
+                            <h1>Creative FW</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>GCAP90</th>
+                                    <th>SCAP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in gsc_dict[1] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{row.GCAP90}}</td>
+                                        <td>{{row.SCAP90}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                        <li class="table-item">
+                            <h1>Creative CAM</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>GCAP90</th>
+                                    <th>SCAP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in gsc_dict[0] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{row.GCAP90}}</td>
+                                        <td>{{row.SCAP90}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="Shot" data-tab-content>
+                    <h1>Priority: {{str_prio}}</h1>
+                    <ul class="table-list">
+                        <li class="table-item">
+                            <h1>Striker</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>Gls</th>
+                                    <th>xG</th>
+                                    <th>GlsP90</th>
+                                    <th>ShP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in str_dict[0] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{row.Gls}}</td>
+                                        <td>{{row.xG}}</td>
+                                        <td>{{"%.2f"|format(row.GlsP90)}}</td>
+                                        <td>{{row.ShP90}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="Passing" data-tab-content>
+                    <h1>Priority: {{mf_prio}}</h1>
+                    <ul class="table-list">
+                        <li class="table-item">
+                            <h1>Midfielder</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>ProgP90</th>
+                                    <th>KPP90</th>
+                                    <th>FTP90</th>
+                                    <th>Pass%</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in mf_dict[0] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.ProgP90)}}</td>
+                                        <td>{{"%.2f"|format(row.KPP90)}}</td>
+                                        <td>{{"%.2f"|format(row.FTP90)}}</td>
+                                        <td>{{"%.2f"|format(row.PassP)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="Defense" data-tab-content>
+                    <h1>Priority: {{df_prio}}</h1>
+                    <ul class="table-list">
+                        <li class="table-item">
+                            <h1>CDM</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>TklIntP90</th>
+                                    <th>TklRate</th>
+                                    <th>Pressure%</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in df_dict[1] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Nation}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                                        <td>{{"%.2f"|format(row.TklIntP90)}}</td>
+                                        <td>{{"%.2f"|format(row.TklRate)}}</td>
+                                        <td>{{"%.2f"|format(row.PressurePct)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                        <li class="table-item">
+                            <h1>DF</h1>
+                            <table>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Country</th>
+                                    <th>Team</th>
+                                    <th>GAP90</th>
+                                    <th>xGAP90</th>
+                                </tr>
+                                <tbody>
+                                    {% for row in df_dict[0] %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                        </td>
+                                        <td>{{row.Age}}</td>
+                                        <td>{{row.Country}}</td>
+                                        <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.team}}</a></td>
+                                        <td>{{"%.2f"|format(row.onGAP90)}}</td>
+                                        <td>{{"%.2f"|format(row.onxGAP90)}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+                    
+            </div>
+        </div>
+</body>
+</html>

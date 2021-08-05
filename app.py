@@ -698,20 +698,20 @@ def teams(Team, viewed_season = current_season):
 
         def genMsg(val, category):
             if val in range(-2,3):
-                return f"{category} is at or hovering around their competitors"
+                return f"{category} is at or hovering around their rivals"
             elif val < -2 and val > -5:
-                return f"{category} is below their competitors and could use improvements"
+                return f"{category} is below their rivals and could use improvements"
             elif val < -5:
-                return f"{category} is considerably below their competitors and need improvement"
+                return f"{category} is considerably below their rivals and need improvement"
             elif val > 2 and val < 5:
-                return f"{category} is above their competitors"
+                return f"{category} is above their rivals"
             else:
-                return f"{category} is considerably above their competitors"
+                return f"{category} is considerably above their rivals"
         
         bc_msg = genMsg(bc_val, best_category)
         wc_msg = genMsg(wc_val, worst_category)
-        print(bc_msg)
-        print(wc_msg)
+        # print(bc_msg)
+        # print(wc_msg)
         # print(best_category)
         # print(worst_category)
         #should write method that based off category shows some stats compared to other teams
@@ -723,6 +723,23 @@ def teams(Team, viewed_season = current_season):
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
+
+@app.route('/<Team>/RecommendSignings')
+def recSignings(Team):
+
+    rec_dict = generateSignings(Team)
+    print(rec_dict)
+    gsc_dict = rec_dict[0][0]
+    gsc_prio = rec_dict[0][1]
+    str_dict = rec_dict[1][0]
+    str_prio = rec_dict[1][1]
+    mf_dict = rec_dict[2][0]
+    mf_prio = rec_dict[2][1]
+    df_dict = rec_dict[3][0]
+    df_prio = rec_dict[3][1]
+    # print(gsc_dict[0].all())
+    return render_template("recsignings.html", Team = Team, gsc_prio = gsc_prio, str_prio = str_prio, mf_prio = mf_prio, df_prio = df_prio,
+                            gsc_dict = gsc_dict, str_dict = str_dict, mf_dict = mf_dict, df_dict = df_dict)
 
 #method to look through the team's general stats GSC, Defense, Passing, shooting and categorizes them
 def analyzeTeam(Team):
@@ -1350,7 +1367,7 @@ def generateSignings(Team):
             #print("DF")
             lst = recommendDef(Team, priority)
         
-        return lst
+        return (lst, priority)
 
     
     rec_dict = dict()
