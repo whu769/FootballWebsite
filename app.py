@@ -653,6 +653,49 @@ def dashboard(user_id):
     # print(user)
     return render_template("dashboard.html", user = user)
 
+@app.route('/<user_id>/followteams', methods = ["GET", "POST"])
+@login_required
+def followteams(user_id):
+    user = User.query.get(user_id)
+    user_teams = user.teams
+    uteams = []
+    if(user_teams == ""):
+        uteams = []
+    else:
+        uteams = user_teams.split(',')
+    print(uteams)
+    teams = teamOverview.query.filter(teamOverview.season == current_season, teamOverview.Team.in_(uteams) == False).distinct().all()
+    # print(len(teams))
+    # for team in teams:
+    #     print(team.Team)
+    return render_template("followteams.html", teams = teams, uteams = uteams, user = user)
+
+@app.route('/<user_id>/addteam/<teamName>')
+@login_required
+def addteam(user_id, teamName):
+    user = User.query.get(user_id)
+    user_teams = user.teams
+    if(user_teams == ""):
+        user_teams = teamName
+    else:
+        user_teams = user_teams + "," + teamName
+    print(user_teams)
+    user.teams = user_teams
+    db.session.commit()
+    return redirect(url_for('dashboard', user_id = user_id))
+
+@app.route('/<user_id>/removeteam/<teamName>')
+@login_required
+def removeteam(user_id, teamName):
+    user = User.query.get(user_id)
+    user_teams = user.teams
+    user_teams = user_teams.split(',')
+    user_teams.remove(teamName)
+    print(user_teams)
+    user.teams = ','.join(user_teams)
+    db.session.commit()
+    return redirect(url_for('dashboard', user_id = user_id))
+
 @app.route('/logout', methods=["GET", "POST"])
 @login_required
 def logout():

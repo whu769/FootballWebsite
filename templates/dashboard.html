@@ -18,9 +18,10 @@
             <h1>Followed Teams</h1>
             {% if user.teams == "" %}
                 <h1>You have no followed teams!</h1>
-                <a href="">Follow teams!</a>
+                <a href="{{url_for('followteams', user_id = user.id)}}">Follow teams!</a>
             {% else %}
                 <h1>Print out teams</h1>
+                <a href="{{url_for('followteams', user_id = user.id)}}">Follow more teams!</a>
             {% endif %}
         </div>
         <div class="grid-item item-3">
