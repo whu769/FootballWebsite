@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/dashboard.css') }}">
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item item-1">
+            <h1>Welcome {{user.username}}</h1>
+            <a href="{{url_for('logout')}}">Logout</a>
+        </div>
+
+        <div class="grid-item item-2">
+            <h1>Followed Teams</h1>
+            {% if user.teams == "" %}
+                <h1>You have no followed teams!</h1>
+                <a href="">Follow teams!</a>
+            {% else %}
+                <h1>Print out teams</h1>
+            {% endif %}
+        </div>
+        <div class="grid-item item-3">
+            Twitter News
+        </div>
+        <div class="grid-item item-4">
+            Something
+        </div>
+    </div>
+    
+</body>
+</html>
