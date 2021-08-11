@@ -52,3 +52,7 @@ body, html{
 .item-4{
     grid-column: 3 / 4;
 }
+
+ul{
+    list-style-type: none;
+}

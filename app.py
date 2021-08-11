@@ -39,6 +39,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable = False, unique = True)
     password = db.Column(db.String(80), nullable = False)
     teams = db.Column(db.String) #implement teams into user db
+    players = db.Column(db.String)
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)],
@@ -635,7 +636,7 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password = hashed_password, teams = "")
+        new_user = User(username=form.username.data, password = hashed_password, teams = "", players = "")
         db.session.add(new_user)
         db.session.commit()
         print("Works")
@@ -649,9 +650,22 @@ def dashboard(user_id):
     # print(form.username)
     user = User.query.get(user_id)
     followed_teams = user.teams
-    print(followed_teams)
+    followed_players = user.players
+    # print(f'TEAMS: {followed_teams}')
+    # print(f'PLAYERS: {followed_players}')
+    if followed_teams == "":
+        team_lst = []
+    else:
+        team_lst = followed_teams.split(',')
+    
+    if followed_players == "":
+        player_lst = []
+    else:
+        player_lst = followed_players.split(',')
+
+    # print(team_lst)
     # print(user)
-    return render_template("dashboard.html", user = user)
+    return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst)
 
 @app.route('/<user_id>/followteams', methods = ["GET", "POST"])
 @login_required
@@ -663,12 +677,26 @@ def followteams(user_id):
         uteams = []
     else:
         uteams = user_teams.split(',')
-    print(uteams)
+    # print(uteams)
     teams = teamOverview.query.filter(teamOverview.season == current_season, teamOverview.Team.in_(uteams) == False).distinct().all()
-    # print(len(teams))
-    # for team in teams:
-    #     print(team.Team)
+    
     return render_template("followteams.html", teams = teams, uteams = uteams, user = user)
+
+@app.route('/<user_id>/followplayers', methods = ["GET", "POST"])
+@login_required
+def followplayers(user_id):
+    user = User.query.get(user_id)
+    user_players = user.players
+    uplayers = []
+    if user_players == "":
+        uplayers = []
+    else:
+        uplayers = user_players.split(',')
+    
+    # print(uplayers)
+    
+    players = playerOverview.query.filter(playerOverview.season == current_season, playerOverview.Name.in_(uplayers) == False).distinct().all()
+    return render_template("followplayers.html", players = players, uplayers = uplayers, user = user)
 
 @app.route('/<user_id>/addteam/<teamName>')
 @login_required
@@ -679,7 +707,7 @@ def addteam(user_id, teamName):
         user_teams = teamName
     else:
         user_teams = user_teams + "," + teamName
-    print(user_teams)
+    # print(user_teams)
     user.teams = user_teams
     db.session.commit()
     return redirect(url_for('dashboard', user_id = user_id))
@@ -691,8 +719,34 @@ def removeteam(user_id, teamName):
     user_teams = user.teams
     user_teams = user_teams.split(',')
     user_teams.remove(teamName)
-    print(user_teams)
+    # print(user_teams)
     user.teams = ','.join(user_teams)
+    db.session.commit()
+    return redirect(url_for('dashboard', user_id = user_id))
+
+@app.route('/<user_id>/addplayer/<playerName>')
+@login_required
+def addplayer(user_id, playerName):
+    # print("IN ADDPLAYER")
+    user = User.query.get(user_id)
+    user_players = user.players
+    if(user_players == ""):
+        user_players = playerName
+    else:
+        user_players = user_players + "," + playerName
+    # print(f'user_players: {user_players}')
+    user.players = user_players
+    db.session.commit()
+    return redirect(url_for('dashboard', user_id = user_id))
+
+@app.route('/<user_id>/removeplayer/<playerName>')
+@login_required
+def removeplayer(user_id, playerName):
+    user = User.query.get(user_id)
+    user_players = user.players
+    user_players = user_players.split(",")
+    user_players.remove(playerName)
+    user.players = ','.join(user_players)
     db.session.commit()
     return redirect(url_for('dashboard', user_id = user_id))
 
@@ -2057,6 +2111,12 @@ def leaguestats(League):
 # Will be deleted everytime the fbrefMain is run, fix later
 # Creates the login/registration tables within the db file 
 
-db.create_all()
+# UNCOMMENT THIS CODE TO CREATE THE USER TABLE
+# db.create_all()
+
+#UNCOMMENT CODE BELOW TO RESET ALL USER ACCOUNTS!
+# db.session.query(User).delete()
+# db.session.commit()
+
 if __name__ == "__main__":
     app.run(debug=True)

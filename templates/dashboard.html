@@ -16,19 +16,39 @@
 
         <div class="grid-item item-2">
             <h1>Followed Teams</h1>
-            {% if user.teams == "" %}
+            {% if team_lst|length == 0 %}
                 <h1>You have no followed teams!</h1>
                 <a href="{{url_for('followteams', user_id = user.id)}}">Follow teams!</a>
             {% else %}
-                <h1>Print out teams</h1>
+                <ul>
+                    {% for team in team_lst %}
+                        <li>
+                            <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
                 <a href="{{url_for('followteams', user_id = user.id)}}">Follow more teams!</a>
             {% endif %}
+            
         </div>
         <div class="grid-item item-3">
-            Twitter News
+            <h1>Twitter Feed</h1>
         </div>
         <div class="grid-item item-4">
-            Something
+            <h1>Followed Players</h1>
+            {% if player_lst|length == 0 %}
+                <h1>You have no followed players!</h1>
+                <a href="{{url_for('followplayers', user_id = user.id)}}">Follow some players!</a>
+            {% else %}
+                <ul>
+                    {% for player in player_lst %}
+                        <li>
+                            <a href="{{url_for('players', Player = player)}}">{{player}}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{url_for('followplayers', user_id = user.id)}}">Follow more players!</a>
+            {% endif %}
         </div>
     </div>
     

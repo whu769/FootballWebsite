@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follow Players</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/followteams.css') }}">
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-item item-1">
+            <h1>Follow players!</h1>
+            <a href="{{url_for('dashboard', user_id = user.id)}}"> back </a>
+        </div>
+
+        <div class="grid-item item-2">
+            <h1>Players</h1>
+            {% for player in players %}
+            <ul>
+                <li><a href="{{url_for('addplayer', user_id = user.id, playerName = player.Name)}}">Follow {{player.Name}}</a></li>
+            </ul>
+            {% endfor %}
+        </div>
+        <div class="grid-item item-3">
+            <h1>Unfollow Players</h1>
+            {% if uplayers|length == 0 %}
+                <h1>You have no players to unfollow</h1>
+            {% else %}
+                {% for player in uplayers %}
+                <ul>
+                    <li>
+                        <a href="{{url_for('removeplayer', user_id = user.id, playerName = player)}}">Unfollow {{player}}</a> 
+                    </li>
+                </ul>
+                
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    
+</body>
+</html>
