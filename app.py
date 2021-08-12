@@ -8,6 +8,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+from Twitter.tweetscraper import tweetscraper as TS
 
 
 app = Flask(__name__)
@@ -19,6 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_name
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
+tweetscraper = TS()
 
 # viewed_season = "2020-2021"
 current_season = '2020-2021'
@@ -651,21 +653,38 @@ def dashboard(user_id):
     user = User.query.get(user_id)
     followed_teams = user.teams
     followed_players = user.players
+
     # print(f'TEAMS: {followed_teams}')
     # print(f'PLAYERS: {followed_players}')
+
+    team_tweets = []
     if followed_teams == "":
         team_lst = []
     else:
         team_lst = followed_teams.split(',')
-    
+        #print("TEAMS")
+        for team in team_lst:
+            team_tweets += (tweetscraper.findRelevantTeamTweets(team))
+        
+        #print(team_tweets)
+            
+
+    player_tweets = []
     if followed_players == "":
         player_lst = []
     else:
         player_lst = followed_players.split(',')
+        #print("PLAYERS")
+        for player in player_lst:
+            player_tweets += (tweetscraper.findRelevantPlayerTweets(player))
+        
+        #print(player_tweets)
+    
+    
 
     # print(team_lst)
     # print(user)
-    return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst)
+    return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst, team_tweets = team_tweets, player_tweets = player_tweets)
 
 @app.route('/<user_id>/followteams', methods = ["GET", "POST"])
 @login_required

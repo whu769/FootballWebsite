@@ -33,6 +33,28 @@
         </div>
         <div class="grid-item item-3">
             <h1>Twitter Feed</h1>
+            <h1 class="team-header">Team News</h1>
+            <ul class="tweetlst">
+                {% for team in team_tweets %}
+                <li class="tweet">
+                    <div class="tweetbox-team">
+                        <h1 class="tweetmsg">{{team}}</h1>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <h1 class="player-header">Player News</h1>
+            <ul class="tweetlst">
+                {% for player in player_tweets %}
+                <li class="tweet">
+                    <div class="tweetbox-player">
+                        <h1 class="tweetmsg">{{player}}</h1>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
         </div>
         <div class="grid-item item-4">
             <h1>Followed Players</h1>

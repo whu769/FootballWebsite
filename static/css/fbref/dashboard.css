@@ -56,3 +56,25 @@ body, html{
 ul{
     list-style-type: none;
 }
+
+.tweetbox-team{
+    border: 3px solid cornflowerblue;
+}
+
+.tweetbox-player{
+    border: 3px solid maroon;
+}
+
+.tweetmsg{
+    font-size: small;
+}
+
+h1.player-header{
+    background-color: white;
+    color: maroon;
+}
+
+h1.team-header{
+    background-color: white;
+    color: cornflowerblue;
+}
