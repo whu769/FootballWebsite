@@ -13,7 +13,7 @@ from Twitter.tweetscraper import tweetscraper as TS
 
 app = Flask(__name__)
 
-#Trying to connect to database
+#Connecting the database
 db_name = "fbref.db"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_name 
 
@@ -22,10 +22,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 tweetscraper = TS()
 
-# viewed_season = "2020-2021"
+# variable of the most current season
 current_season = '2020-2021'
 
-#LOGIN STUFF
+#Setup for login and registration features
 app.config['SECRET_KEY'] = 'secretkey'
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
@@ -36,6 +36,7 @@ login_manager.login_view = "login"
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+#DB table for the user
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable = False, unique = True)
@@ -43,6 +44,7 @@ class User(db.Model, UserMixin):
     teams = db.Column(db.String) #implement teams into user db
     players = db.Column(db.String)
 
+#Class representing the registration form that collects input when registering
 class RegisterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)],
         render_kw={"placeholder":"Username"})
@@ -58,6 +60,7 @@ class RegisterForm(FlaskForm):
         if existing_user_username:
             raise ValidationError("Username already exists, Please choose another")
 
+#Form that collects the input when logging in
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)],
         render_kw={"placeholder":"Username"})
@@ -69,7 +72,7 @@ class LoginForm(FlaskForm):
 
 
 
-#The various classes for the sql_tables in the db file
+#The various fbref classes the db file
 class combinedLeagues(db.Model):
     __tablename__ = 'combined_leagues'
     index = db.Column(db.Integer, primary_key = True)
@@ -618,7 +621,8 @@ class defenseRec(db.Model):
     recommendedTeam = db.Column(db.Text)
 
 
-#LOGIN STUFF
+#LOGIN Pages
+# Login page, checks if user exists and logs in if true
 @app.route('/login', methods = ["GET", "POST"])
 def login():
     form = LoginForm()
@@ -632,6 +636,7 @@ def login():
     
     return render_template('login.html', form = form)
 
+#Registration page and makes an account if the requirements go through
 @app.route('/register', methods = ["GET", "POST"])
 def register():
     form = RegisterForm()
@@ -646,6 +651,7 @@ def register():
 
     return render_template('registration.html', form = form)
 
+#Once logged in, user is taken to their dashboard page
 @app.route('/dashboard/<user_id>', methods = ["GET", "POST"])
 @login_required
 def dashboard(user_id):
@@ -680,12 +686,9 @@ def dashboard(user_id):
         
         #print(player_tweets)
     
-    
-
-    # print(team_lst)
-    # print(user)
     return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst, team_tweets = team_tweets, player_tweets = player_tweets)
 
+#Page that allows users to follow teams
 @app.route('/<user_id>/followteams', methods = ["GET", "POST"])
 @login_required
 def followteams(user_id):
@@ -701,6 +704,7 @@ def followteams(user_id):
     
     return render_template("followteams.html", teams = teams, uteams = uteams, user = user)
 
+#Page that allows users to follow players
 @app.route('/<user_id>/followplayers', methods = ["GET", "POST"])
 @login_required
 def followplayers(user_id):
@@ -717,6 +721,7 @@ def followplayers(user_id):
     players = playerOverview.query.filter(playerOverview.season == current_season, playerOverview.Name.in_(uplayers) == False).distinct().all()
     return render_template("followplayers.html", players = players, uplayers = uplayers, user = user)
 
+#Method of adding a team, redirects to the updated dashboard
 @app.route('/<user_id>/addteam/<teamName>')
 @login_required
 def addteam(user_id, teamName):
@@ -731,6 +736,7 @@ def addteam(user_id, teamName):
     db.session.commit()
     return redirect(url_for('dashboard', user_id = user_id))
 
+#Method of removing a team, redirects to the updated dashboard
 @app.route('/<user_id>/removeteam/<teamName>')
 @login_required
 def removeteam(user_id, teamName):
@@ -743,6 +749,7 @@ def removeteam(user_id, teamName):
     db.session.commit()
     return redirect(url_for('dashboard', user_id = user_id))
 
+#Method of adding a player, redirects to the updated dashboard
 @app.route('/<user_id>/addplayer/<playerName>')
 @login_required
 def addplayer(user_id, playerName):
@@ -758,6 +765,7 @@ def addplayer(user_id, playerName):
     db.session.commit()
     return redirect(url_for('dashboard', user_id = user_id))
 
+#Method of removing a followed player, redirects to the updated dashboard
 @app.route('/<user_id>/removeplayer/<playerName>')
 @login_required
 def removeplayer(user_id, playerName):
@@ -769,6 +777,7 @@ def removeplayer(user_id, playerName):
     db.session.commit()
     return redirect(url_for('dashboard', user_id = user_id))
 
+#Method to log the user out, redirects to the index
 @app.route('/logout', methods=["GET", "POST"])
 @login_required
 def logout():
@@ -776,64 +785,23 @@ def logout():
     print("Logged out!")
     return redirect(url_for('index', viewed_season = current_season))
 
+#Index/main page
 @app.route("/", defaults={'viewed_season':'2020-2021'})
 @app.route('/<viewed_season>')
 def index(viewed_season):
-    #print(viewed_season)
-    #Good tester code to see if the db works
-    # try:
-    #     combinedLeague = combinedLeagues.query.filter_by(league='Premier League').order_by( combinedLeagues.Pts.desc()).all()
-    #     cl_text = '<ul>'
-    #     for cl in combinedLeague:
-    #         cl_text += '<li>' + cl.Team + ', ' + str(cl.PTS) + '</li>'
-    #     cl_text += '</ul>'
-    #     return cl_text
-    # except Exception as e:
-    #     # e holds description of the error
-    #     error_text = "<p>The error:<br>" + str(e) + "</p>"
-    #     hed = '<h1>Something is broken.</h1>'
-    #     return hed + error_text
     
-    #KEEP THIS, IT'S LIKE LEGACY LOL
-    # players = CombinedPlayer.query.order_by(CombinedPlayer.goals.desc()).limit(20)
-    # cL = CombinedLeague.query.order_by(CombinedLeague.PTS.desc()).limit(20)
-    # leagues = CombinedLeague.query.with_entities(CombinedLeague.League).distinct()
-    # return render_template("index2.html", combinedLeague = cL, Leagues = leagues, Players = players)
-
-    #this effort is ALL FBREF STUFF
-    #try:
-        #WHAT IS WRONG WITH THIS LINE?
     players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
     #print(players)
     # for player in players:
     #     print(player.season)
     cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
-    #print(type(cL))
-
-    
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
     return render_template("index3.html", combinedLeague = cL, Leagues = leagues, Player = players, season = viewed_season)
  
-
+#Pages for the individual leagues
 @app.route('/league/<League>')
 def leagues(League, viewed_season = current_season):
     try:
-        # Leagues = CombinedLeague.query.filter_by(League=League).order_by(CombinedLeague.PTS.desc()).all()
-        # Teams = CombinedLeague.query.with_entities(CombinedLeague.Team).distinct()
-        # Goals = advancedStats.query.filter_by(League=League).order_by(advancedStats.goals.desc()).all()
-        # Assists = advancedStats.query.filter_by(League = League).order_by(advancedStats.assists.desc()).all()
-
-        # bestOffensively = CombinedLeague.query.filter_by(League = League).order_by(CombinedLeague.G.desc()).first()
-        # bestDefensively = CombinedLeague.query.filter_by(League = League).order_by(CombinedLeague.GA).first()
-        # worstDefensively = CombinedLeague.query.filter_by(League = League).order_by(CombinedLeague.GA.desc()).first()
-        # worstOffensively = CombinedLeague.query.filter_by(League = League).order_by(CombinedLeague.G).first()
-
-        # overAchieved = CombinedLeague.query.filter_by(League = League).order_by(CombinedLeague.xPTS_diff).first()
-        # underAchieved = CombinedLeague.query.filter_by(League = League).order_by(CombinedLeague.xPTS_diff.desc()).first()
-        
-        # #DON'T NAME LISTS THE SAME THINGS AS COLUMN NAMES DUMBASS
-        # return render_template('league2.html', League=Leagues, Team = Teams, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively,
-        # wO = worstOffensively, wD = worstDefensively, overAchieved = overAchieved, underAchieved = underAchieved)
 
         Leagues = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).all()
         Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).all()
@@ -845,8 +813,6 @@ def leagues(League, viewed_season = current_season):
         worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
         highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
 
-        
-
         return render_template('league3.html', League = Leagues, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively, 
         wO = worstOffensively, wD = worstDefensively, hGD = highestGD)
     except Exception as e:
@@ -854,41 +820,18 @@ def leagues(League, viewed_season = current_season):
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+#Pages for the teams
 @app.route('/team/<Team>')
 def teams(Team, viewed_season = current_season):
     try:
-        #print(Team)
-        # team = CombinedLeague.query.filter_by(Team = Team).first()
-        # #print(team)
-        # players = CombinedPlayer.query.filter_by(team_title=Team).order_by(CombinedPlayer.goals.desc()).all()
-        # goals = advancedStats.query.filter_by(team_title = Team).order_by(advancedStats.goals.desc()).all()
-
-        # assists = advancedStats.query.filter_by(team_title = Team).order_by(advancedStats.assists.desc()).all()
-
-        # attackingSignings = offenseRec.query.filter_by(teamRecommend = Team).all()
-        # defenseSignings = defenseRec.query.filter_by(teamRecommend = Team).all()
-        # print(len(defenseSignings))
-        # #print(offense)
-        # #print(attackingPlayer) 
-        # # dSignings = defenseSignings
-        # return render_template('team2.html', Team = team, Player = players, Goals = goals, Assists = assists, aSignings = attackingSignings, dSignings = defenseSignings)
-
+        #Team statistics from the sql tables
         team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
         tAdvanced = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
         players = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.minutes != 0, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()
         goals = playerOffensive.query.filter(playerOffensive.Team == Team, playerOffensive.season == viewed_season).order_by(playerOffensive.Gls.desc()).all()
         assists = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
-        # aSignings = offenseRec.query.filter(offenseRec.recommendedTeam == Team, offenseRec.season == viewed_season).all()
-        # dSignings = defenseRec.query.filter(defenseRec.recommendedTeam == Team, defenseRec.season == viewed_season).all()
-
-        #test analyzeTeam method
-        # analysis_lst = analyzeTeam(Team)
-        # analysis_pts = analysis_lst[0]
-        # analysis_indices = analysis_lst[1]
-
-        # print(analysis_lst)
-        #generateSignings(Team)
         
+        #Code for analysing a team's performancce in terms of their rivals and the league overall
         analysis_lst = analyzeTeam(Team)
         analysis_pts = analysis_lst[0]
         analysis_indices = analysis_lst[1]
@@ -899,6 +842,7 @@ def teams(Team, viewed_season = current_season):
         bc_val = analysis_pts[analysis_indices[0]]
         wc_val = analysis_pts[analysis_indices[len(analysis_indices)-1]]
 
+        #method to generate an interpretation of how the team is performing in terms of goal-shot creation, shooting, passing, and defense
         def genMsg(val, category):
             if val in range(-2,3):
                 return f"{category} is at or hovering around their rivals"
@@ -913,12 +857,6 @@ def teams(Team, viewed_season = current_season):
         
         bc_msg = genMsg(bc_val, best_category)
         wc_msg = genMsg(wc_val, worst_category)
-        # print(bc_msg)
-        # print(wc_msg)
-        # print(best_category)
-        # print(worst_category)
-        #should write method that based off category shows some stats compared to other teams
-
         
         return render_template("team3.html", Team = team, tO = tAdvanced, Player = players, Goals = goals, Assists = assists, bc = best_category, wc = worst_category,
                                 bc_msg = bc_msg, wc_msg = wc_msg)
@@ -927,9 +865,9 @@ def teams(Team, viewed_season = current_season):
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+#Page of recommended signings for a specific team
 @app.route('/<Team>/RecommendSignings')
 def recSignings(Team):
-
     rec_dict = generateSignings(Team)
     print(rec_dict)
     gsc_dict = rec_dict[0][0]
@@ -945,10 +883,10 @@ def recSignings(Team):
                             gsc_dict = gsc_dict, str_dict = str_dict, mf_dict = mf_dict, df_dict = df_dict)
 
 #method to look through the team's general stats GSC, Defense, Passing, shooting and categorizes them
+#contains inner methods of assess the various aspects and returns a value
+#every inner method, compares its values to its rivals (teams in the same tier), the average of their rivals, and the league avg (5 OR 7 values)
 def analyzeTeam(Team):
-    #Later on, possibly separate into 4 inner methods for passing, gsc, defense, shooting
     
-    #Obtain all information regarding specifically the team
     team_standard = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).all()
     team_overview = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == current_season).all()
     team_gsc = teamGSC.query.filter(teamGSC.Team == Team, teamGSC.season == current_season).all()
@@ -1394,6 +1332,7 @@ def analyzeTeam(Team):
     overall_lst = [sum(gsc_lst), sum(shot_lst), sum(pass_lst), sum(def_lst)] #ORDER: GSC, SHOT, PASS, DEF
     #print(overall_lst)
 
+    #generates a list with the values of the indices of the sorted overall_lst as a map to the best --> worst values
     def createIndexLst(overall_lst):
         overall_copy = [val for val in overall_lst]
         overall_copy = list(set(overall_copy))
@@ -1413,14 +1352,11 @@ def analyzeTeam(Team):
     
     index_lst = createIndexLst(overall_lst)
     teamDict = {0 : 'Goal Shot Creation', 1 : 'Shooting', 2 : 'Passing', 3 : 'Defense'} #legend
-    # best_category = teamDict[index_lst[0]]
-    # worst_category = teamDict[index_lst[len(index_lst) - 1]]
-    # print(f'Best category: {best_category}')
-    # print(f'Worst category: {worst_category}')
     
     #need to return overall list, index list which will ultimately set up a more personalized recommendor
     return [overall_lst, index_lst, teamDict]
 
+#recommends a Creative midfielder or forward with different criteria depending on priority
 def recommendGSC(Team, priority):
     team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
     #Want two options. If GSC is not a priority fix, find prospects. If it is, find proven good players. All tiers balls to the wall
@@ -1455,6 +1391,7 @@ def recommendGSC(Team, priority):
     
     return players
 
+#recommends a striker with different criteria depending on priority
 def recommendStriker(Team, priority):
     team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
 
@@ -1479,6 +1416,7 @@ def recommendStriker(Team, priority):
     
     return players
 
+#Recommends a striker with different criteria depending on priority
 def recommendMF(Team, priority):
     team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
     
@@ -1503,6 +1441,7 @@ def recommendMF(Team, priority):
     
     return players
 
+#Recommends a defensive midfielder and a defender with different criteria depending on priority
 def recommendDef(Team, priority):
     team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
     
@@ -1537,6 +1476,7 @@ def recommendDef(Team, priority):
 
     return players
 
+#generates all types of signings for a team
 def generateSignings(Team):
     analysis_lst = analyzeTeam(Team)
     #print(analysis_lst)
@@ -1582,10 +1522,9 @@ def generateSignings(Team):
     return rec_dict
     
     
-
+# given the current season, compile all of the 20 teams in the league and create averages 
+# sort the GCA's, SCA's and create the parameters. 
 def createLeagueAvgs(League):
-    # given the current season, compile all of the 20 teams in the league and create averages 
-    # sort the GCA's, SCA's and create the parameters. 
     
     league_gsc = teamGSC.query.filter(teamGSC.league == League, teamGSC.season == current_season)
     league_gca = league_gsc.order_by(teamGSC.GCA90).all()
@@ -1637,6 +1576,7 @@ def createLeagueAvgs(League):
 
     return dict_list
 
+#obtain a team's goals p90, assists p90, expected goals p90, expected assists p90
 def obtainTeamStats(team):
     teamDataList = []
     teamDataList.append(team.GlsP90)
@@ -1645,6 +1585,7 @@ def obtainTeamStats(team):
     teamDataList.append(team.xAP90)
     return teamDataList
 
+#Obtains the league's average of stats of goals p90, assists p90, expected goals p90, expected assists p90
 def obtainTeamAvgStats(teams):
     teamList = [[],[],[],[]]
     for team in teams:
@@ -1659,6 +1600,7 @@ def obtainTeamAvgStats(teams):
     
     return lstAvg
 
+#Page of graphs including age, minutes, etc
 @app.route('/team/<Team>/graphs')
 def graphs(Team, viewed_season = current_season):
     try:
@@ -1763,7 +1705,7 @@ def obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation):
     return [[offenseLabels, offenseData], [defenseLabels, defenseData], [passingLabels, passingData],
     [passingLabels2, passingData2], [gsCLabels, gsCData]]
 
-
+#Creates average stats of every player in the league
 def obtainAvgStats(teamDef, teamAtt, teamPass, teamGSC):
     teamDefData = [[],[],[],[],[],[]]
     teamDefAvgData = []
@@ -1826,6 +1768,7 @@ def obtainAvgStats(teamDef, teamAtt, teamPass, teamGSC):
 
     return [teamDefAvgData, teamAttAvgData, teamPassAvgData, teamGSCAvgData]
 
+#Obtains a GK's specific stats
 def obtainGKStats(GKStats):
     #Passing segments
     gkPassLabels = ["Thrown", "Launched", "Short"]
@@ -1846,6 +1789,7 @@ def obtainGKStats(GKStats):
     
     return [gkPassLst, gkShotLst, gkMiscLst]
 
+#Obtain the average of a set of GK's stats
 def obtainAvgGKStats(oppGKStats):
     gkShotStats = [[], [], []]
     gkAvgShotData = []
@@ -1870,6 +1814,7 @@ def obtainAvgGKStats(oppGKStats):
     
     return [gkAvgShotData, gkAvgMiscData]
 
+#Page to a player, includes graphs of shooting, passing, and defense
 @app.route('/player/<Player>')
 def players(Player, viewed_season = current_season):
     try:
@@ -1951,6 +1896,7 @@ def players(Player, viewed_season = current_season):
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+#Page that acts as a legend of terminology
 @app.route('/terms')
 def terms():
     try:
@@ -1960,6 +1906,7 @@ def terms():
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+#Page that contains a giant table of all the players in a league
 @app.route('/<League>/LeaguePlayers')
 def LeaguePlayers(League, viewed_season = current_season):
     try:
