@@ -4,54 +4,14 @@ import datetime
 import time
 import pandas as pd
 
-
-
+#Class that generates all of the sql db tables and creates the db file
 
 seasonlst = ["2020-2021", "2019-2020", "2018-2019"]
-# fbref = Fbref.Fbref()
 
-# #Need to swap these when running
-# fbref.scrapeFbref("2020-2021")
-# fbref.scrapeFbref("2019-2020")
-# fbref.scrapeFbref("2018-2019")
-
-# # fbrefMain.counter+=1
-# # print(fbrefMain.counter)
-# fbref.createMegaTeamDFs()
-# fbref.createRecommendorDFs()
-# engine = create_engine('sqlite:///fbref.db')
-# fbref.getMLT().to_sql("combined_leagues", engine, if_exists='append')
-# fbref.getMSS().to_sql("team_overview", engine, if_exists='append')
-# fbref.getMTSS().to_sql("player_overview", engine, if_exists='append')
-# fbref.getMTOS().to_sql("player_offensive", engine, if_exists='append')
-# fbref.getMTDS().to_sql("player_defensive", engine, if_exists='append')
-# fbref.getMTPS().to_sql("player_passing", engine, if_exists='append')
-# fbref.getMTGKS().to_sql("goalkeeping", engine, if_exists='append')
-# fbref.getMTGSCS().to_sql("goal_shot_creation", engine, if_exists='append')
-# fbref.getMTPOSS().to_sql("possession", engine, if_exists='append')
-# fbref.getOffenseRec().to_sql("offense_rec", engine, if_exists='append')
-# fbref.getDefenseRec().to_sql('defense_rec', engine, if_exists='append')
-# fbref.getMLGSC().to_sql('team_gsc', engine, if_exists='append')
-# fbref.getMLPS().to_sql('team_passing', engine, if_exists='append')
-
-# for season in seasonlst:
-#     print("Waiting 300 seconds")
-#     time.sleep(300)
-#     fbref.scrapeFbref(season)
-# class fbrefMain:
-#
-#     def obtainDFs(self, fbref, year):
-#         fbref.scrapeFbref(year)
-#         fbref.createMegaTeamDFs()
-#         fbref.createRecommendorDFs()
-#         return [fbref.getMLT(), fbref.getMSS(), fbref.getMTSS(), fbref.getMTOS(), fbref.getMTDS, fbref.getMTPS,
-#                 fbref.getMTGKS, fbref.getMTGSCS(), fbref.getMTPOSS(), fbref.getOffenseRec(), fbref.getDefenseRec()]
-
-
-# fbref = Fbref.Fbref()
-#
-# test.obtainDFs(fbref, "2020-2021")
+#Connects the engine
 engine = create_engine('sqlite:///fbref.db')
+
+#Iterates through the season and creates all of the files
 for i in range(len(seasonlst)):
     fbref = Fbref.Fbref()
     print("30 second pause")
@@ -76,7 +36,7 @@ for i in range(len(seasonlst)):
         fbref.getMLDS().to_sql('team_defense', engine, if_exists='replace')
         fbref.getMLSS().to_sql('team_shooting', engine, if_exists='replace')
         fbref.getMTPTS().to_sql('player_playtime', engine, if_exists='replace')
-    else:
+    else: #If not the first season in the list, append
         fbref.getMLT().to_sql("combined_leagues", engine, if_exists='append')
         fbref.getMSS().to_sql("team_overview", engine, if_exists='append')
         fbref.getMTSS().to_sql("player_overview", engine, if_exists='append')
@@ -96,9 +56,9 @@ for i in range(len(seasonlst)):
     
 
 
-#Part taken from dbCreatorClass
+#This area is needed to fix all the indices in the tables
 print("FIXING INDICES")
-# engine = create_engine('sqlite:///fbref.db')
+
 cL = pd.read_sql('combined_leagues', engine).drop(columns=['index']).reset_index(drop=True)
 cL.to_sql('combined_leagues', engine, if_exists='replace')
 

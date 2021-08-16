@@ -1521,7 +1521,6 @@ def generateSignings(Team):
     #print(rec_dict)
     return rec_dict
     
-    
 # given the current season, compile all of the 20 teams in the league and create averages 
 # sort the GCA's, SCA's and create the parameters. 
 def createLeagueAvgs(League):
@@ -1920,34 +1919,26 @@ def LeaguePlayers(League, viewed_season = current_season):
 
 #Finds the most lethal forwards, creative forwards, and dribbling/1v1 forwards
 def findBestFW(League, age, tier, minutes, viewed_season):
-    #print("finding FW")
     #Shots/Goals Type FW
     fwOStats = playerOffensive.query.filter(playerOffensive.League == League, playerOffensive.Position.contains("FW"), playerOffensive.minutes >= minutes,
                 playerOffensive.Age <= age, playerOffensive.tier >= tier, playerOffensive.season == viewed_season)
     #print(type(fwOStats))
     fwOPlayers = fwOStats.order_by(playerOffensive.Gls.desc(), playerOffensive.GlsP90.desc(), playerOffensive.xG.desc()).limit(10)
-    # for player in fwOPlayers:
-    #     print(player.Name)
     
     #Creative stuff
     fwCStats = gsCreation.query.filter(gsCreation.League == League, gsCreation.Position.contains("FW"), gsCreation.minutes >= minutes,
                 gsCreation.Age <= age, gsCreation.tier >= tier, gsCreation.season == viewed_season)
     fwCPlayers = fwCStats.order_by(gsCreation.GCAP90.desc(), gsCreation.SCAP90.desc()).limit(10)
-    # for player in fwCPlayers:
-    #     print(player.Name)
-
 
     #Haven't implemented the ball carrying stuff
     fwDStats = possession.query.filter(possession.League == League, possession.Position.contains("FW"), possession.minutes >= minutes,
                 possession.Age <= age, possession.tier >= tier, possession.season == viewed_season)
     fwDPlayers = fwDStats.order_by(possession.DribP90.desc(), possession.DribSuccP.desc(), possession.TAPP90.desc(), possession.CarriesCPAP90.desc()).limit(10)
-    # for player in fwDPlayers:
-    #     print(player.Name)
+    
     return [fwOPlayers, fwCPlayers, fwDPlayers]
 
 #Find the most creative midfielder, passing midfielder, and defensive midfielder
 def findBestMF(League, age, tier, minutes, viewed_season):
-    #print("finding MF")
     #CAM section
     mfCStats = gsCreation.query.filter(gsCreation.League == League, gsCreation.Position.contains("MF"), gsCreation.minutes >= minutes,
                     gsCreation.Age <= age, gsCreation.tier >= tier, gsCreation.season == viewed_season)
@@ -1967,28 +1958,22 @@ def findBestMF(League, age, tier, minutes, viewed_season):
 
 #Find the best offensive DF, passing DF, and defender (lol)
 def findBestDF(League, age, tier, minutes, viewed_season):
-    #print("Finding DF")
     #offensive df
     dfOStats = playerOffensive.query.filter(playerOffensive.League == League, playerOffensive.Position == "DF", playerOffensive.minutes >= minutes
                 , playerOffensive.Age <= age, playerOffensive.tier >= tier, playerOffensive.season == viewed_season)
     dfOPlayers = dfOStats.order_by(playerOffensive.Gls.desc(), playerOffensive.SoTP90.desc()).limit(10)
-    # for player in dfOPlayers:
-    #     print(player.Name)
     
     #Passing DF LPP90, 
     dfPStats = playerPassing.query.filter(playerPassing.League == League, playerPassing.Position == "DF", playerPassing.minutes >= minutes,
                 playerPassing.Age <= age, playerPassing.tier >= tier, playerPassing.season == viewed_season)
     dfPPlayers = dfPStats.order_by(playerPassing.LPP.desc(), playerPassing.FTP90.desc(), playerPassing.ProgP90.desc()).limit(10)
-    # for player in dfPPlayers:
-    #     print(player.Name)
 
     #Not REALLY Satisfied with this one, data could be updated. Seems to be that 
     #defensive df
     dfDStats = playerDefensive.query.filter(playerDefensive.League == League, playerDefensive.Position == "DF", playerDefensive.minutes >= minutes,
                 playerDefensive.Age <= age, playerDefensive.tier >= tier, playerDefensive.season == viewed_season)
     dfDPlayers = dfDStats.order_by(playerDefensive.TklRate.desc(), playerDefensive.TklIntP90.desc(), playerDefensive.BlkP90.desc(), playerDefensive.tier,).limit(10)
-    # for player in dfDPlayers:
-    #     print(player.Name)
+    
     return [dfOPlayers, dfPPlayers, dfDPlayers]
 
 #Page that shows the top players in the league
@@ -1997,7 +1982,6 @@ def topplayers(League, viewed_season = current_season):
     try:
         players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0).all()
         # Three methods, forwards, midfielders, defenders
-
         #age under 50, tier 1 or higher, at least 1000 minutes
         fwList = findBestFW(League, 50, 1, 1000, viewed_season)
         mfList = findBestMF(League, 50, 1, 1000, viewed_season)

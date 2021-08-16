@@ -6,12 +6,14 @@ import FbrefTeam as FbT
 import time
 import random
 
+#Class representation of a league
 class FbrefLeague:
     baseLink = "https://fbref.com"
 
     def __init__(self, link, year):
         self.link = link
 
+        #Sets up the league's name
         leagueStr = self.link.rsplit('/', 1)[-1].split('-')
         if(len(leagueStr) > 3):
             self.leagueName = ' '.join(leagueStr[2:len(leagueStr) - 1])
@@ -23,6 +25,7 @@ class FbrefLeague:
         #print(self.leagueName)
         #self.teams LIST OF ALL FBREFTEAM CLASSES EXIST
 
+        #Scrapes the site and creates all of the tables from the league site
         self.scrape_league_site()
         #print(self.tables)
         self.makeLeagueTableDF()
@@ -34,7 +37,7 @@ class FbrefLeague:
 
         #print(self.leagueName)
 
-    #method opens the link and obtains a table of all the tables so future methods can be added to scrape the other tables
+    # method opens the link and obtains a table of all the tables so future methods can be added to scrape the other tables
     # later down the line
     def scrape_league_site(self):
         source = urllib.request.urlopen(self.link)
@@ -44,6 +47,7 @@ class FbrefLeague:
         self.tables = tables
         #print(self.tables)
 
+    #Creates the general league table
     def makeLeagueTableDF(self):
         league_teams = []
         table = self.tables[0]
@@ -131,6 +135,7 @@ class FbrefLeague:
         # for team in self.teams:
         #     print(team.getTeamName())
 
+    #Creates the table of squad statistics
     def makeSquadStatsTable(self):
         table = self.tables[2]
         tbody = table.find("tbody")
@@ -181,14 +186,14 @@ class FbrefLeague:
         #print(squadStatsPD)
         self.squadStatsDF = squadStatsPD
 
+    #Creates the goal shot creation table
     def makeSquadGSCTable(self):
         table = self.tables[14]
         #print(table)
         tbody = table.find("tbody")
         teamOrder = self.league_table.sort_values(by="Team").reset_index(drop=True)[
             "Team"].to_list()  # Team names in alphabetical order
-        #print(teamOrder)
-        # print(len(teamOrder))
+        
         rows = tbody.find_all("tr")
         pd_table_list = []
         for x in range(len(rows)):
@@ -231,7 +236,8 @@ class FbrefLeague:
         squadStatsPD = squadStatsPD.assign(tier = tier_col)
 
         self.squadGSCDF = squadStatsPD
-
+    
+    #Creates the league shooting table
     def makeSquadShootingTable(self):
         table = self.tables[8]
         # print(table)
@@ -283,6 +289,7 @@ class FbrefLeague:
 
         self.squadShootingDF = squadStatsPD
 
+    #Creates the league passing table
     def makeSquadPassingTable(self):
         table = self.tables[10]
         #print(table)
@@ -352,6 +359,7 @@ class FbrefLeague:
 
         self.squadPassingDF = squadStatsPD
 
+    #Creates the league defense table
     def makeSquadDefenseTable(self):
         table = self.tables[16]
         #print(table)

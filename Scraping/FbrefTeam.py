@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 
-
+#Representation of the team and scrapes the specific team's page with a given season as well
 class FbrefTeam:
     tier1 = [1, 2, 3, 4]
     tier2 = [5, 6, 7, 8]
@@ -13,6 +13,7 @@ class FbrefTeam:
     tier4 = [15, 16, 17, 18, 19, 20]
     tiers = [tier1, tier2, tier3, tier4]
 
+    #Initializes the fbrefteam instance
     def __init__(self, link, position, leagueName, season):
         self.link = link
         #(self.link)
@@ -22,13 +23,7 @@ class FbrefTeam:
         #print(self.leagueName)
         self.season = season
 
-        #fix the links
-        # newlink = self.link.rsplit('/', 1)
-        # nLP1 = newlink[0]
-        # nLP2 = newlink[1]
-        # self.link = (nLP1 + f'/{self.season}/'+nLP2)
-        # print(self.link)
-        #tier bit
+        #Assigns the proper 'tier' based off the position
         self.position = position
         for i in range(len(FbrefTeam.tiers)):
             tier = FbrefTeam.tiers[i]
@@ -39,6 +34,7 @@ class FbrefTeam:
         #print("Scraping")
         self.scrape_site()
 
+        #Makes all of the team-specific tables
         self.makeStandardTable()
         self.makeDefensiveTable()
         self.makeOffensiveTable()
@@ -52,21 +48,19 @@ class FbrefTeam:
         self.leagueData = []
         self.squadData = []
 
-
+    #Scrapes the site link and obtain all the tables html code, sets up the creation of the team specific tables
     def scrape_site(self):
-        # time.sleep(random.randint(5, 10))
         source = urllib.request.urlopen(self.link)
         soup = BeautifulSoup(source, "lxml")
         # print(soup)
         tables = soup.find_all("table")
-        # if(self.getTeamName() == "Wolfsburg"):
-        #     #print(soup)
-        #     print(tables)
         self.tables = tables
 
+    #Returns the team name
     def getTeamName(self):
         return self.team
 
+    #Makes the standard team table
     def makeStandardTable(self):
         table = self.tables[0]
         #print(table)
@@ -115,7 +109,7 @@ class FbrefTeam:
         #print(pd_table)
         self.standardTable = pd_table
 
-
+    #Makes the team defensive table
     def makeDefensiveTable(self):
         defensiveTable = self.tables[8] #index 8 is the defensive action
         #print(defensiveTable)
@@ -148,9 +142,7 @@ class FbrefTeam:
                 else:
                     playerStats.append(int(val))
             teamStats.append(playerStats)
-            #print(playerStats)
-            #print("#################################################################################")
-        #print(teamStats)
+           
         cols = ["Name", "Nation", "Position", "Age", "Nineties", "Tkl", "TklW", "Def3rd", "Mid3rd", "Att3rd",
                    "TklDribble", "TklAttDribble", "TklPctDribble", "Past", "Pressures", "PressureSuccess",
                    "PressurePct", "PDef3rd", "PMid3rd", "PAtt3rd", "Blocks", "ShotBlk", "ShSv", "BlkPass",
@@ -181,6 +173,7 @@ class FbrefTeam:
         self.teamDefDF = teamDefenseDF
         #print(self.teamDF)
 
+    #Makes the team offensive table
     def makeOffensiveTable(self):
         table = self.tables[4]
         #print(table)
@@ -233,6 +226,7 @@ class FbrefTeam:
 
         self.offensiveTable = pd_table
 
+    #Make the team passing table
     def makePassingTable(self):
         table = self.tables[5]
         #print(table)
@@ -290,6 +284,7 @@ class FbrefTeam:
         #(pd_table)
         self.passTable = pd_table
 
+    #Make the team Goalkeeping table
     def makeGKTable(self):
         table = self.tables[3]
         tbody = table.find("tbody")
@@ -351,6 +346,7 @@ class FbrefTeam:
         #print(pd_table)
         self.GKTable = pd_table
 
+    #Make the team shot creation table
     def makeGSCreationTable(self):
         table = self.tables[7]
         tbody = table.find("tbody")
@@ -400,6 +396,7 @@ class FbrefTeam:
         #print(pd_table)
         self.GSCreationTable = pd_table
 
+    #Make the team possession table
     def makePossessionTable(self):
         table = self.tables[9]
         tbody = table.find("tbody")
@@ -461,6 +458,7 @@ class FbrefTeam:
 
         self.possessionTable = pd_table
     
+    #Make the team minutes/playtime table
     def makePlaytimeTable(self):
         table = self.tables[10]
         tbody = table.find("tbody")
@@ -559,6 +557,7 @@ class FbrefTeam:
         #print(self.squadData)
         return self.squadData
 
+    #Legacy recommender methods below, maybe delete.
     def analyzeTeam(self):
         #log = []
         teamData = self.getLeagueData()

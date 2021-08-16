@@ -6,32 +6,30 @@ import FbrefLeague as FL
 import time
 import random
 
+#Class that scrapes a season and creates the megatables
 class Fbref:
     baseLink = "https://fbref.com"
     compLink = "https://fbref.com/en/comps/"
     years = ["2018-2019", "2019-2020", "2020-2021"]
 
+    #Initializes the Fbref instance
     def __init__(self):
         print("Initializing Fbref")
         self.obtainLeagueLinks()
         #self.scrapeFbref()
 
+    #Method that goes to the fbref competitions link and finds the "big 5" to find the links to the leagues
     def obtainLeagueLinks(self):
         leagueLinks = []
         # should properly scrape the leaguelinks
         source = urllib.request.urlopen(Fbref.compLink)
         soup = BeautifulSoup(source, "lxml")
-        # print(soup)
         topLeaguesHTML = soup.find(id="all_comps_club")
-        # print(topLeaguesHTML.find("tbody"))
-        topLeagueHistories = topLeaguesHTML.find("tbody").find_all("tr")[0:5]
-        # self.scrapeFbref()
+        topLeagueHistories = topLeaguesHTML.find("tbody").find_all("tr")[0:5] #First 5 are the top 5 EU leagues
         historyEndings = []
-        #print(topLeagueHistories)
         for item in topLeagueHistories:
             historyEndings.append(item.find('a', href=True)["href"])
 
-        #print(historyEndings)
 
         for ending in historyEndings:
             linkSource = urllib.request.urlopen(Fbref.baseLink+ending)
@@ -55,6 +53,7 @@ class Fbref:
         self.leagueLinks = leagueLinks
         #print(self.leagueLinks)
 
+    #Given the year, create the links to the 5 leagues at the specific season and scrapes all of the information
     def scrapeFbref(self, year):
         index = 0
         for i in range(len(self.years)):
@@ -91,6 +90,7 @@ class Fbref:
     #     #print(megaDF)
     #     return megaDF
 
+    #Creates the tables
     def createMegaTeamDFs(self):
         megaLeagueTable = []
         megaSquadStats = []
@@ -154,6 +154,7 @@ class Fbref:
         self.MLSS = MLSS
         self.MTPTS = MTPTS
 
+    #Obsolete method delete soon
     def createRecommendorDFs(self):
         offenseLst = []
         defenseLst = []
@@ -175,6 +176,8 @@ class Fbref:
         self.offenseRec = pd.concat(offenseLst).reset_index(drop=True)
         self.defenseRec = pd.concat(defenseLst).reset_index(drop=True)
 
+
+    #GETTER METHODS FOR ALL OF THE MEGA TABLES BELOW
     def getMLT(self):
         return self.MLT
 
