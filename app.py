@@ -1918,6 +1918,7 @@ def LeaguePlayers(League, viewed_season = current_season):
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+#Finds the most lethal forwards, creative forwards, and dribbling/1v1 forwards
 def findBestFW(League, age, tier, minutes, viewed_season):
     #print("finding FW")
     #Shots/Goals Type FW
@@ -1944,6 +1945,7 @@ def findBestFW(League, age, tier, minutes, viewed_season):
     #     print(player.Name)
     return [fwOPlayers, fwCPlayers, fwDPlayers]
 
+#Find the most creative midfielder, passing midfielder, and defensive midfielder
 def findBestMF(League, age, tier, minutes, viewed_season):
     #print("finding MF")
     #CAM section
@@ -1963,6 +1965,7 @@ def findBestMF(League, age, tier, minutes, viewed_season):
     
     return [mfCPlayers, mfPPlayers, mfDPlayers]
 
+#Find the best offensive DF, passing DF, and defender (lol)
 def findBestDF(League, age, tier, minutes, viewed_season):
     #print("Finding DF")
     #offensive df
@@ -1988,6 +1991,7 @@ def findBestDF(League, age, tier, minutes, viewed_season):
     #     print(player.Name)
     return [dfOPlayers, dfPPlayers, dfDPlayers]
 
+#Page that shows the top players in the league
 @app.route('/<League>/TopPlayers')
 def topplayers(League, viewed_season = current_season):
     try:
@@ -2005,6 +2009,7 @@ def topplayers(League, viewed_season = current_season):
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+#Page that thows the top prospects in the league
 @app.route('/<League>/TopProspects')
 def topprospects(League, viewed_season = current_season):
     try:
@@ -2022,6 +2027,7 @@ def topprospects(League, viewed_season = current_season):
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
 
+#Page that shows the league stats
 @app.route('/<League>/Stats')
 def leaguestats(League):
 
@@ -2041,9 +2047,6 @@ def leaguestats(League):
     gls_lst = [x[0] for x in shooting_dict.values()]
     xG_lst = [x[1] for x in shooting_dict.values()]
     xG_diff_lst = [x[4] for x in shooting_dict.values()]
-    # print(gls_lst)
-    # print(test_list)
-    # print(gsc_dict.keys())
 
     #Passing
     kp_lst = [x[0] for x in passing_dict.values()]
