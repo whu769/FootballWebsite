@@ -2059,7 +2059,10 @@ def leaguestats(League):
                             , defenseLabels = list(defense_dict.keys()), tklPData = defense_lists[0], d3pData = defense_lists[1], m3pData = defense_lists[2], a3pData = defense_lists[3])
 
 
+@app.route('/genesis')
+def genesis():
 
+    return render_template('genesis.html')
 # TEST USER username: test, password: 1234
 # TEST USER 2: username: test2, password:1234
 # Will be deleted everytime the fbrefMain is run, fix later
