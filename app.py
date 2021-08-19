@@ -12,6 +12,7 @@ from Twitter.tweetscraper import tweetscraper as TS
 
 
 app = Flask(__name__)
+# DELETE_ME test
 
 #Connecting the database
 db_name = "fbref.db"
