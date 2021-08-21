@@ -8,10 +8,12 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+from flask_bootstrap import Bootstrap
 from Twitter.tweetscraper import tweetscraper as TS
 
 
 app = Flask(__name__)
+Bootstrap(app)
 # DELETE_ME test
 
 #Connecting the database
