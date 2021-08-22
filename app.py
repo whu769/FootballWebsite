@@ -2065,6 +2065,18 @@ def leaguestats(League):
 def genesis():
 
     return render_template('genesis.html')
+
+#Bootstrap-ified pages
+@app.route('/testindex')
+def testindex():
+
+    return render_template('indexBS.html')
+
+@app.route('/testleague')
+def testleague():
+
+    return render_template('leagueBS.html')
+
 # TEST USER username: test, password: 1234
 # TEST USER 2: username: test2, password:1234
 # Will be deleted everytime the fbrefMain is run, fix later
