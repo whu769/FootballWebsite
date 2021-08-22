@@ -12,37 +12,62 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap');
 
+      .navbar-brand{
+        font-family: Blinker;
+        font-weight: 800;
+        color: #242417;
+        font-size: 36px;
+      }
+
+      .nav-link{
+        font-family: Blinker;
+        font-weight: 600;
+        color: #63635E;
+        font-size: 18px;
+      }
+
+      .navbar-togger-icon{
+        color: #242417;
+      }
+    </style>
 </head>
+
 <body>
     <div class="grid-container">
         <div class="grid-item item-1">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-                <a class="navbar-brand" href="#">Soccer Statistics</a>
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="#">wh-fbtracker</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                   <ul class="navbar-nav">
-                    <li class="nav-item active">
-                      <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <li class="nav-item active genesis">
+                      <a class="nav-link" href="#">Genesis</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Terms</a>
+                    <li class="nav-item glossary">
+                      <a class="nav-link" href="#">Glossary</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Login</a>
+                    <li class="nav-item league">
+                      <a class="nav-link" href="#">Browse By</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Register</a>
+                    <li class="nav-item season">
+                      <a class="nav-link" href="#">Season</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Genesis</a>
-                      </li>
+                    <li class="nav-item login">
+                        <a class="nav-link" href="#">Log in</a>
+                    </li>
+                    <li class="nav-item sign-in">
+                      <a class="nav-link" href="#">Sign in</a>
+                    </li>
                   </ul>
                 </div>
               </nav>
-        </div>
+          </div>
 
         <div class="grid-item item-2">
             <div id="carouselExampleIndicators" class="carousel slide" data-interval="false" data-ride="carousel" data-pause="hover">
@@ -100,6 +125,6 @@
                 </a>
               </div>
         </div>
-        
-</body>
+      </div>
+  </body>
 </html>
