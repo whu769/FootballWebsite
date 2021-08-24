@@ -84,23 +84,31 @@
           <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Login Modal</h5>
+                <!-- <h5 class="modal-title" id="exampleModalLabel">Login Modal</h5> -->
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
+                  Close X
                 </button>
               </div>
               <div class="modal-body">
-                <form method="POST" action="">
+                <img class="d-block w-100" src="..." alt="Picture Placeholder">
+                <form id="loginModal" method="POST" action="">
                   {{form.hidden_tag()}}
-                  {{form.username}}
-                  {{form.password}}
-                  {{form.submit}}
+                  <label class="login-label username">Username: </label>
+                  <span class="text-input">{{form.username}}</span>
+                  <label class="break"></label>
+                  <label class="login-label password">Password: </label>
+                  <span class="text-input">{{form.password}}</span>
+
+                  <div class="login-register">
+                    <div class="item"><a href="#">Register</a></div>
+                    <div class="item"><span id="submit-info">{{form.submit}}</span></div>
+                  </div>
                 </form>
               </div>
-              <div class="modal-footer">
+              <!-- <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary btn-sm">Save changes</button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
