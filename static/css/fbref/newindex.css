@@ -47,6 +47,27 @@ body, html{
     margin: auto;
 }
 
+ol.carousel-indicators {
+    position: absolute;
+    
+    
+    width: auto;
+  }
+  
+  ol.carousel-indicators li,
+  ol.carousel-indicators li.active {
+    float: left;
+    width: 15%;
+    height: 10px;
+    margin: 5px;
+    border-radius: 0;
+    border: 0;
+    background: rgba(99, 99, 94, 0.25);
+  }
+  
+  ol.carousel-indicators li.active {
+    background:  rgba(99, 99, 94, 0.75);
+  }
 
 /* Navbar CSS below */
 .navbar{
@@ -143,7 +164,7 @@ button.navbar-toggler{
 
 .text-input{
     padding: 20px;
-    margin-left: 15px;
+    margin-left: 12px;
 }
 
 .text-input input{
