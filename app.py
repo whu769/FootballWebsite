@@ -2067,13 +2067,21 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route('/testindex')
+@app.route('/testindex', methods = ["GET", "POST"])
 def testindex():
-
-    return render_template('indexBS.html')
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+    return render_template('indexBS.html',  form = form)
 
 @app.route('/testleague')
 def testleague():
+    
 
     return render_template('leagueBS.html')
 
