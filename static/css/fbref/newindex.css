@@ -29,21 +29,26 @@ body, html{
 .sr-only{
     color: black;
 }
-
-.carousel .carousel-indicators li {
-    background-color: #fff;
-    background-color: rgba(70, 70, 70, 0.25);
-}
   
-.carousel .carousel-indicators .active {
-    background-color: #444;
-}
+
+
 
 .carousel-caption h5, .carousel-caption p{
      font-size: medium;
      color: white;
 }
 
+.carousel-inner{
+    width: 100%;
+}
+
+#carouselExampleIndicators.carousel.slide{
+    width: 60%;
+    margin: auto;
+}
+
+
+/* Navbar CSS below */
 .navbar{
     margin-top: 4px;
     margin-bottom: 3px;
@@ -71,6 +76,13 @@ body, html{
 
   .row-2{
       margin-top: 15px;
+      /* display: flex;
+      flex-wrap: wrap; */
+      background-image: linear-gradient(90deg,#D9D9CE, #d9d9ce00);
+  }
+
+  .row-2 .col-7{
+    justify-content: center;
   }
 
   .dropdown-item{
@@ -180,6 +192,8 @@ label.break{
     margin-right: 15px;
     color:  #63635E;
 }
+
+
 
 @media (min-width: 1200px) {
     .nav-item{
