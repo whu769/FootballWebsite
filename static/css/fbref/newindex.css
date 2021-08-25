@@ -18,9 +18,11 @@ body, html{
     text-align: center;
     color:rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
-    overflow: hidden;
 }
 
+/* body{
+    overflow-x: auto;
+} */
 
 .carousel-item{
     min-height: 500px;
@@ -262,23 +264,74 @@ label.break{
         margin-left: 15px;
     }
 
-    .row-3 h1{
-        font-family: Blinker;
-        font-weight: 600;
-        font-size: 36px;
-    }
-
-    .row-3 table thead tr th{
-        font-family: Blinker;
-        font-weight: 400;
-        font-size: 21px;
-        padding: 0;
-    }
-
-    .row-3 .col{
-        margin: auto;
+    body{
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
 }
+
+h1#combined-league, h1#best-strikers{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+}
+
+/* .row-3 .col table thead tr th{
+    font-family: Blinker;
+    font-weight: 400;
+    font-size: 21px;
+    padding: 0;
+} */
+
+.table-responsive table.table-striped tbody tr td{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 21px;
+}
+
+.table-responsive table.table-striped thead tr th{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 21px;
+    color: rgb(36, 36, 23);
+}
+
+.row-3 .col{
+    margin: auto;
+}
+
+a.table-link{
+    font-size: 21px;
+    font-family: Inria Sans;
+    font-weight: 700;
+    color: rgb(99, 99, 94);
+    text-decoration: none;
+}
+
+a.table-link:hover{
+    text-decoration: underline;
+}
+
+.table-striped thead{
+    background-color: rgba(99, 99, 94, 0.25);
+}
+
+.table-striped tbody tr:nth-of-type(odd){
+    background-color: white;
+}
+
+.table-striped tbody tr:nth-of-type(even){
+    background-color: rgba(217, 217, 206, 0.6);
+}
+
+.table-striped tbody tr td{
+    padding-top: 15px;
+    color: rgb(99, 99, 94);
+}
+
+
+
+
   
 
 

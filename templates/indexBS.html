@@ -183,42 +183,76 @@
     </div>
     <div class="row row-3">
       <div class="col col-7">
-        <h1 id="combined-league">Top 20 Teams From the top 5 Leagues in {{viewed_season}}</h1>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col" data-toggle="tooltip" title="TOOLTIP">Team</th>
-              <th scope="col">League</th>
-              <th scope="col">Points</th>
-              <th scope="col">W</th>
-              <th scope="col">D</th>
-              <th scope="col">L</th>
-              <th scope="col">GF</th>
-              <th scope="col">GA</th>
-            </tr>
-          </thead>
-          <!-- Do the jinja repetition here -->
-        </table>
+        <div class="table-responsive">
+          <h1 id="combined-league">Top 20 Teams From the top 5 Leagues in {{viewed_season}}</h1>
+          <table class="table table-striped table-sm" id = "cl-table">
+            <thead>
+              <tr>
+                <th scope="col" data-toggle="tooltip" title="TOOLTIP">Team</th>
+                <th scope="col">League</th>
+                <th scope="col">Points</th>
+                <th scope="col">W</th>
+                <th scope="col">D</th>
+                <th scope="col">L</th>
+                <th scope="col">GF</th>
+                <th scope="col">GA</th>
+              </tr>
+            </thead>
+            {% for team in cL %}
+              <tr>
+                <th scope="col">
+                  <a href="{{url_for('teams', Team = team.Team)}}" class="table-link">{{team.Team}}</a>
+                </th>
+                <td>{{team.League}}</td>
+                <td>{{team.Pts}}</td>
+                <td>{{team.W}}</td>
+                <td>{{team.D}}</td>
+                <td>{{team.L}}</td>
+                <td>{{team.GF}}</td>
+                <td>{{team.GA}}</td>
+              </tr>
+            {% endfor %}
+
+            <!-- Do the jinja repetition here -->
+          </table>
+        </div>
       </div>
 
       <div class="w-100"></div>
 
       <div class="col col-7">
-        <h1 id="best-strikers">Top 20 Goal-Scorers From the Five Leagues in {{viewed_season}}</h1>
-        <table class="table table-striped">
-          <thead>
+        <div class="table-responsive">
+          <h1 id="best-strikers">Top 20 Goal-Scorers From the Five Leagues in {{viewed_season}}</h1>
+          <table class="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Player</th>
+                <th scope="col">Team</th>
+                <th scope="col">Age</th>
+                <th scope="col">Position</th>
+                <th scope="col">Goals</th>
+                <th scope="col">xG</th>
+                <th scope="col">GlsP90</th>
+              </tr>
+            </thead>
+            {% for player in players%}
             <tr>
-              <th scope="col">Player</th>
-              <th scope="col">Team</th>
-              <th scope="col">Age</th>
-              <th scope="col">Position</th>
-              <th scope="col">Goals</th>
-              <th scope="col">xG</th>
-              <th scope="col">GlsP90</th>
+              <th scope="col">
+                <a href="{{url_for('players', Player = player.Name)}}" class="table-link">{{player.Name}}</a>
+              </th>
+              <th scope="col">
+                <a href="{{url_for('teams', Team = player.Team)}}" class="table-link">{{player.Team}}</a>
+              </th>
+              <td>{{player.Age}}</td>
+              <td>{{player.Position}}</td>
+              <td>{{player.Gls}}</td>
+              <td>{{player.xG}}</td>
+              <td>{{player.GlsP90}}</td>
             </tr>
-          </thead>
-          <!-- Do the jinja repetition here -->
-        </table>
+            {% endfor %}
+            <!-- Do the jinja repetition here -->
+          </table>
+        </div>
       </div>
     </div>
 
