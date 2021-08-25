@@ -182,15 +182,29 @@
       </div>
     </div>
     <div class="row row-3">
-      <div class="col col-8">
-        <h1 id="combined-league">Top 20 Teams From the top 5 Leagues in {{SEASON}}</h1>
-      
+      <div class="col col-7">
+        <h1 id="combined-league">Top 20 Teams From the top 5 Leagues in {{viewed_season}}</h1>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col" data-toggle="tooltip" title="TOOLTIP">Team</th>
+              <th scope="col">League</th>
+              <th scope="col">Points</th>
+              <th scope="col">W</th>
+              <th scope="col">D</th>
+              <th scope="col">L</th>
+              <th scope="col">GF</th>
+              <th scope="col">GA</th>
+            </tr>
+          </thead>
+          <!-- Do the jinja repetition here -->
+        </table>
       </div>
 
       <div class="w-100"></div>
 
-      <div class="col col-8">
-        <h1 id="best-strikers">Top 20 Goal-Scorers From the Five Leagues in {{SEASON}}</h1>
+      <div class="col col-7">
+        <h1 id="best-strikers">Top 20 Goal-Scorers From the Five Leagues in {{viewed_season}}</h1>
         <table class="table table-striped">
           <thead>
             <tr>
@@ -203,9 +217,9 @@
               <th scope="col">GlsP90</th>
             </tr>
           </thead>
+          <!-- Do the jinja repetition here -->
         </table>
       </div>
-        <!-- Do the jinja repetition here -->
     </div>
 
 </body>

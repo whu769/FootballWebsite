@@ -2067,8 +2067,9 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route('/testindex', methods = ["GET", "POST"])
-def testindex():
+@app.route("/testindex", defaults={'viewed_season':'2020-2021'})
+@app.route('/testindex/<viewed_season>', methods = ["GET", "POST"])
+def testindex(viewed_season):
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
@@ -2077,12 +2078,20 @@ def testindex():
                 login_user(user)
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
-    return render_template('indexBS.html',  form = form)
+
+
+    players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
+    cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
+
+    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+
+    return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues)
+
 
 @app.route('/testleague')
 def testleague():
     
-
+   
     return render_template('leagueBS.html')
 
 # TEST USER username: test, password: 1234
