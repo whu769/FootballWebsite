@@ -2084,15 +2084,10 @@ def testindex(viewed_season):
     cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
 
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
-
-    return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues)
-
-
-@app.route('/testleague')
-def testleague():
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-   
-    return render_template('leagueBS.html')
+    return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues, seasons = seasons)
+
 
 # TEST USER username: test, password: 1234
 # TEST USER 2: username: test2, password:1234

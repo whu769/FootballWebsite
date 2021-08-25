@@ -329,6 +329,20 @@ a.table-link:hover{
     color: rgb(99, 99, 94);
 }
 
+.introduction .img-responsive{
+    width: 60%;
+    margin-top: 15px;
+}
+
+.introduction .title-text{
+    margin-top: 10px;
+    margin-left: -15px;
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 21px;
+    color: rgb(99, 99, 94);
+    text-align: left;
+}
 
 
 
