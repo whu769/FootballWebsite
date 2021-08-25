@@ -261,6 +261,23 @@ label.break{
         padding: 8px 105px 8px 8px;
         margin-left: 15px;
     }
+
+    .row-3 h1{
+        font-family: Blinker;
+        font-weight: 600;
+        font-size: 36px;
+    }
+
+    .row-3 table thead tr th{
+        font-family: Blinker;
+        font-weight: 400;
+        font-size: 21px;
+        padding: 0;
+    }
+
+    .row-3 .col{
+        margin: auto;
+    }
 }
   
 
