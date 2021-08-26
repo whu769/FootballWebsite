@@ -83,9 +83,7 @@ ol.carousel-indicators {
 
 /* Navbar CSS below */
 .navbar{
-    margin-top: 4px;
-    margin-bottom: 3px;
-    margin-left: 60px;
+    padding-top: .75em;
 }
 
 .navbar-brand{
@@ -93,7 +91,6 @@ ol.carousel-indicators {
     font-weight: 800;
     color: #242417;
     font-size: 40px;
-    margin-left: -30px;
   }
 
   .nav-link, .nav-text{
@@ -154,8 +151,6 @@ ul.navbar-nav div{
     font-size: 16px;
     
 }
-  
-
 
 .shadow-textbox {
     box-shadow: 0 2px 2px rgba(184, 192, 217, .4)
@@ -197,7 +192,6 @@ button.close{
 
 button.navbar-toggler{
     position: relative;
-    left: -100px;
 }
 
 .text-input{
@@ -260,62 +254,44 @@ li.dropdown .dropdown-menu {
 
 li.dropdown .dropdown-menu.show {
     visibility: visible;
-}
-
-#season-nav-dropdown {
-    margin-left: 14px;
+    display: block;
 }
 
 
-
-@media (min-width: 1200px) {
-    /* .nav-item{
-        margin-top: 5px;
-    }
-  
-    .genesis{
-        margin-left: 60px;
-    }
-  
-    .glossary{
-        margin-left: 30px;
-    }
-  
-    .league{
-        margin-left: 30px;
-    }
-  
-    .season-dropdown{
-        margin-left: 160px;
-    }
-  
-    .login{
-        margin-left: 140px;
-    }
-
-    .browse{
-        margin-left: 20px;
-        margin-right: -40px;
-    }
-
-    .season-text{
-        margin-right: -180px;
-        margin-left: 30px;
-    }
-
-    .season-dropdown{
-        margin-top: 10px;
-    } */
-
+@media (min-width: 1260px) {
     .nav-link#seasonDropdown{
         outline: .5px #78784D solid;
         border-radius: 2px;
         padding: 8px 105px 8px 8px;
         margin-left: 15px;
     }
+}
 
-    body{
-        overflow-y: scroll;
+@media (max-width: 1260px) {
+    nav.navbar{
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 991px) {
+    ul.navbar-nav {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    ul.navbar-nav div {
+        flex-direction: column;
+        align-items: center;
+    }
+    li.dropdown .dropdown-menu{
+        display: none;
+    }
+    .navbar-light .navbar-nav .nav-link {
+        padding: 7% 20%;
+    }
+    .nav-link.browse, .nav-link.season, .navbar-section.auth, li>.nav-item.browse-text, li>.nav-item.search-text {
+        margin-top: 7%;
     }
 }
 
