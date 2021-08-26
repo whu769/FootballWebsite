@@ -71,6 +71,16 @@ ol.carousel-indicators {
     background:  rgba(99, 99, 94, 0.75);
   }
 
+  .carousel-container{
+      width: 80%;
+      height: 80%;
+      
+  }
+
+  .carousel-container .row{
+      background-color: white;
+  }
+
 /* Navbar CSS below */
 .navbar{
     margin-top: 4px;
@@ -314,13 +324,6 @@ h1#combined-league, h1#best-strikers{
     font-weight: 600;
     font-size: 36px;
 }
-
-/* .row-3 .col table thead tr th{
-    font-family: Blinker;
-    font-weight: 400;
-    font-size: 21px;
-    padding: 0;
-} */
 
 .table-responsive table.table-striped tbody tr td{
     font-family: Inria Sans;
