@@ -8,7 +8,7 @@
   <title> Bootstrap Test</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/newindex.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/indexBS.css') }}">
 
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -68,7 +68,7 @@
                 <div class="dropdown-menu" id="season-nav-dropdown" aria-labelledby="navbarDropdown">
                   {% for season in seasons %}
                   <!-- WHEN MIGRATING CHANGE URL_FOR TO INDEX -->
-                  <a class="dropdown-item" href="{{url_for('testindex', viewed_season = season.season)}}">{{season.season}}</a>
+                  <a class="dropdown-item" href="{{url_for('index', viewed_season = season.season)}}">{{season.season}}</a>
                   {% endfor %}
                 </div>
               </li>
@@ -133,63 +133,107 @@
           </ol>
           <div class="carousel-inner">
             <div class="carousel-item active">
-              <div class="container carousel-container">
-                <div class="row">
-                  <div class="col">
-                    <img class="d-block w-100" src="..." alt="First slide">
+              <img class="d-block w-100" src="..." alt="Premier League">
+              <div class="carousel-caption d-none d-md-block">
+                <div class="featured-teams">
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Manchester United</a>
                   </div>
-                  <div class="w-100"></div>
-                  <div class="col">
-                    <div class="carousel-caption d-none d-md-block">
-                      <h5 class="text-secondary">First slide label</h5>
-                      <p class="text-secondary">link to first thingy</p>
-                    </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Liverpool</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Chelsea</a>
                   </div>
                 </div>
-                
-              </div>
-              <!-- <img class="d-block w-100" src="..." alt="First slide"> -->
-              <!-- <div class="carousel-caption d-none d-md-block">
-                <h5 class="text-secondary">First slide label</h5>
-                <p class="text-secondary">link to first thingy</p>
-              </div> -->
-            </div>
-            <div class="carousel-item">
-              <img class="d-block w-100" src="..." alt="Second slide">
-              <div class="carousel-caption d-none d-md-block">
-                <h5 class="text-secondary">Second slide label</h5>
-                <p class="text-secondary">link to second thingy</p>
               </div>
             </div>
             <div class="carousel-item">
-              <img class="d-block w-100" src="..." alt="Third slide">
+              <img class="d-block w-100" src="..." alt="La Liga">
               <div class="carousel-caption d-none d-md-block">
-                <h5 class="text-secondary">Third slide label</h5>
-                <p class="text-secondary">link to third thingy</p>
+                <div class="featured-teams">
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">FC Barcelona</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Real Madrid</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Athletico Madrid</a>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="carousel-item">
-              <img class="d-block w-100" src="..." alt="Fourth slide">
+              <img class="d-block w-100" src="..." alt="Ligue 1">
               <div class="carousel-caption d-none d-md-block">
-                <h5 class="text-secondary">Fourth slide label</h5>
-                <p class="text-secondary">link to fourth thingy</p>
+                <div class="featured-teams">
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">PSG</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Lille</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">AS Monaco</a>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="carousel-item">
-              <img class="d-block w-100" src="..." alt="Fifth slide">
+              <img class="d-block w-100" src="..." alt="Bundesliga">
               <div class="carousel-caption d-none d-md-block">
-                <h5 class="text-secondary">Fifth slide label</h5>
-                <p class="text-secondary">link to fifth thingy</p>
+                <div class="featured-teams">
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">FC Bayern</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Dortmund</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">RB Leipzig</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img class="d-block w-100" src="..." alt="Serie A">
+              <div class="carousel-caption d-none d-md-block">
+                <div class="featured-teams">
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Inter Milan</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">AC Milan</a>
+                  </div>
+                  <div class="feature">
+                    <img class="d-block w-100" src="..." alt="Img">
+                    <a class="icon-link" href="">Juventus</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Back</span>
+            <span class="sr-only"><</span>
           </a>
           <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
+            <span class="sr-only">></span>
+
           </a>
         </div>
       </div>

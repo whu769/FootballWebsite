@@ -788,18 +788,28 @@ def logout():
     print("Logged out!")
     return redirect(url_for('index', viewed_season = current_season))
 
+#TRANSPLANT NEWINDEXINTOINDEX
 #Index/main page
 @app.route("/", defaults={'viewed_season':'2020-2021'})
-@app.route('/<viewed_season>')
+@app.route('/<viewed_season>', methods=["GET", "POST"])
 def index(viewed_season):
-    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+
     players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
-    #print(players)
-    # for player in players:
-    #     print(player.season)
     cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
+
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
-    return render_template("index3.html", combinedLeague = cL, Leagues = leagues, Player = players, season = viewed_season)
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    
+    return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues, seasons = seasons)
  
 #Pages for the individual leagues
 @app.route('/league/<League>')
@@ -2070,23 +2080,23 @@ def genesis():
 @app.route("/testindex", defaults={'viewed_season':'2020-2021'})
 @app.route('/testindex/<viewed_season>', methods = ["GET", "POST"])
 def testindex(viewed_season):
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username = form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                print(user.id)
-                return redirect(url_for('dashboard', user_id = user.id))
+    # form = LoginForm()
+    # if form.validate_on_submit():
+    #     user = User.query.filter_by(username = form.username.data).first()
+    #     if user:
+    #         if bcrypt.check_password_hash(user.password, form.password.data):
+    #             login_user(user)
+    #             print(user.id)
+    #             return redirect(url_for('dashboard', user_id = user.id))
 
 
-    players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
-    cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
+    # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
+    # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
 
-    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
-    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    # leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    # seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-    return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues, seasons = seasons)
+    return render_template('leagueBS.html', viewed_season = viewed_season)
 
 
 # TEST USER username: test, password: 1234

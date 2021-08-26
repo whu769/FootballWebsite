@@ -45,7 +45,7 @@ body, html{
 }
 
 #carouselExampleIndicators.carousel.slide{
-    width: 60%;
+    width: 75%;
     margin: auto;
 }
 
@@ -81,6 +81,24 @@ ol.carousel-indicators {
       background-color: white;
   }
 
+  .featured-teams{
+      display: flex;
+      justify-content: center;
+  }
+
+
+
+  .featured-teams .feature a{
+      font-family: Blinker;
+      font-weight: 600;
+      font-size: 0.4em;
+      color: #242417;
+      text-decoration: none;
+  }
+
+  .carousel-control-prev .sr-only, .carousel-control-next .sr-only{
+      color: #78784D;
+  }
 /* Navbar CSS below */
 .navbar{
     padding-top: .75em;
