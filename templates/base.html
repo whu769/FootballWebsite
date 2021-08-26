@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/base.css') }}">
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+    </style>
+
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body>
+    <div class="row navbar-top shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="#">wh-fbtracker</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <div class="navbar-section site-nav">
+                        <li class="nav-item active genesis">
+                            <a class="nav-link" href="{{url_for('genesis')}}">Genesis</a>
+                        </li>
+                        <li class="nav-item glossary">
+                            <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
+                        </li>
+                        <li class="nav-item browse-text">
+                            <text class="nav-link browse">Browse By »</text>
+                        </li>
+                        <li class="nav-item league dropdown">
+                            <a class="nav-link shadow-textbox" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Choose League!</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% for league in leagues %}
+                                <a class="dropdown-item"
+                                    href="{{url_for('leagues', League = league.League)}}">{{league.League}}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                        <li class="nav-item season-text">
+                            <text class="nav-link season">Season</text>
+                        </li>
+                        <li class="nav-item season-dropdown dropdown">
+                            <a class="nav-link shadow-textbox" href="#" id="seasonDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{viewed_season}}</a>
+                            <div class="dropdown-menu" id="season-nav-dropdown" aria-labelledby="navbarDropdown">
+                                {% for season in seasons %}
+                                <!-- WHEN MIGRATING CHANGE URL_FOR TO INDEX -->
+                                <!-- Need to do something about this for the base template -->
+                                <a class="dropdown-item"
+                                    href="{{url_for('index', viewed_season = season.season)}}">{{season.season}}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    </div>
+                    <div class="navbar-section auth">
+                        <li class="nav-item login">
+                            <a class="nav-link" data-toggle="modal" data-target="#exampleModal" href="#">Log in</a>
+                        </li>
+                        <li class="nav-item register">
+                            <a class="nav-link" href="{{url_for('register')}}">Register</a>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <!-- <h5 class="modal-title" id="exampleModalLabel">Login Modal</h5> -->
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                Close X
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <img class="d-block w-100" src="..." alt="Picture Placeholder">
+                            <form id="loginModal" method="POST" action="">
+                                {{form.hidden_tag()}}
+                                <label class="login-label username">Username: </label>
+                                <span class="text-input">{{form.username}}</span>
+                                <label class="break"></label>
+                                <label class="login-label password">Password: </label>
+                                <span class="text-input">{{form.password}}</span>
+
+                                <div class="login-register">
+                                    <div class="item"><a href="#">Register</a></div>
+                                    <div class="item"><span id="submit-info">{{form.submit}}</span></div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-sm">Save changes</button>
+              </div> -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    {% block body %}
+    {% endblock %}
+</body>
+
+</html>

@@ -22,7 +22,21 @@ body, html{
     background-color: rgb(255, 255, 255);
 }
 
-.row{
-    background-color: whitesmoke;
-    
+.container-fluid{
+    padding-top: 5px;
+    padding-left: .25em;
+}
+
+/* Cookies css */
+.cookies{
+    display: flex;
+    justify-content: flex-start;
+    font-family: Blinker;
+    font-weight: 600;
+    color: #63635E;
+}
+
+.cookies .cookie-option{
+    margin: .25em;
+    font-size: 12px;
 }

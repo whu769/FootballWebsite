@@ -1,0 +1,393 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 30px;
+  }
+
+head{
+    margin: 0;
+    text-align: center;
+    color:rgb(0, 0, 0);
+    font-size: x-large;
+    }
+
+
+body, html{
+    margin: 0;
+    text-align: center;
+    color:rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+}
+
+/* body{
+    overflow-x: auto;
+} */
+
+.carousel-item{
+    min-height: 500px;
+}
+
+.sr-only{
+    color: black;
+}
+  
+
+
+
+.carousel-caption h5, .carousel-caption p{
+     font-size: medium;
+     color: white;
+}
+
+.carousel-inner{
+    width: 100%;
+}
+
+#carouselExampleIndicators.carousel.slide{
+    width: 75%;
+    margin: auto;
+}
+
+ol.carousel-indicators {
+    position: absolute;
+    
+    
+    width: auto;
+  }
+  
+  ol.carousel-indicators>li,
+  ol.carousel-indicators>li.active {
+    float: left;
+    width: 7%;
+    height: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 0;
+    background: rgba(99, 99, 94, 0.25);
+  }
+  
+  ol.carousel-indicators li.active {
+    background:  rgba(99, 99, 94, 0.75);
+  }
+
+  .carousel-container{
+      width: 80%;
+      height: 80%;
+      
+  }
+
+  .carousel-container .row{
+      background-color: white;
+  }
+
+  .featured-teams{
+      display: flex;
+      justify-content: center;
+  }
+
+
+
+  .featured-teams .feature a{
+      font-family: Blinker;
+      font-weight: 600;
+      font-size: 0.4em;
+      color: #242417;
+      text-decoration: none;
+  }
+
+  .carousel-control-prev .sr-only, .carousel-control-next .sr-only{
+      color: #78784D;
+  }
+/* Navbar CSS below */
+.navbar{
+    padding-top: .75em;
+}
+
+.navbar-brand{
+    font-family: Blinker;
+    font-weight: 800;
+    color: #242417;
+    font-size: 40px;
+  }
+
+  .nav-link, .nav-text{
+    font-family: Blinker;
+    font-size: 20px;
+    inline-size: max-content;
+  }
+
+  .navbar-togger-icon{
+    color: #242417;
+  }
+
+  .row-2{
+      margin-top: 15px;
+      /* display: flex;
+      flex-wrap: wrap; */
+      background-image: linear-gradient(90deg,#D9D9CE, #d9d9ce00);
+  }
+
+  .row-2 .col-7{
+    justify-content: center;
+  }
+
+  .season, .nav-link.browse{
+      color:  #78784D !important;
+      font-weight: 600;
+  }
+
+  ul.navbar-nav {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 97%;
+  }
+
+  ul.navbar-nav div li>a{
+    font-weight: 600;
+    color: #63635E !important;
+}
+
+ul.navbar-nav div li>a:hover{
+    font-weight: bold;
+    color: #63635E;
+    text-decoration: underline #B5B574;
+    text-decoration-thickness: 3px;
+}
+
+ul.navbar-nav div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dropdown-item{
+    font-family: Inria sans;
+    font-weight: 400;
+    color: #63635E;
+    font-size: 16px;
+    
+}
+
+.shadow-textbox {
+    box-shadow: 0 2px 2px rgba(184, 192, 217, .4)
+}
+
+.btn, .modal-body{
+    font-size: 16px;
+}
+
+.modal-title{
+    font-size: 20px;
+}
+
+.modal-content{
+    width: 375px;
+    height: 500px;
+}
+
+.modal-header{
+    height: 50px;
+}
+
+.modal-body{
+    margin-left: -5%;
+}
+
+button.close{
+    align-content: flex-end;
+    font-size: 13px;
+    width: 100px;
+    margin-left: 270px;
+    white-space: nowrap;
+    text-align: center;
+    font-family: Blinker;
+    font-weight: 600;
+    border: none;
+    background: none;
+}
+
+button.navbar-toggler{
+    position: relative;
+}
+
+.text-input{
+    padding: 20px;
+    margin-left: 12px;
+}
+
+.text-input input{
+    width: 300px;
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 16px;
+    color: #D9D9CE;
+}
+
+.text-input input:focus{
+    width: 300px;
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 16px;
+    color: #242417;
+}
+
+label.login-label{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+label.break{
+    flex-basis: 100%;
+    height: 0;
+}
+
+#submit-info input{
+    background: 0;
+    border-color: #78784D;
+    border-width: 0.5px;
+    font-size: 16px;
+}
+
+.login-register{
+    margin-top: 100px;
+    display: flex;
+    justify-content: flex-end;
+    font-family: Blinker;
+    font-weight: 600;
+}
+.item a{
+    font-size: 16px; 
+    margin-right: 15px;
+    color:  #63635E;
+}
+
+li.dropdown .dropdown-menu {
+    border-radius: .05rem;
+    flex-direction: column;
+    visibility: collapse;
+}
+
+li.dropdown .dropdown-menu.show {
+    visibility: visible;
+    display: block;
+}
+
+
+@media (min-width: 1260px) {
+    .nav-link#seasonDropdown{
+        outline: .5px #78784D solid;
+        border-radius: 2px;
+        padding: 8px 105px 8px 8px;
+        margin-left: 15px;
+    }
+}
+
+@media (max-width: 1260px) {
+    nav.navbar{
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 991px) {
+    ul.navbar-nav {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    ul.navbar-nav div {
+        flex-direction: column;
+        align-items: center;
+    }
+    li.dropdown .dropdown-menu{
+        display: none;
+    }
+    .navbar-light .navbar-nav .nav-link {
+        padding: 7% 20%;
+    }
+    .nav-link.browse, .nav-link.season, .navbar-section.auth, li>.nav-item.browse-text, li>.nav-item.search-text {
+        margin-top: 7%;
+    }
+}
+
+h1#combined-league, h1#best-strikers{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+}
+
+.table-responsive table.table-striped tbody tr td{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 21px;
+}
+
+.table-responsive table.table-striped thead tr th{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 21px;
+    color: rgb(36, 36, 23);
+}
+
+.row-3 .col{
+    margin: auto;
+}
+
+a.table-link{
+    font-size: 21px;
+    font-family: Inria Sans;
+    font-weight: 700;
+    color: rgb(99, 99, 94);
+    text-decoration: none;
+}
+
+a.table-link:hover{
+    text-decoration: underline;
+}
+
+.table-striped thead{
+    background-color: rgba(99, 99, 94, 0.25);
+}
+
+.table-striped tbody tr:nth-of-type(odd){
+    background-color: white;
+}
+
+.table-striped tbody tr:nth-of-type(even){
+    background-color: rgba(217, 217, 206, 0.6);
+}
+
+.table-striped tbody tr td{
+    padding-top: 15px;
+    color: rgb(99, 99, 94);
+}
+
+.introduction .img-responsive{
+    width: 60%;
+    margin-top: 15px;
+}
+
+.introduction .title-text{
+    margin-top: 10px;
+    margin-left: -15px;
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 21px;
+    color: rgb(99, 99, 94);
+    text-align: left;
+}
+
+
+
+  
+
+.navbar-top{
+    padding-left: .25em;
+}
+
+.navbar-toggler{
+    margin-right: 1em;
+}
