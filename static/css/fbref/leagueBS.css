@@ -27,16 +27,77 @@ body, html{
     padding-left: .25em;
 }
 
-/* Cookies css */
-.cookies{
-    display: flex;
+/* Breadcrumbs css */
+.breadcrumbs{
     justify-content: flex-start;
     font-family: Blinker;
     font-weight: 600;
     color: #63635E;
+
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
 }
 
-.cookies .cookie-option{
+.breadcrumbs .crumb-option{
     margin: .25em;
-    font-size: 12px;
+}
+
+.crumb-option a{
+    text-decoration: none;
+    color: #63635E;
+    padding-bottom: 10px;
+}
+
+.crumb-option a:hover{
+    text-decoration: underline;
+    color: #63635E;
+}
+
+.crumb-option p, .crumb-option a{
+    font-size: 18px;
+}
+
+/* Banner */
+.banner{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.banner-item{
+    margin: 1em;
+}
+
+.banner-item.numteams,  .banner-item.numplayers{
+    font-family: Inria Sans;
+    font-weight: 300;
+    font-size: 45px;
+    color: #4E76ED;
+}
+
+.banner-item{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 30px;
+    color: #242417;
+}
+
+.banner{
+    background-image: linear-gradient(90deg,#d9d9ce ,#d9d9ce00);
+}
+
+.banner-item.divider{
+    height: 90%;
+    width: .25%;
+    background-color:  #63635E;
+    color: #63635E;
+}
+
+.banner-item.divider p{
+    opacity: 0%;
+}
+
+.banner-item p{
+    margin-top: 1em;
 }
