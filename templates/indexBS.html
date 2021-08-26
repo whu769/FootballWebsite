@@ -38,45 +38,49 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
-            <li class="nav-item active genesis">
-              <a class="nav-link" href="{{url_for('genesis')}}">Genesis</a>
-            </li>
-            <li class="nav-item glossary">
-              <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
-            </li>
-            <li class="nav-item">
-              <text class="nav-link browse">Browse By »</text>
-            </li>
-            <li class="nav-item league dropdown">
-              <a class="nav-link shadow-textbox" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                Choose League!</a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                {% for league in leagues %}
-                <a class="dropdown-item" href="{{url_for('leagues', League = league.League)}}">{{league.League}}</a>
-                {% endfor %}
-              </div>
-            </li>
-            <li class="nav-item season-text">
-              <text class="nav-link season">Season</text>
-            </li>
-            <li class="nav-item season-dropdown dropdown">
-              <a class="nav-link shadow-textbox" href="#" id="seasonDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                {{viewed_season}}</a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                {% for season in seasons %}
-                <!-- WHEN MIGRATING CHANGE URL_FOR TO INDEX -->
-                <a class="dropdown-item" href="{{url_for('testindex', viewed_season = season.season)}}">{{season.season}}</a>
-                {% endfor %}
-              </div>
-            </li>
-            <li class="nav-item login">
-              <a class="nav-link" data-toggle="modal" data-target="#exampleModal" href="#">Log in</a>
-            </li>
-            <li class="nav-item register">
-              <a class="nav-link" href="{{url_for('register')}}">Register</a>
-            </li>
+            <div class="navbar-section site-nav">
+              <li class="nav-item active genesis">
+                <a class="nav-link" href="{{url_for('genesis')}}">Genesis</a>
+              </li>
+              <li class="nav-item glossary">
+                <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
+              </li>
+              <li class="nav-item">
+                <text class="nav-link browse">Browse By »</text>
+              </li>
+              <li class="nav-item league dropdown">
+                <a class="nav-link shadow-textbox" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+                  Choose League!</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  {% for league in leagues %}
+                  <a class="dropdown-item" href="{{url_for('leagues', League = league.League)}}">{{league.League}}</a>
+                  {% endfor %}
+                </div>
+              </li>
+              <li class="nav-item season-text">
+                <text class="nav-link season">Season</text>
+              </li>
+              <li class="nav-item season-dropdown dropdown">
+                <a class="nav-link shadow-textbox" href="#" id="seasonDropdown" role="button" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+                  {{viewed_season}}</a>
+                <div class="dropdown-menu" id="season-nav-dropdown" aria-labelledby="navbarDropdown">
+                  {% for season in seasons %}
+                  <!-- WHEN MIGRATING CHANGE URL_FOR TO INDEX -->
+                  <a class="dropdown-item" href="{{url_for('testindex', viewed_season = season.season)}}">{{season.season}}</a>
+                  {% endfor %}
+                </div>
+              </li>
+            </div>
+            <div class="navbar-section auth">
+              <li class="nav-item login">
+                <a class="nav-link" data-toggle="modal" data-target="#exampleModal" href="#">Log in</a>
+              </li>
+              <li class="nav-item register">
+                <a class="nav-link" href="{{url_for('register')}}">Register</a>
+              </li>
+            </div>
           </ul>
         </div>
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

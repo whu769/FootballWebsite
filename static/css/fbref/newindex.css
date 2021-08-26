@@ -56,13 +56,13 @@ ol.carousel-indicators {
     width: auto;
   }
   
-  ol.carousel-indicators li,
-  ol.carousel-indicators li.active {
+  ol.carousel-indicators>li,
+  ol.carousel-indicators>li.active {
     float: left;
-    width: 15%;
+    width: 7%;
     height: 10px;
     margin: 5px;
-    border-radius: 0;
+    border-radius: 5px;
     border: 0;
     background: rgba(99, 99, 94, 0.25);
   }
@@ -88,9 +88,8 @@ ol.carousel-indicators {
 
   .nav-link, .nav-text{
     font-family: Blinker;
-    font-weight: 600;
-    color: #63635E;
     font-size: 20px;
+    inline-size: max-content;
   }
 
   .navbar-togger-icon{
@@ -108,17 +107,44 @@ ol.carousel-indicators {
     justify-content: center;
   }
 
-  .dropdown-item{
-      font-family: Inria sans;
-      font-weight: 400;
-      color: #63635E;
-      font-size: 16px;
-      
+  .season, .nav-link.browse{
+      color:  #78784D !important;
+      font-weight: 600;
   }
 
-  .season{
-      color:  #78784D !important;
+  ul.navbar-nav {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 97%;
   }
+
+  ul.navbar-nav div li>a{
+    font-weight: 600;
+    color: #63635E !important;
+}
+
+ul.navbar-nav div li>a:hover{
+    font-weight: bold;
+    color: #63635E;
+    text-decoration: underline #B5B574;
+    text-decoration-thickness: 3px;
+}
+
+ul.navbar-nav div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dropdown-item{
+    font-family: Inria sans;
+    font-weight: 400;
+    color: #63635E;
+    font-size: 16px;
+    
+}
+  
 
 
 .shadow-textbox {
@@ -216,10 +242,24 @@ label.break{
     color:  #63635E;
 }
 
+li.dropdown .dropdown-menu {
+    border-radius: .05rem;
+    flex-direction: column;
+    visibility: collapse;
+}
+
+li.dropdown .dropdown-menu.show {
+    visibility: visible;
+}
+
+#season-nav-dropdown {
+    margin-left: 14px;
+}
+
 
 
 @media (min-width: 1200px) {
-    .nav-item{
+    /* .nav-item{
         margin-top: 5px;
     }
   
@@ -255,7 +295,7 @@ label.break{
 
     .season-dropdown{
         margin-top: 10px;
-    }
+    } */
 
     .nav-link#seasonDropdown{
         outline: .5px #78784D solid;
@@ -266,7 +306,6 @@ label.break{
 
     body{
         overflow-y: scroll;
-        overflow-x: hidden;
     }
 }
 
