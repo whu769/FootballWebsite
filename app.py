@@ -2077,9 +2077,9 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test", defaults={'viewed_season':'2020-2021'})
-@app.route('/test/<viewed_season>', methods = ["GET", "POST"])
-def test(viewed_season):
+@app.route("/test/<League>/", defaults={'viewed_season':'2020-2021'})
+@app.route('/test/<League>/<viewed_season>', methods = ["GET", "POST"])
+def test(viewed_season, League):
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
@@ -2095,8 +2095,12 @@ def test(viewed_season):
 
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
     
-    return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons)
+    # Test link for prem: http://localhost:5000/test/Premier%20League/
+    return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons
+                            , teams = teams, league = League)
 
 
 # TEST USER username: test, password: 1234

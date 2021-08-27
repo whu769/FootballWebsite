@@ -101,3 +101,50 @@ body, html{
 .banner-item p{
     margin-top: 1em;
 }
+
+/* main-content css */
+/* left col content */
+#teamtable, #superlatives, #quicklinks, #topscorers{
+    text-align: left;
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+    color: #242417;
+    padding-top: .5em;
+}
+
+/* team table */
+
+
+.league-table table tbody tr td a{
+    font-size: 21px;
+    color: #63635E;
+    text-decoration: none;
+}
+
+.league-table table tbody tr td a:hover{
+    text-decoration: underline;
+}
+
+.league-table td, .league-table th{
+    text-align: left;
+}
+
+/* quick links css */
+.quicklinks .links{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.links a{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 20px;
+    color: #63635E;
+    text-decoration: none;
+}
+
+.links a:hover{
+    text-decoration: underline;
+}
