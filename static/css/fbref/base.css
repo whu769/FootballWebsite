@@ -20,85 +20,6 @@ body, html{
     background-color: rgb(255, 255, 255);
 }
 
-/* body{
-    overflow-x: auto;
-} */
-
-.carousel-item{
-    min-height: 500px;
-}
-
-.sr-only{
-    color: black;
-}
-  
-
-
-
-.carousel-caption h5, .carousel-caption p{
-     font-size: medium;
-     color: white;
-}
-
-.carousel-inner{
-    width: 100%;
-}
-
-#carouselExampleIndicators.carousel.slide{
-    width: 75%;
-    margin: auto;
-}
-
-ol.carousel-indicators {
-    position: absolute;
-    
-    
-    width: auto;
-  }
-  
-  ol.carousel-indicators>li,
-  ol.carousel-indicators>li.active {
-    float: left;
-    width: 7%;
-    height: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    border: 0;
-    background: rgba(99, 99, 94, 0.25);
-  }
-  
-  ol.carousel-indicators li.active {
-    background:  rgba(99, 99, 94, 0.75);
-  }
-
-  .carousel-container{
-      width: 80%;
-      height: 80%;
-      
-  }
-
-  .carousel-container .row{
-      background-color: white;
-  }
-
-  .featured-teams{
-      display: flex;
-      justify-content: center;
-  }
-
-
-
-  .featured-teams .feature a{
-      font-family: Blinker;
-      font-weight: 600;
-      font-size: 0.4em;
-      color: #242417;
-      text-decoration: none;
-  }
-
-  .carousel-control-prev .sr-only, .carousel-control-next .sr-only{
-      color: #78784D;
-  }
 /* Navbar CSS below */
 .navbar{
     padding-top: .75em;
@@ -308,6 +229,7 @@ li.dropdown .dropdown-menu.show {
     .navbar-light .navbar-nav .nav-link {
         padding: 7% 20%;
     }
+
     .nav-link.browse, .nav-link.season, .navbar-section.auth, li>.nav-item.browse-text, li>.nav-item.search-text {
         margin-top: 7%;
     }
@@ -368,6 +290,7 @@ a.table-link:hover{
 .introduction .img-responsive{
     width: 60%;
     margin-top: 15px;
+    min-width: 200px;
 }
 
 .introduction .title-text{
