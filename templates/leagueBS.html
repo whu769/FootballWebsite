@@ -17,7 +17,7 @@
                 <p>»</p>
             </div>
             <div class="league crumb-option">
-                <a href="">League</a>
+                <a href="">{{league}}</a>
             </div>
             <div class="arrow crumb-option">
                 <p>»</p>
@@ -45,7 +45,7 @@
                 <p>teams</p>
             </div>
             <div class="banner-item numplayers">
-                <p class="val">NUMBER</p>
+                <p class="val">{{players|length}}</p>
             </div>
             <div class="banner-item players">
                 <p>players</p>
@@ -94,6 +94,33 @@
             </div>
             <div class="row superlatives">
                 <h1 id="superlatives">League Superlatives</h1>
+                <div class="superlatives-table shadow-sm">
+                    <div class="superlatives-item bo">
+                        <div class="superlative-title"><p>Best Offense</p></div>
+                        <div class="superlative-team"><a href="">{{bo.Team}}</a></div>
+                        <div class="superlative-value"><p class="val">{{bo.GF}} Goals Scored</p></div>
+                    </div>
+                    <div class="superlatives-item bd">
+                        <div class="superlative-title"><p>Best Defense</p></div>
+                        <div class="superlative-team"><a href="">{{bd.Team}}</a></div>
+                        <div class="superlative-value"><p class="val">{{bd.GA}} Goals Conceded</p></div>
+                    </div>
+                    <div class="superlatives-item wo">
+                        <div class="superlative-title"><p>Worst Offense</p></div>
+                        <div class="superlative-team"><a href="">{{wo.Team}}</a></div>
+                        <div class="superlative-value"><p class="val">{{wo.GF}} Goals Scored</p></div>
+                    </div>
+                    <div class="superlatives-item wd">
+                        <div class="superlative-title"><p>Worst Defense</p></div>
+                        <div class="superlative-team"><a href="">{{wd.Team}}</a></div>
+                        <div class="superlative-value"><p class="val">{{wd.GA}} Goals Conceded</p></div>
+                    </div>
+                    <div class="superlatives-item ggd">
+                        <div class="superlative-title"><p>Greatest GD</p></div>
+                        <div class="superlative-team"><a href="">{{ggd.Team}}</a></div>
+                        <div class="superlative-value"><p class="val">{{ggd.GD}} Goal Difference</p></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -111,25 +138,54 @@
             </div>
 
             <div class="row top-striker">
-                <div class="top-table">
+                <div class="top-table shadow-sm">
                     <div class="header">
                         <h1 id="topscorers">Top Scorers</h1>
                     </div>
-                    <div class="topcard shadow-sm">
-                        <div class="topcard-1">
-                            <a href="">Player Name</a>
-                            <p>Goals</p>
-                            <p class="val">69</p>
+                    <!-- jinja this bit  -->
+                    {% for goalscorer in goals %}
+                        <div class="topcard shadow-sm">
+                            <div class="topcard-1">
+                                <a href="">{{goalscorer.Name}}</a>
+                                <p>Goals</p>
+                                <p class="val">{{goalscorer.Gls}}</p>
+                            </div>
+                            <div class="topcard-2">
+                                <p>Teams: </p>
+                                <a href="">{{goalscorer.Team}}</a>
+                            </div>
+                            <div class="topcard-2">
+                                <p>Position: </p>
+                                <p class="val">{{goalscorer.Position}}</p>
+                            </div>
                         </div>
-                        <div class="topcard-2">
-                            <p>Teams: </p>
-                            <a href="">Team</a>
-                        </div>
-                        <div class="topcard-2">
-                            <p>Position: </p>
-                            <p class="val">Positions</p>
-                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row top-assists">
+                <div class="top-table shadow-sm">
+                    <div class="header">
+                        <h1 id="topassists">Top Assists</h1>
                     </div>
+                    <!-- jinja this bit  -->
+                    {% for assist in assists %}
+                        <div class="topcard">
+                            <div class="topcard-1">
+                                <a href="">{{assist.Name}}</a>
+                                <p>Assists</p>
+                                <p class="val">{{assist.Ast}}</p>
+                            </div>
+                            <div class="topcard-2">
+                                <p>Teams: </p>
+                                <a href="">{{assist.Team}}</a>
+                            </div>
+                            <div class="topcard-2">
+                                <p>Position: </p>
+                                <p class="val">{{assist.Position}}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

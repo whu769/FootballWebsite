@@ -1314,7 +1314,7 @@ def analyzeTeam(Team):
         elif(lg_sotp_avg > team_shot_vals[0]):
             sotp_lst.append(-1)
         else:
-            lg_lst.append(0)
+            sotp_lst.append(0)
         
         if(lg_gpsot_avg < team_shot_vals[1]):
             gpsot_lst.append(1)
@@ -2097,10 +2097,22 @@ def test(viewed_season, League):
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
 
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+
     
+    Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(5)
+    Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).limit(5)
+
+    bestOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF.desc()).first()
+    bestDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA).first()
+    worstDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA.desc()).first()
+    worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
+    highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
+
+    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
     # Test link for prem: http://localhost:5000/test/Premier%20League/
     return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons
-                            , teams = teams, league = League)
+                            , teams = teams, league = League, goals = Goals, assists = Assists, bo = bestOffensively, bd = bestDefensively,
+                            wo = worstOffensively, wd = worstDefensively, ggd = highestGD, players = players)
 
 
 # TEST USER username: test, password: 1234

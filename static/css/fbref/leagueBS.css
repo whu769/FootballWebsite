@@ -104,7 +104,7 @@ body, html{
 
 /* main-content css */
 /* left col content */
-#teamtable, #superlatives, #quicklinks, #topscorers{
+#teamtable, #superlatives{
     text-align: left;
     font-family: Blinker;
     font-weight: 600;
@@ -153,14 +153,74 @@ body, html{
     text-decoration: underline;
 }
 
+/* Superlatives section css */
+
+.superlatives-table{
+    width: 70%;
+    height: 80%;
+}
+
+.superlatives-item{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.superlatives-item p{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 25px;
+    color: #63635E;
+}
+
+.superlatives-item a{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 20px;
+    color: #63635E;
+    text-decoration: none;
+}
+
+.superlatives-item a:hover{
+    text-decoration: underline;
+}
+
+.superlative-title, .superlative-team, .superlative-value {
+    margin-top: 1em;
+}
+
+.superlatives-item p.val{
+    font-family: Blinker;
+    font-weight: 200;
+    font-size: 20px;
+    color: #63635E;
+}
+
+/* Right side content css */
 /* Top Scorers and Assisters  */
+
+#topscorers, #topassists, #quicklinks{
+    text-align: left;
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+    color: #242417;
+    padding-top: .5em;
+}
+
 .top-table .header{
     border-bottom:#B5B574;
     border-bottom-style: solid;
 }
 
 .top-table{
-    width: 90%;
+    width: 85%;
+    height: 90%;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .topcard-1, .topcard-2{
@@ -168,11 +228,15 @@ body, html{
     flex-direction: row;
     justify-content: left;
     align-items: baseline;
+    width: 80%;
 }
 
 .topcard{
     width: 95%;
     margin: auto;
+    border-bottom:  #DADAB9;
+    border-bottom-style: solid;
+    border-bottom-width: .05em;
 }
 
 .topcard-1 a{
@@ -181,6 +245,7 @@ body, html{
     font-size: 20px;
     color:  #63635E;
     margin-right: 3.5em;
+    margin-left: .5em;
 }
 
 .topcard-1 p{
@@ -212,7 +277,7 @@ body, html{
     margin-right: 1.75em;
 }
 
-.topcard-2 a{
+.topcard-2 a, .topcard-2 p.val{
     font-family: Blinker;
     font-weight: 200;
     font-size: 20px;
