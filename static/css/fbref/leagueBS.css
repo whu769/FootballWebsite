@@ -130,6 +130,10 @@ body, html{
     text-align: left;
 }
 
+.table-responsive{
+    width: 95%;
+}
+
 /* quick links css */
 .quicklinks .links{
     display: flex;
@@ -147,4 +151,70 @@ body, html{
 
 .links a:hover{
     text-decoration: underline;
+}
+
+/* Top Scorers and Assisters  */
+.top-table .header{
+    border-bottom:#B5B574;
+    border-bottom-style: solid;
+}
+
+.top-table{
+    width: 90%;
+}
+
+.topcard-1, .topcard-2{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: baseline;
+}
+
+.topcard{
+    width: 95%;
+    margin: auto;
+}
+
+.topcard-1 a{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 20px;
+    color:  #63635E;
+    margin-right: 3.5em;
+}
+
+.topcard-1 p{
+    font-family: Blinker;
+    font-weight: 400;
+    font-size: 20px;
+    color:  #63635E;
+    margin-right: .5em;
+}
+
+.topcard-1 p.val{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 25px;
+    color:#4E76ED;
+    margin: 0;
+}
+
+.topcard-2{
+    margin-top: -.75em;
+    margin-left: .5em;
+}
+
+.topcard-2 p{
+    font-family: Blinker;
+    font-weight: 400;
+    font-size: 20px;
+    color: #63635E;
+    margin-right: 1.75em;
+}
+
+.topcard-2 a{
+    font-family: Blinker;
+    font-weight: 200;
+    font-size: 20px;
+    color: #63635E;
 }
