@@ -97,27 +97,27 @@
                 <div class="superlatives-table shadow-sm">
                     <div class="superlatives-item bo">
                         <div class="superlative-title"><p>Best Offense</p></div>
-                        <div class="superlative-team"><a href="">{{bo.Team}}</a></div>
+                        <div class="superlative-team"><a href="{{url_for('teams', Team = bo.Team)}}">{{bo.Team}}</a></div>
                         <div class="superlative-value"><p class="val">{{bo.GF}} Goals Scored</p></div>
                     </div>
                     <div class="superlatives-item bd">
                         <div class="superlative-title"><p>Best Defense</p></div>
-                        <div class="superlative-team"><a href="">{{bd.Team}}</a></div>
+                        <div class="superlative-team"><a href="{{url_for('teams', Team = bd.Team)}}">{{bd.Team}}</a></div>
                         <div class="superlative-value"><p class="val">{{bd.GA}} Goals Conceded</p></div>
                     </div>
                     <div class="superlatives-item wo">
                         <div class="superlative-title"><p>Worst Offense</p></div>
-                        <div class="superlative-team"><a href="">{{wo.Team}}</a></div>
+                        <div class="superlative-team"><a href="{{url_for('teams', Team = wo.Team)}}">{{wo.Team}}</a></div>
                         <div class="superlative-value"><p class="val">{{wo.GF}} Goals Scored</p></div>
                     </div>
                     <div class="superlatives-item wd">
                         <div class="superlative-title"><p>Worst Defense</p></div>
-                        <div class="superlative-team"><a href="">{{wd.Team}}</a></div>
+                        <div class="superlative-team"><a href="{{url_for('teams', Team = wd.Team)}}">{{wd.Team}}</a></div>
                         <div class="superlative-value"><p class="val">{{wd.GA}} Goals Conceded</p></div>
                     </div>
                     <div class="superlatives-item ggd">
                         <div class="superlative-title"><p>Greatest GD</p></div>
-                        <div class="superlative-team"><a href="">{{ggd.Team}}</a></div>
+                        <div class="superlative-team"><a href="{{url_for('teams', Team = ggd.Team)}}">{{ggd.Team}}</a></div>
                         <div class="superlative-value"><p class="val">{{ggd.GD}} Goal Difference</p></div>
                     </div>
                 </div>
@@ -146,7 +146,7 @@
                     {% for goalscorer in goals %}
                         <div class="topcard">
                             <div class="topcard-1">
-                                <a href="">{{goalscorer.Name}}</a>
+                                <a href="{{url_for('players', Player = goalscorer.Name)}}">{{goalscorer.Name}}</a>
                                 <div class="top-metric">
                                     <p>Goals</p>
                                     <p class="val">{{goalscorer.Gls}}</p>
@@ -154,7 +154,7 @@
                             </div>
                             <div class="topcard-2 team-info">
                                 <p>Team: </p>
-                                <a href="">{{goalscorer.Team}}</a>
+                                <a href="{{url_for('teams', Team = goalscorer.Team)}}">{{goalscorer.Team}}</a>
                             </div>
                             <div class="topcard-2">
                                 <p>Position: </p>
@@ -174,7 +174,7 @@
                     {% for assist in assists %}
                         <div class="topcard">
                             <div class="topcard-1">
-                                <a href="">{{assist.Name}}</a>
+                                <a href="{{url_for('players', Player = assist.Name)}}">{{assist.Name}}</a>
                                 <div class="top-metric">
                                     <p>Assists</p>
                                     <p class="val">{{assist.Ast}}</p>
@@ -182,7 +182,7 @@
                             </div>
                             <div class="topcard-2 team-info">
                                 <p>Team: </p>
-                                <a href="">{{assist.Team}}</a>
+                                <a href="{{url_for('teams', Team = assist.Team)}}">{{assist.Team}}</a>
                             </div>
                             <div class="topcard-2">
                                 <p>Position: </p>

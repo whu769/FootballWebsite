@@ -812,8 +812,9 @@ def index(viewed_season):
     return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues, seasons = seasons)
  
 #Pages for the individual leagues
-@app.route('/league/<League>')
-def leagues(League, viewed_season = current_season):
+@app.route("/league/<League>", defaults={'viewed_season':'2020-2021'},  methods=["GET", "POST"])
+@app.route('/league/<League>/<viewed_season>', methods=["GET", "POST"])
+def leagues(League, viewed_season):
     try:
 
         Leagues = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).all()
