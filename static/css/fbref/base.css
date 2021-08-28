@@ -5,6 +5,11 @@
     font-size: 30px;
   }
 
+.row.navbar-top {
+    padding-right: 0;
+    margin-right: 0;
+}
+
 head{
     margin: 0;
     text-align: center;

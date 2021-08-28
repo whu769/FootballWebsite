@@ -144,14 +144,16 @@
                     </div>
                     <!-- jinja this bit  -->
                     {% for goalscorer in goals %}
-                        <div class="topcard shadow-sm">
+                        <div class="topcard">
                             <div class="topcard-1">
                                 <a href="">{{goalscorer.Name}}</a>
-                                <p>Goals</p>
-                                <p class="val">{{goalscorer.Gls}}</p>
+                                <div class="top-metric">
+                                    <p>Goals</p>
+                                    <p class="val">{{goalscorer.Gls}}</p>
+                                </div>
                             </div>
-                            <div class="topcard-2">
-                                <p>Teams: </p>
+                            <div class="topcard-2 team-info">
+                                <p>Team: </p>
                                 <a href="">{{goalscorer.Team}}</a>
                             </div>
                             <div class="topcard-2">
@@ -173,11 +175,13 @@
                         <div class="topcard">
                             <div class="topcard-1">
                                 <a href="">{{assist.Name}}</a>
-                                <p>Assists</p>
-                                <p class="val">{{assist.Ast}}</p>
+                                <div class="top-metric">
+                                    <p>Assists</p>
+                                    <p class="val">{{assist.Ast}}</p>
+                                </div>
                             </div>
-                            <div class="topcard-2">
-                                <p>Teams: </p>
+                            <div class="topcard-2 team-info">
+                                <p>Team: </p>
                                 <a href="">{{assist.Team}}</a>
                             </div>
                             <div class="topcard-2">

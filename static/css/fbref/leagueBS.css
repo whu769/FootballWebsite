@@ -221,6 +221,7 @@ body, html{
     height: 90%;
     margin-top: auto;
     margin-bottom: auto;
+    min-width: 330px;
 }
 
 .topcard-1, .topcard-2{
@@ -228,24 +229,41 @@ body, html{
     flex-direction: row;
     justify-content: left;
     align-items: baseline;
-    width: 80%;
+    margin-bottom: 1rem;
 }
 
-.topcard{
-    width: 95%;
-    margin: auto;
+.topcard > div > a {
+    min-width: max-content;
+}
+
+.topcard {
     border-bottom:  #DADAB9;
     border-bottom-style: solid;
     border-bottom-width: .05em;
+
+    display: flex;
+    flex-direction: column;
+
+    text-align: left;
 }
 
-.topcard-1 a{
+.topcard-1 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.topcard-1 > *,  .topcard-2 > *{
+    margin: 0 .5em;
+}
+
+.topcard-1 a {
     font-family: Blinker;
     font-weight: 600;
     font-size: 20px;
     color:  #63635E;
-    margin-right: 3.5em;
-    margin-left: .5em;
 }
 
 .topcard-1 p{
@@ -264,9 +282,8 @@ body, html{
     margin: 0;
 }
 
-.topcard-2{
+.topcard-2 {
     margin-top: -.75em;
-    margin-left: .5em;
 }
 
 .topcard-2 p{
@@ -274,7 +291,7 @@ body, html{
     font-weight: 400;
     font-size: 20px;
     color: #63635E;
-    margin-right: 1.75em;
+    min-width: 73px;
 }
 
 .topcard-2 a, .topcard-2 p.val{
@@ -282,4 +299,19 @@ body, html{
     font-weight: 200;
     font-size: 20px;
     color: #63635E;
+}
+
+.topcard-2.team-info{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.top-metric {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.top-metric > p {
+    margin-bottom: 0;
 }
