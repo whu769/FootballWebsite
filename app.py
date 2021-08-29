@@ -1571,9 +1571,9 @@ def generateSignings(Team):
     
 # given the current season, compile all of the 20 teams in the league and create averages 
 # sort the GCA's, SCA's and create the parameters. 
-def createLeagueAvgs(League):
+def createLeagueAvgs(League, viewed_season):
     
-    league_gsc = teamGSC.query.filter(teamGSC.league == League, teamGSC.season == current_season)
+    league_gsc = teamGSC.query.filter(teamGSC.league == League, teamGSC.season == viewed_season)
     league_gca = league_gsc.order_by(teamGSC.GCA90).all()
     league_sca = league_gsc.order_by(teamGSC.SCA90).all()
 
@@ -1588,9 +1588,9 @@ def createLeagueAvgs(League):
     #     print(f'{k}: GCA-{v[0]} SCA-{v[1]} Proportion-{v[2]}')
 
     #Defense, pressures
-    league_GA = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == current_season).order_by(
+    league_GA = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(
         combinedLeagues.GA).all()
-    league_defense = teamDefense.query.filter(teamDefense.league == League, teamGSC.season == current_season)
+    league_defense = teamDefense.query.filter(teamDefense.league == League, teamGSC.season == viewed_season)
 
     defense_dict = dict()
     for team in league_GA:
@@ -1601,7 +1601,7 @@ def createLeagueAvgs(League):
     #     print(f'{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]}')
 
     #league shooting
-    league_shooting = teamShooting.query.filter(teamShooting.league == League, teamShooting.season == current_season).order_by(teamShooting.Gls).all()
+    league_shooting = teamShooting.query.filter(teamShooting.league == League, teamShooting.season == viewed_season).order_by(teamShooting.Gls).all()
     shooting_dict = dict()
     for team in league_shooting:
         # print(team.SoTP90)
@@ -1610,7 +1610,7 @@ def createLeagueAvgs(League):
     # for k, v in shooting_dict.items():
     #     print(f'{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]} {v[5]}')
 
-    league_passing = teamPassing.query.filter(teamPassing.league == League, teamPassing.season == current_season).order_by(teamPassing.CmpP.desc()).all()
+    league_passing = teamPassing.query.filter(teamPassing.league == League, teamPassing.season == viewed_season).order_by(teamPassing.CmpP.desc()).all()
     passing_dict = dict()
 
     for team in league_passing:
@@ -1954,8 +1954,8 @@ def terms():
         return hed + error_text
 
 #Page that contains a giant table of all the players in a league
-@app.route('/<League>/LeaguePlayers')
-def LeaguePlayers(League, viewed_season = current_season):
+@app.route('/<League>/<viewed_season>/LeaguePlayers')
+def LeaguePlayers(League, viewed_season):
     try:
         leaguePlayers = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
     
@@ -2025,8 +2025,8 @@ def findBestDF(League, age, tier, minutes, viewed_season):
     return [dfOPlayers, dfPPlayers, dfDPlayers]
 
 #Page that shows the top players in the league
-@app.route('/<League>/TopPlayers')
-def topplayers(League, viewed_season = current_season):
+@app.route('/<League>/<viewed_season>/TopPlayers')
+def topplayers(League, viewed_season):
     try:
         players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0).all()
         # Three methods, forwards, midfielders, defenders
@@ -2042,8 +2042,8 @@ def topplayers(League, viewed_season = current_season):
         return hed + error_text
 
 #Page that thows the top prospects in the league
-@app.route('/<League>/TopProspects')
-def topprospects(League, viewed_season = current_season):
+@app.route('/<League>/<viewed_season>/TopProspects')
+def topprospects(League, viewed_season):
     try:
         players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
         # Three methods, forwards, midfielders, defenders
@@ -2060,10 +2060,10 @@ def topprospects(League, viewed_season = current_season):
         return hed + error_text
 
 #Page that shows the league stats
-@app.route('/<League>/Stats')
-def leaguestats(League):
+@app.route('/<League>/<viewed_season>/Stats')
+def leaguestats(League, viewed_season):
 
-    league_stats = createLeagueAvgs(League)
+    league_stats = createLeagueAvgs(League, viewed_season)
     gsc_dict = league_stats[0]
     shooting_dict = league_stats[3]
     passing_dict = league_stats[2]

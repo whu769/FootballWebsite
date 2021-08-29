@@ -97,10 +97,10 @@
             <div class="row quicklinks">
                 <h1 id="quicklinks">Quick Links »</h1>
                 <div class="links">
-                    <a href="">Top Players</a>
-                    <a href="">Top Prospects</a>
-                    <a href="">Comparison of Team Stats</a>
-                    <a href="">List of all players</a>
+                    <a href="{{url_for('topplayers', League = league, viewed_season = viewed_season)}}">Top Players</a>
+                    <a href="{{url_for('topprospects', League = league, viewed_season = viewed_season)}}">Top Prospects</a>
+                    <a href="{{url_for('leaguestats', League = league, viewed_season = viewed_season)}}">Comparison of Team Stats</a>
+                    <a href="{{url_for('LeaguePlayers', League = league, viewed_season = viewed_season)}}">List of all players</a>
                 </div>
             </div>
 
