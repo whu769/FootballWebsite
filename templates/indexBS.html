@@ -1,3 +1,5 @@
+{% from 'navbar-macro.html' import navbar %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,96 +32,7 @@
 <body>
   <div class="container-fluid">
     <div class="row row-1 shadow-sm">
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="#">wh-fbtracker</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <div class="navbar-section site-nav">
-              <li class="nav-item active genesis">
-                <a class="nav-link" href="{{url_for('genesis')}}">Genesis</a>
-              </li>
-              <li class="nav-item glossary">
-                <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
-              </li>
-              <li class="nav-item browse-text">
-                <text class="nav-link browse">Browse By »</text>
-              </li>
-              <li class="nav-item league dropdown">
-                <a class="nav-link shadow-textbox" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-                  Choose League!</a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  {% for league in leagues %}
-                  <a class="dropdown-item" href="{{url_for('leagues', League = league.League)}}">{{league.League}}</a>
-                  {% endfor %}
-                </div>
-              </li>
-              <li class="nav-item season-text">
-                <text class="nav-link season">Season</text>
-              </li>
-              <li class="nav-item season-dropdown dropdown">
-                <a class="nav-link shadow-textbox" href="#" id="seasonDropdown" role="button" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-                  {{viewed_season}}</a>
-                <div class="dropdown-menu" id="season-nav-dropdown" aria-labelledby="navbarDropdown">
-                  {% for season in seasons %}
-                  <!-- WHEN MIGRATING CHANGE URL_FOR TO INDEX -->
-                  <a class="dropdown-item"
-                    href="{{url_for('index', viewed_season = season.season)}}">{{season.season}}</a>
-                  {% endfor %}
-                </div>
-              </li>
-            </div>
-            <div class="navbar-section auth">
-              <li class="nav-item login">
-                <a class="nav-link" data-toggle="modal" data-target="#exampleModal" href="#">Log in</a>
-              </li>
-              <li class="nav-item register">
-                <a class="nav-link" href="{{url_for('register')}}">Register</a>
-              </li>
-            </div>
-          </ul>
-        </div>
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-          aria-hidden="true">
-          <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <!-- <h5 class="modal-title" id="exampleModalLabel">Login Modal</h5> -->
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  Close X
-                </button>
-              </div>
-              <div class="modal-body">
-                <img class="d-block w-100" src="..." alt="Picture Placeholder">
-                <form id="loginModal" method="POST" action="">
-                  {{form.hidden_tag()}}
-                  <label class="login-label username">Username: </label>
-                  <span class="text-input">{{form.username}}</span>
-                  <label class="break"></label>
-                  <label class="login-label password">Password: </label>
-                  <span class="text-input">{{form.password}}</span>
-
-                  <div class="login-register">
-                    <div class="item"><a href="#">Register</a></div>
-                    <div class="item"><span id="submit-info">{{form.submit}}</span></div>
-                  </div>
-                </form>
-              </div>
-              <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary btn-sm">Save changes</button>
-              </div> -->
-            </div>
-          </div>
-        </div>
-      </nav>
-
-
+      {{navbar(leagues, seasons, form, viewed_season)}}
     </div>
     <div class="row row-2">
       <div class="col-7">

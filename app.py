@@ -817,9 +817,39 @@ def index(viewed_season):
 def leagues(League, viewed_season):
     try:
 
-        Leagues = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).all()
-        Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).all()
-        Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
+        # Leagues = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).all()
+        # Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).all()
+        # Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
+
+        # bestOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF.desc()).first()
+        # bestDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA).first()
+        # worstDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA.desc()).first()
+        # worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
+        # highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
+
+        # return render_template('league3.html', League = Leagues, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively, 
+        # wO = worstOffensively, wD = worstDefensively, hGD = highestGD)
+        form = LoginForm()
+        if form.validate_on_submit():
+            user = User.query.filter_by(username = form.username.data).first()
+            if user:
+                if bcrypt.check_password_hash(user.password, form.password.data):
+                    login_user(user)
+                    print(user.id)
+                    return redirect(url_for('dashboard', user_id = user.id))
+
+
+        # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
+        # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
+
+        leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+        seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+
+        teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+
+        
+        Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(5)
+        Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).limit(5)
 
         bestOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF.desc()).first()
         bestDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA).first()
@@ -827,8 +857,12 @@ def leagues(League, viewed_season):
         worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
         highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
 
-        return render_template('league3.html', League = Leagues, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively, 
-        wO = worstOffensively, wD = worstDefensively, hGD = highestGD)
+        players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+        # Test link for prem: http://localhost:5000/test/Premier%20League/
+        return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons
+                                , teams = teams, league = League, goals = Goals, assists = Assists, bo = bestOffensively, bd = bestDefensively,
+                                wo = worstOffensively, wd = worstDefensively, ggd = highestGD, players = players)
+
     except Exception as e:
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
@@ -2094,7 +2128,7 @@ def test(viewed_season, League):
     # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
     # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
 
-    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
 
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
