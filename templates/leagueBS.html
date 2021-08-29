@@ -1,4 +1,7 @@
 {% from 'navbar-macro.html' import navbar %}
+{% from 'toptable-macro.html' import toptable %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% from 'banner-macro.html' import banner %}
 {% extends 'base.html' %}
 
 {% block head %}
@@ -11,48 +14,10 @@
 {{navbar(leagues, seasons, form, viewed_season,league)}}
 <div class="container-fluid">
     <div class="row breadcrumbs">
-        <div class="breadcrumbs">
-            <div class="main crumb-option">
-                <a href="">Main</a>
-            </div>
-            <div class="arrow crumb-option">
-                <p>»</p>
-            </div>
-            <div class="league crumb-option">
-                <a href="">{{league}}</a>
-            </div>
-            <div class="arrow crumb-option">
-                <p>»</p>
-            </div>
-            <div class="choose-team crumb-option">
-                <p>Choose team!</p>
-            </div>
-        </div>
+        {{breadcrumbs(league)}}
     </div>
     <div class="row banner">
-        <div class="banner">
-            <div class="banner-item league-img">
-                <img src="" class="img-responsive" alt="{{league}}">
-            </div>
-            <div class="banner-item divider">
-                <p>l</p>
-            </div>
-            <div class="banner-item nation">
-                <p>Nation</p>
-            </div>
-            <div class="banner-item numteams">
-                <p class="val">{{teams|length}}</p>
-            </div>
-            <div class="banner-item teams">
-                <p>teams</p>
-            </div>
-            <div class="banner-item numplayers">
-                <p class="val">{{players|length}}</p>
-            </div>
-            <div class="banner-item players">
-                <p>players</p>
-            </div>
-        </div>
+       {{banner(league, teams, players)}}
     </div>
     <div class="row main-content">
         <div class="col col-8 left-col">
@@ -140,59 +105,11 @@
             </div>
 
             <div class="row top-striker">
-                <div class="top-table shadow-sm">
-                    <div class="header">
-                        <h1 id="topscorers">Top Scorers</h1>
-                    </div>
-                    <!-- jinja this bit  -->
-                    {% for goalscorer in goals %}
-                        <div class="topcard">
-                            <div class="topcard-1">
-                                <a href="{{url_for('players', Player = goalscorer.Name)}}">{{goalscorer.Name}}</a>
-                                <div class="top-metric">
-                                    <p>Goals</p>
-                                    <p class="val">{{goalscorer.Gls}}</p>
-                                </div>
-                            </div>
-                            <div class="topcard-2 team-info">
-                                <p>Team: </p>
-                                <a href="{{url_for('teams', Team = goalscorer.Team)}}">{{goalscorer.Team}}</a>
-                            </div>
-                            <div class="topcard-2">
-                                <p>Position: </p>
-                                <p class="val">{{goalscorer.Position}}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                {{toptable("Goals", goals)}}
             </div>
 
             <div class="row top-assists">
-                <div class="top-table shadow-sm">
-                    <div class="header">
-                        <h1 id="topassists">Top Assists</h1>
-                    </div>
-                    <!-- jinja this bit  -->
-                    {% for assist in assists %}
-                        <div class="topcard">
-                            <div class="topcard-1">
-                                <a href="{{url_for('players', Player = assist.Name)}}">{{assist.Name}}</a>
-                                <div class="top-metric">
-                                    <p>Assists</p>
-                                    <p class="val">{{assist.Ast}}</p>
-                                </div>
-                            </div>
-                            <div class="topcard-2 team-info">
-                                <p>Team: </p>
-                                <a href="{{url_for('teams', Team = assist.Team)}}">{{assist.Team}}</a>
-                            </div>
-                            <div class="topcard-2">
-                                <p>Position: </p>
-                                <p class="val">{{assist.Position}}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                {{toptable("Assists", assists)}}
             </div>
         </div>
     </div>

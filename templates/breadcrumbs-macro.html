@@ -1,0 +1,23 @@
+{% macro breadcrumbs(league, team="")%}
+<div class="breadcrumbs">
+    <div class="main crumb-option">
+        <a href="{{url_for('index')}}">Main</a>
+    </div>
+    <div class="arrow crumb-option">
+        <p>»</p>
+    </div>
+    <div class="league crumb-option">
+        <a href="">{{league}}</a>
+    </div>
+    <div class="arrow crumb-option">
+        <p>»</p>
+    </div>
+    <div class="choose-team crumb-option">
+        {% if team == "" %}
+            <p>Choose team!</p>
+        {% else %}
+            <p>{{team}}</a>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}

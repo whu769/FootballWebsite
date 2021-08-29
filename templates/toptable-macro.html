@@ -1,0 +1,31 @@
+{% macro toptable(category, players) %}
+<div class="top-table shadow-sm">
+    <div class="header">
+        <h1 id="topscorers">Top {{category}}</h1>
+    </div>
+    <!-- jinja this bit  -->
+    {% for player in players %}
+        <div class="topcard">
+            <div class="topcard-1">
+                <a href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
+                <div class="top-metric">
+                    <p>{{category}}</p>
+                    {% if category == "Goals" %}
+                        <p class="val">{{player.Gls}}</p>
+                    {% elif category == "Assists" %}
+                        <p class="val">{{player.Gls}}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="topcard-2 team-info">
+                <p>Team: </p>
+                <a href="{{url_for('teams', Team = player.Team)}}">{{player.Team}}</a>
+            </div>
+            <div class="topcard-2">
+                <p>Position: </p>
+                <p class="val">{{player.Position}}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endmacro %}

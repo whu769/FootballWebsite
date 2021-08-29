@@ -1,0 +1,32 @@
+{% macro banner(league, teams, players, team="", position="",teamplayers="")%}
+<div class="banner">
+    <!-- Left side dependent on page -->
+    <div class="banner-item league-img">
+        {% if team=="" %}
+            <img src="" class="img-responsive" alt="{{league}}">
+        {% else %}
+            <p class="team-title">{{team}}</p>
+        {% endif %}
+    </div>
+    <div class="banner-item divider">
+        <p>l</p>
+    </div>
+
+    <!-- Right side content also dependent will change when teamBS gets setup-->
+    <div class="banner-item nation">
+        <p>Nation</p>
+    </div>
+    <div class="banner-item numteams">
+        <p class="val">{{teams|length}}</p>
+    </div>
+    <div class="banner-item teams">
+        <p>teams</p>
+    </div>
+    <div class="banner-item numplayers">
+        <p class="val">{{players|length}}</p>
+    </div>
+    <div class="banner-item players">
+        <p>players</p>
+    </div>
+</div>
+{% endmacro %}

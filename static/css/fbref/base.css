@@ -49,8 +49,6 @@ body, html{
 
   .row-2{
       margin-top: 15px;
-      /* display: flex;
-      flex-wrap: wrap; */
       background-image: linear-gradient(90deg,#D9D9CE, #d9d9ce00);
   }
 
@@ -240,6 +238,7 @@ li.dropdown .dropdown-menu.show {
     }
 }
 
+/* Css for tables */
 h1#combined-league, h1#best-strikers{
     font-family: Blinker;
     font-weight: 600;
@@ -292,31 +291,200 @@ a.table-link:hover{
     color: rgb(99, 99, 94);
 }
 
-
-/* .introduction .img-responsive{
-    width: 60%;
-    margin-top: 15px;
-    min-width: 200px;
-}
-
-.introduction .title-text{
-    margin-top: 10px;
-    margin-left: -15px;
-    font-family: Inria Sans;
-    font-weight: 400;
-    font-size: 21px;
-    color: rgb(99, 99, 94);
-    text-align: left;
-} */
-
-
-
-  
-
 .navbar-top{
     padding-left: .25em;
 }
 
 .navbar-toggler{
     margin-right: 1em;
+}
+
+/* Css for toptable-macros */
+#topscorers, #topassists, #quicklinks{
+    text-align: left;
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+    color: #242417;
+    padding-top: .5em;
+}
+
+.top-table .header{
+    border-bottom:#B5B574;
+    border-bottom-style: solid;
+}
+
+.top-table{
+    width: 85%;
+    height: 90%;
+    margin-top: auto;
+    margin-bottom: auto;
+    min-width: 330px;
+}
+
+.topcard-1, .topcard-2{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: baseline;
+    margin-bottom: 1rem;
+}
+
+.topcard > div > a {
+    min-width: max-content;
+}
+
+.topcard {
+    border-bottom:  #DADAB9;
+    border-bottom-style: solid;
+    border-bottom-width: .05em;
+
+    display: flex;
+    flex-direction: column;
+
+    text-align: left;
+}
+
+.topcard-1 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.topcard-1 > *,  .topcard-2 > *{
+    margin: 0 .5em;
+}
+
+.topcard-1 a {
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 20px;
+    color:  #63635E;
+}
+
+.topcard-1 p{
+    font-family: Blinker;
+    font-weight: 400;
+    font-size: 20px;
+    color:  #63635E;
+    margin-right: .5em;
+}
+
+.topcard-1 p.val{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 25px;
+    color:#4E76ED;
+    margin: 0;
+}
+
+.topcard-2 {
+    margin-top: -.75em;
+}
+
+.topcard-2 p{
+    font-family: Blinker;
+    font-weight: 400;
+    font-size: 20px;
+    color: #63635E;
+    min-width: 73px;
+}
+
+.topcard-2 a, .topcard-2 p.val{
+    font-family: Blinker;
+    font-weight: 200;
+    font-size: 20px;
+    color: #63635E;
+}
+
+.topcard-2.team-info{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.top-metric {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.top-metric > p {
+    margin-bottom: 0;
+}
+
+/* Css for breadcrumbs */
+.breadcrumbs{
+    justify-content: flex-start;
+    font-family: Blinker;
+    font-weight: 600;
+    color: #63635E;
+
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.breadcrumbs .crumb-option{
+    margin: .25em;
+}
+
+.crumb-option a{
+    text-decoration: none;
+    color: #63635E;
+    padding-bottom: 10px;
+}
+
+.crumb-option a:hover{
+    text-decoration: underline;
+    color: #63635E;
+}
+
+.crumb-option p, .crumb-option a{
+    font-size: 18px;
+}
+
+/* BANNER CSS */
+.banner{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.banner-item{
+    margin: 1em;
+}
+
+.banner-item.numteams,  .banner-item.numplayers{
+    font-family: Inria Sans;
+    font-weight: 300;
+    font-size: 45px;
+    color: #4E76ED;
+}
+
+.banner-item{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 30px;
+    color: #242417;
+}
+
+.banner{
+    background-image: linear-gradient(90deg,#d9d9ce ,#d9d9ce00);
+}
+
+.banner-item.divider{
+    height: 90%;
+    width: .25%;
+    background-color:  #63635E;
+    color: #63635E;
+}
+
+.banner-item.divider p{
+    opacity: 0%;
+}
+
+.banner-item p{
+    margin-top: 1em;
 }
