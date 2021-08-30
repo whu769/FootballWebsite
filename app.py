@@ -2112,9 +2112,9 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/<League>/", defaults={'viewed_season':'2020-2021'})
-@app.route('/test/<League>/<viewed_season>', methods = ["GET", "POST"])
-def test(viewed_season, League):
+@app.route("/test/<Team>/", defaults={'viewed_season':'2020-2021'})
+@app.route('/test/<Team>/<viewed_season>', methods = ["GET", "POST"])
+def test(viewed_season, Team):
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
@@ -2127,27 +2127,16 @@ def test(viewed_season, League):
 
     # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
     # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
-
+    Team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = Team.League
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
-
-    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
-
     
-    Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(5)
-    Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).limit(5)
-
-    bestOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF.desc()).first()
-    bestDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA).first()
-    worstDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA.desc()).first()
-    worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
-    highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
-
-    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+    teamPos = ((Team.index % len(combinedLeagues.query.filter(combinedLeagues.season == viewed_season).all())) + 1)
+    # print(teamPos)
+    
     # Test link for prem: http://localhost:5000/test/Premier%20League/
-    return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons
-                            , teams = teams, league = League, goals = Goals, assists = Assists, bo = bestOffensively, bd = bestDefensively,
-                            wo = worstOffensively, wd = worstDefensively, ggd = highestGD, players = players)
+    return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons)
 
 
 # TEST USER username: test, password: 1234
