@@ -816,19 +816,6 @@ def index(viewed_season):
 @app.route('/league/<League>/<viewed_season>', methods=["GET", "POST"])
 def leagues(League, viewed_season):
     try:
-
-        # Leagues = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).all()
-        # Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).all()
-        # Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
-
-        # bestOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF.desc()).first()
-        # bestDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA).first()
-        # worstDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA.desc()).first()
-        # worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
-        # highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
-
-        # return render_template('league3.html', League = Leagues, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively, 
-        # wO = worstOffensively, wD = worstDefensively, hGD = highestGD)
         form = LoginForm()
         if form.validate_on_submit():
             user = User.query.filter_by(username = form.username.data).first()
@@ -846,7 +833,7 @@ def leagues(League, viewed_season):
         seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
 
         teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
-
+        print(len(teams))
         
         Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(5)
         Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).limit(5)
@@ -917,7 +904,7 @@ def teams(Team, viewed_season = current_season):
 @app.route('/<Team>/RecommendSignings')
 def recSignings(Team):
     rec_dict = generateSignings(Team)
-    print(rec_dict)
+    #print(rec_dict)
     gsc_dict = rec_dict[0][0]
     gsc_prio = rec_dict[0][1]
     str_dict = rec_dict[1][0]
@@ -2108,14 +2095,30 @@ def leaguestats(League, viewed_season):
 
 @app.route('/genesis')
 def genesis():
-
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/<Team>/", defaults={'viewed_season':'2020-2021'})
-@app.route('/test/<Team>/<viewed_season>', methods = ["GET", "POST"])
-def test(viewed_season, Team):
+
+# @app.route("/test/<Team>/<viewed_season>/...", defaults={'viewed_season': current_season})
+# def test_redirect_dots(Team, viewed_season):
+#     print("REDIRECTING FROM DEFAULT TO ACTUAL-------------")
+#     return redirect(url_for('.test', Team = Team, viewed_season = viewed_season), code=307)
+
+# @app.route("/test/<Team>/", defaults={'viewed_season': current_season})
+# def test_redirect(Team, viewed_season):
+#     print("REDIRECTING FROM DEFAULT TO ACTUAL-------------")
+#     return redirect(url_for('.test', Team = Team, viewed_season = viewed_season), code=307)
+
+#@app.route('/test/<Team>/', defaults={'viewed_season': current_season})
+@app.route('/test/<Team>/')
+@app.route('/test/<Team>/<viewed_season>/', methods = ["GET","POST"])
+def test(Team, viewed_season=current_season):
+    # try:
+    if viewed_season == '...':
+        viewed_season = current_season
+        print("DUMB BITCH")
     form = LoginForm()
+    
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
         if user:
@@ -2124,19 +2127,37 @@ def test(viewed_season, Team):
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
 
-
-    # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
-    # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
-    Team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-    League = Team.League
+    print("SEASON---->", viewed_season)
+    print("IS IT NULL", viewed_season == None)
+    print("dumping teamOverview ---->>>> ")
+    for row in teamOverview.query.limit(5):
+        print(row.index, row.Team)
+    teamStats = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+    # print(teamStats.Team)
+    League = teamStats.league
+    print("LEAGUE ---->>>> ", League)
+    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    print("teamPlayers ---->>>> ", len(teamPlayers))
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+    league_pos = 0
+    for i in range(len(teams)):
+        if teams[i].Team == Team:
+            league_pos = i + 1
+            break
     
-    teamPos = ((Team.index % len(combinedLeagues.query.filter(combinedLeagues.season == viewed_season).all())) + 1)
+    
+    # print(len(teamPlayers))
     # print(teamPos)
     
-    # Test link for prem: http://localhost:5000/test/Premier%20League/
-    return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons)
+    
+    return render_template('teamBS.html', viewed_season = viewed_season, form = form, team = Team, leagues = leagues, seasons = seasons
+                            ,teamPlayers = teamPlayers, league = League, position = league_pos)
+    # except Exception as e:
+    #     error_text = "<p>The error:<br>" + str(e) + "</p>"
+    #     hed = '<h1>Something is broken.</h1>'
+    #     return hed + error_text
 
 
 # TEST USER username: test, password: 1234
@@ -2151,5 +2172,7 @@ def test(viewed_season, Team):
 # db.session.query(User).delete()
 # db.session.commit()
 
+
 if __name__ == "__main__":
     app.run(debug=True)
+    #app.run()

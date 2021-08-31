@@ -35,17 +35,26 @@ body, html{
     font-weight: 800;
     color: #242417;
     font-size: 40px;
-  }
+}
 
-  .nav-link, .nav-text{
+.navbar-brand.team-brand{
+    font-family: Blinker;
+    font-weight: 800;
+    font-size: 36px;
+    color: #78784D;
+    text-decoration: none;
+}
+
+
+.nav-link, .nav-text{
     font-family: Blinker;
     font-size: 20px;
     inline-size: max-content;
-  }
+}
 
-  .navbar-togger-icon{
+.navbar-togger-icon{
     color: #242417;
-  }
+}
 
   .row-2{
       margin-top: 15px;
@@ -237,6 +246,8 @@ li.dropdown .dropdown-menu.show {
         margin-top: 7%;
     }
 }
+
+
 
 /* Css for tables */
 h1#combined-league, h1#best-strikers{
@@ -487,4 +498,11 @@ a.table-link:hover{
 
 .banner-item p{
     margin-top: 1em;
+}
+
+.team-title{
+    font-family: Inria Sans;
+    font-weight: 700;
+    font-size: 48px;
+    color: #78784D;
 }

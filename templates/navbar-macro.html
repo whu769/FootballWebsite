@@ -1,7 +1,11 @@
-{% macro navbar(leagues, seasons, form, viewed_season,league = "") %}
+{% macro navbar(leagues, seasons, form, viewed_season,league = "", team = "") %}
 <div class="row navbar-top shadow-sm">
     <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="{{url_for('index')}}">wh-fbtracker</a>
+        {% if team =="" %}
+            <a class="navbar-brand" href="{{url_for('index')}}">wh-fbtracker</a>
+        {% else %}
+            <a class="navbar-brand team-brand" href="">Team Stats</a>
+        {% endif %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -9,34 +13,50 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <div class="navbar-section site-nav">
-                    <li class="nav-item active genesis">
-                        <a class="nav-link" href="{{url_for('genesis')}}">Genesis</a>
-                    </li>
-                    <li class="nav-item glossary">
-                        <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
-                    </li>
-                    <li class="nav-item browse-text">
-                        <text class="nav-link browse">Browse By »</text>
-                    </li>
-                    <li class="nav-item league dropdown">
-                        <a class="nav-link shadow-textbox" href="#" id="navbarDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {% if league|length %}
-                                {{league}}
-                            {% else %}
-                                Choose League!
-                            {% endif %}
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            {% for league in leagues %}
-                            <a class="dropdown-item"
-                                href="{{url_for('leagues', League = league.League, viewed_season = viewed_season)}}">{{league.League}}</a>
-                            {% endfor %}
-                        </div>
-                    </li>
-                    <li class="nav-item season-text">
-                        <text class="nav-link season">Season</text>
-                    </li>
+
+                    {% if team == "" %}
+                        <li class="nav-item active genesis">
+                            <a class="nav-link" href="{{url_for('genesis')}}">Genesis</a>
+                        </li>
+                        <li class="nav-item glossary">
+                            <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
+                        </li>
+                        <li class="nav-item browse-text">
+                            <text class="nav-link browse">Browse By »</text>
+                        </li>
+                        <li class="nav-item league dropdown">
+                            <a class="nav-link shadow-textbox" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {% if league|length %}
+                                    {{league}}
+                                {% else %}
+                                    Choose League!
+                                {% endif %}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% for league in leagues %}
+                                <a class="dropdown-item"
+                                    href="{{url_for('leagues', League = league.League, viewed_season = viewed_season)}}">{{league.League}}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+
+                    {% else %}
+                        <li class="nav-item active back-league">
+                            <a class="nav-link" href="">« League</a>
+                        </li>
+                        <li class="nav-item back-main">
+                            <a class="nav-link" href="">« Main</a>
+                        </li>
+                        <li class="nav-item glossary">
+                            <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
+                        </li>
+                    {% endif %}
+
+
+                        <li class="nav-item season-text">
+                            <text class="nav-link season">Season</text>
+                        </li>
                     <li class="nav-item season-dropdown dropdown">
                         <a class="nav-link shadow-textbox" href="#" id="seasonDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

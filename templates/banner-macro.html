@@ -1,4 +1,4 @@
-{% macro banner(league, teams, players, team="", position="",teamplayers="")%}
+{% macro banner(league, teams, players, team="", position="", teamPlayers="")%}
 <div class="banner">
     <!-- Left side dependent on page -->
     <div class="banner-item league-img">
@@ -16,17 +16,33 @@
     <div class="banner-item nation">
         <p>Nation</p>
     </div>
-    <div class="banner-item numteams">
-        <p class="val">{{teams|length}}</p>
-    </div>
-    <div class="banner-item teams">
-        <p>teams</p>
-    </div>
-    <div class="banner-item numplayers">
-        <p class="val">{{players|length}}</p>
-    </div>
-    <div class="banner-item players">
-        <p>players</p>
-    </div>
+
+    {% if team == "" %}
+        <div class="banner-item numteams">
+            <p class="val">{{teams|length}}</p>
+        </div>
+        <div class="banner-item teams">
+            <p>teams</p>
+        </div>
+        <div class="banner-item numplayers">
+            <p class="val">{{players|length}}</p>
+        </div>
+        <div class="banner-item players">
+            <p>players</p>
+        </div>
+    {% else %}
+        <div class="banner-item numposition">
+            <p class="val">#{{position}}</p>
+        </div>
+        <div class="banner-item position">
+            <p>in League</p>
+        </div>
+        <div class="banner-item numplayers">
+            <p class="val">{{teamPlayers|length}}</p>
+        </div>
+        <div class="banner-item players">
+            <p>players</p>
+        </div>
+    {% endif %}
 </div>
 {% endmacro %}
