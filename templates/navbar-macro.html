@@ -43,10 +43,10 @@
 
                     {% else %}
                         <li class="nav-item active back-league">
-                            <a class="nav-link" href="">« League</a>
+                            <a class="nav-link" href="{{url_for('leagues', League = league, viewed_season = viewed_season)}}">« League</a>
                         </li>
                         <li class="nav-item back-main">
-                            <a class="nav-link" href="">« Main</a>
+                            <a class="nav-link" href="{{url_for('index')}}">« Main</a>
                         </li>
                         <li class="nav-item glossary">
                             <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
@@ -65,7 +65,11 @@
                             {% for season in seasons %}
                             <!-- WHEN MIGRATING CHANGE URL_FOR TO INDEX -->
                             <!-- Need to do something about this for the base template -->
-                            {% if league|length %}
+                            {% if team|length %}
+                            <a class="dropdown-item" href="{{url_for('test', Team = team, viewed_season = season.season)}}">
+                                {{season.season}}
+                            </a>
+                            {% elif league|length %}
                             <a class="dropdown-item" href="{{url_for('leagues', League = league,viewed_season = season.season)}}">
                                 {{season.season}}
                             </a>
