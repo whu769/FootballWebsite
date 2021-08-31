@@ -2132,8 +2132,7 @@ def test(viewed_season, Team):
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-    
-    print(League)
+    teamPos = ((Team.index % len(combinedLeagues.query.filter(combinedLeagues.season == viewed_season).all())) + 1)
     # print(teamPos)
     
     # Test link for prem: http://localhost:5000/test/Premier%20League/
