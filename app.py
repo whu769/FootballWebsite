@@ -818,18 +818,6 @@ def index(viewed_season):
 def leagues(League, viewed_season):
     try:
 
-        # Leagues = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).all()
-        # Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).all()
-        # Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
-
-        # bestOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF.desc()).first()
-        # bestDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA).first()
-        # worstDefensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GA.desc()).first()
-        # worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
-        # highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
-
-        # return render_template('league3.html', League = Leagues, Goals = Goals, Assists = Assists, bO = bestOffensively, bD = bestDefensively, 
-        # wO = worstOffensively, wD = worstDefensively, hGD = highestGD)
         form = LoginForm()
         if form.validate_on_submit():
             user = User.query.filter_by(username = form.username.data).first()
@@ -870,29 +858,49 @@ def leagues(League, viewed_season):
         return hed + error_text
 
 #Pages for the teams
-@app.route('/team/<Team>')
-def teams(Team, viewed_season = current_season):
-    try:
-        #Team statistics from the sql tables
-        team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-        tAdvanced = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
-        players = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.minutes != 0, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()
-        goals = playerOffensive.query.filter(playerOffensive.Team == Team, playerOffensive.season == viewed_season).order_by(playerOffensive.Gls.desc()).all()
-        assists = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
-        
-        #Code for analysing a team's performancce in terms of their rivals and the league overall
-        analysis_lst = analyzeTeam(Team, viewed_season)
-        analysis_pts = analysis_lst[0]
-        analysis_indices = analysis_lst[1]
-        teamDict = analysis_lst[2]
+@app.route("/team/<Team>/", defaults={'viewed_season':'2020-2021'})
+@app.route('/team/<Team>/<viewed_season>', methods = ["GET", "POST"])
+def teams(Team, viewed_season):
+    if viewed_season == "...":
+        viewed_season = current_season
 
-        best_category = teamDict[analysis_indices[0]]
-        worst_category = teamDict[analysis_indices[len(analysis_indices)-1]]
-        bc_val = analysis_pts[analysis_indices[0]]
-        wc_val = analysis_pts[analysis_indices[len(analysis_indices)-1]]
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
 
-        #method to generate an interpretation of how the team is performing in terms of goal-shot creation, shooting, passing, and defense
-        def genMsg(val, category):
+
+    # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
+    # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
+    teamOverviewRow = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+    teamCLRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = teamOverviewRow.league
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    
+    teamPos = ((teamCLRow.index % 98) % 20) + 1
+    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
+    Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season, playerOverview.Team == Team).order_by(playerOverview.Gls.desc()).limit(5)
+    Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season, playerOverview.Team == Team).order_by(playerOverview.Ast.desc()).limit(5)
+    
+    
+    # Anaylsis portion of the team area
+    analysis_lst = analyzeTeam(Team, viewed_season)
+    analysis_pts = analysis_lst[0]
+    analysis_indices = analysis_lst[1]
+    teamDict = analysis_lst[2]
+
+    best_category = teamDict[analysis_indices[0]]
+    worst_category = teamDict[analysis_indices[len(analysis_indices)-1]]
+    bc_val = analysis_pts[analysis_indices[0]]
+    wc_val = analysis_pts[analysis_indices[len(analysis_indices)-1]]
+    
+    #print(analysis_lst)
+    def genMsg(val, category):
             if val in range(-2,3):
                 return f"{category} is at or hovering around their rivals"
             elif val < -2 and val > -5:
@@ -904,20 +912,35 @@ def teams(Team, viewed_season = current_season):
             else:
                 return f"{category} is considerably above their rivals"
         
-        bc_msg = genMsg(bc_val, best_category)
-        wc_msg = genMsg(wc_val, worst_category)
-        
-        return render_template("team3.html", Team = team, tO = tAdvanced, Player = players, Goals = goals, Assists = assists, bc = best_category, wc = worst_category,
-                                bc_msg = bc_msg, wc_msg = wc_msg)
-    except Exception as e:
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+    bc_msg = genMsg(bc_val, best_category)
+    wc_msg = genMsg(wc_val, worst_category)
+
+    graphLabels = [Team, "Rival Averages"]
+
+
+    rival_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season, 
+                                                combinedLeagues.tier == teamCLRow.tier, combinedLeagues.Team != Team).all()
+    
+    rival_cat_avgs = [[], [], [], []]
+    for team in rival_teams:
+        analysis = analyzeTeam(team.Team, viewed_season)[0]
+        for i in range(len(analysis)):
+            rival_cat_avgs[i].append(analysis[i])
+
+    graph_lst = []
+    for i in range(len(analysis_pts)):
+        graph_lst.append([analysis_pts[i], sum(rival_cat_avgs[i])/len(rival_cat_avgs[i])])
+    
+    return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons, team = Team, 
+                            teamORow = teamOverviewRow, teamCLRow = teamCLRow, position = teamPos, teamPlayers = teamPlayers, league = League
+                            , goals = Goals, assists = Assists, graphLabels = graphLabels, bc_msg = bc_msg, wc_msg = wc_msg, bc = best_category
+                            , wc = worst_category, graphData = graph_lst)
+
 
 #Page of recommended signings for a specific team
-@app.route('/<Team>/RecommendSignings')
-def recSignings(Team):
-    rec_dict = generateSignings(Team, current_season)
+@app.route('/<Team>/<viewed_season>/RecommendSignings')
+def recSignings(Team, viewed_season):
+    rec_dict = generateSignings(Team, viewed_season)
     print(rec_dict)
     gsc_dict = rec_dict[0][0]
     gsc_prio = rec_dict[0][1]
@@ -1406,10 +1429,10 @@ def analyzeTeam(Team, viewed_season):
     return [overall_lst, index_lst, teamDict]
 
 #recommends a Creative midfielder or forward with different criteria depending on priority
-def recommendGSC(Team, priority):
-    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+def recommendGSC(Team, priority, viewed_season):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
     #Want two options. If GSC is not a priority fix, find prospects. If it is, find proven good players. All tiers balls to the wall
-    gsc_players = gsCreation.query.filter(gsCreation.Team != Team, gsCreation.season == current_season)
+    gsc_players = gsCreation.query.filter(gsCreation.Team != Team, gsCreation.season == viewed_season)
     players = []
     if priority == "high": #Find the best CAM/Winger/Creative player <32yrs, >1000min
         potential_signings = gsc_players.filter(gsCreation.Age <= 32, gsCreation.minutes >= 1000, gsCreation.tier >= team.tier)
@@ -1441,10 +1464,10 @@ def recommendGSC(Team, priority):
     return players
 
 #recommends a striker with different criteria depending on priority
-def recommendStriker(Team, priority):
-    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+def recommendStriker(Team, priority, viewed_season):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
 
-    strikers = playerOffensive.query.filter(playerOffensive.Team != Team, playerOffensive.season == current_season)
+    strikers = playerOffensive.query.filter(playerOffensive.Team != Team, playerOffensive.season == viewed_season)
     players = []
     
     if priority == "high": #<32yrs, >1000min
@@ -1466,10 +1489,10 @@ def recommendStriker(Team, priority):
     return players
 
 #Recommends a striker with different criteria depending on priority
-def recommendMF(Team, priority):
-    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+def recommendMF(Team, priority, viewed_season):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
     
-    mf = playerPassing.query.filter(playerPassing.Team != Team, playerPassing.season == current_season, playerPassing.Position.contains("MF"))
+    mf = playerPassing.query.filter(playerPassing.Team != Team, playerPassing.season == viewed_season, playerPassing.Position.contains("MF"))
     players = []
 
     if priority == "high": # <32yrs, >1000min
@@ -1491,11 +1514,11 @@ def recommendMF(Team, priority):
     return players
 
 #Recommends a defensive midfielder and a defender with different criteria depending on priority
-def recommendDef(Team, priority):
-    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).first()
+def recommendDef(Team, priority, viewed_season):
+    team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
     
-    cdms = playerDefensive.query.filter(playerDefensive.Team != Team, playerDefensive.season == current_season, playerDefensive.Position.contains("MF"))
-    defs = playerPlaytime.query.filter(playerPlaytime.team != Team, playerPlaytime.season == current_season, playerPlaytime.Position == ("DF"))
+    cdms = playerDefensive.query.filter(playerDefensive.Team != Team, playerDefensive.season == viewed_season, playerDefensive.Position.contains("MF"))
+    defs = playerPlaytime.query.filter(playerPlaytime.team != Team, playerPlaytime.season == viewed_season, playerPlaytime.Position == ("DF"))
     players = []
 
     #split between cdm and a df probably
@@ -1548,16 +1571,16 @@ def generateSignings(Team, viewed_season):
         
         if index == 0:
             #print("GSC")
-            lst = recommendGSC(Team , priority)
+            lst = recommendGSC(Team , priority, viewed_season)
         elif index == 1:
             #print("STRIKER")
-            lst = recommendStriker(Team, priority)
+            lst = recommendStriker(Team, priority, viewed_season)
         elif index == 2:
             #print("MF")
-            lst = recommendMF(Team, priority)
+            lst = recommendMF(Team, priority, viewed_season)
         else:
             #print("DF")
-            lst = recommendDef(Team, priority)
+            lst = recommendDef(Team, priority, viewed_season)
         
         return (lst, priority)
 
@@ -1649,8 +1672,8 @@ def obtainTeamAvgStats(teams):
     return lstAvg
 
 #Page of graphs including age, minutes, etc
-@app.route('/team/<Team>/graphs')
-def graphs(Team, viewed_season = current_season):
+@app.route('/team/<Team>/<viewed_season>/graphs')
+def graphs(Team, viewed_season):
     try:
         #print("The page is working")
         team = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
@@ -2113,9 +2136,9 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/<Team>/", defaults={'viewed_season':'2020-2021'})
-@app.route('/test/<Team>/<viewed_season>', methods = ["GET", "POST"])
-def test(viewed_season, Team):
+@app.route("/test/<Player>/", defaults={'viewed_season':'2020-2021'})
+@app.route('/test/<Player>/<viewed_season>', methods = ["GET", "POST"])
+def test(viewed_season, Player):
     if viewed_season == "...":
         viewed_season = current_season
 
@@ -2128,74 +2151,13 @@ def test(viewed_season, Team):
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
 
-
-    # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
-    # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
-    teamOverviewRow = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
-    teamCLRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-    League = teamOverviewRow.league
-    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
-    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
-    
-    teamPos = ((teamCLRow.index % 98) % 20) + 1
-    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
-    Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season, playerOverview.Team == Team).order_by(playerOverview.Gls.desc()).limit(5)
-    Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season, playerOverview.Team == Team).order_by(playerOverview.Ast.desc()).limit(5)
-    
-    
-    # Anaylsis portion of the team area
-    analysis_lst = analyzeTeam(Team, viewed_season)
-    analysis_pts = analysis_lst[0]
-    analysis_indices = analysis_lst[1]
-    teamDict = analysis_lst[2]
-
-    best_category = teamDict[analysis_indices[0]]
-    worst_category = teamDict[analysis_indices[len(analysis_indices)-1]]
-    bc_val = analysis_pts[analysis_indices[0]]
-    wc_val = analysis_pts[analysis_indices[len(analysis_indices)-1]]
-    
-    #print(analysis_lst)
-    def genMsg(val, category):
-            if val in range(-2,3):
-                return f"{category} is at or hovering around their rivals"
-            elif val < -2 and val > -5:
-                return f"{category} is below their rivals and could use improvements"
-            elif val < -5:
-                return f"{category} is considerably below their rivals and need improvement"
-            elif val > 2 and val < 5:
-                return f"{category} is above their rivals"
-            else:
-                return f"{category} is considerably above their rivals"
-        
-    bc_msg = genMsg(bc_val, best_category)
-    wc_msg = genMsg(wc_val, worst_category)
-
-    graphLabels = [Team, "Rival Averages"]
-
-
-    rival_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season, 
-                                                combinedLeagues.tier == teamCLRow.tier, combinedLeagues.Team != Team).all()
-    
-    rival_cat_avgs = [[], [], [], []]
-    for team in rival_teams:
-        analysis = analyzeTeam(team.Team, viewed_season)[0]
-        for i in range(len(analysis)):
-            rival_cat_avgs[i].append(analysis[i])
-
-    graph_lst = []
-    for i in range(len(analysis_pts)):
-        graph_lst.append([analysis_pts[i], sum(rival_cat_avgs[i])/len(rival_cat_avgs[i])])
-    
-    
-
+    # leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    # seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
 
     #print(analysis_pts, analysis_indices, teamDict, bc_msg, wc_msg)
     # Test link for prem: http://localhost:5000/test/Premier%20League/
-    return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons, team = Team, 
-                            teamORow = teamOverviewRow, teamCLRow = teamCLRow, position = teamPos, teamPlayers = teamPlayers, league = League
-                            , goals = Goals, assists = Assists, graphLabels = graphLabels, bc_msg = bc_msg, wc_msg = wc_msg, bc = best_category
-                            , wc = worst_category, graphData = graph_lst)
+    return render_template('playerBS.html', viewed_season = viewed_season, form = form)
 
 
 # TEST USER username: test, password: 1234

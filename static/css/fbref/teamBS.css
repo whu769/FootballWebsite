@@ -6,7 +6,11 @@ h1.h1-title{
     text-align: left;
 }
 
-/* Tale css stuff */
+/* Table css stuff */
+.row.table-responsive{
+    width: 90%;
+}
+
 #playerLink{
     font-family: Inria Sans;
     font-weight: 700;
@@ -43,6 +47,9 @@ td, th{
 }
 
 /* Superlatives Section */
+.row.superlatives{
+    width: 90%;
+}
 .categories{
     display: flex;
     flex-direction: row;

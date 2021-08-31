@@ -197,8 +197,8 @@
             <div class="row quicklinks">
                 <h1 class="h1-title">Quick Links »</h1>
                 <div class="links">
-                    <a href="">Graphs</a>
-                    <a href="">Recommended Signings</a>
+                    <a href="{{url_for('graphs', Team = team, viewed_season = viewed_season)}}">Graphs</a>
+                    <a href="{{url_for('recSignings', Team = team, viewed_season = viewed_season)}}">Recommended Signings</a>
                     <a href="">Season Performance</a>
                     <!-- SEASON PERFORMANCE TO BE ADDED -->
                 </div>
