@@ -881,7 +881,7 @@ def teams(Team, viewed_season = current_season):
         assists = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).all()
         
         #Code for analysing a team's performancce in terms of their rivals and the league overall
-        analysis_lst = analyzeTeam(Team)
+        analysis_lst = analyzeTeam(Team, viewed_season)
         analysis_pts = analysis_lst[0]
         analysis_indices = analysis_lst[1]
         teamDict = analysis_lst[2]
@@ -917,7 +917,7 @@ def teams(Team, viewed_season = current_season):
 #Page of recommended signings for a specific team
 @app.route('/<Team>/RecommendSignings')
 def recSignings(Team):
-    rec_dict = generateSignings(Team)
+    rec_dict = generateSignings(Team, current_season)
     print(rec_dict)
     gsc_dict = rec_dict[0][0]
     gsc_prio = rec_dict[0][1]
@@ -934,25 +934,25 @@ def recSignings(Team):
 #method to look through the team's general stats GSC, Defense, Passing, shooting and categorizes them
 #contains inner methods of assess the various aspects and returns a value
 #every inner method, compares its values to its rivals (teams in the same tier), the average of their rivals, and the league avg (5 OR 7 values)
-def analyzeTeam(Team):
+def analyzeTeam(Team, viewed_season):
     
-    team_standard = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == current_season).all()
-    team_overview = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == current_season).all()
-    team_gsc = teamGSC.query.filter(teamGSC.Team == Team, teamGSC.season == current_season).all()
-    team_defense = teamDefense.query.filter(teamDefense.Team == Team, teamDefense.season == current_season).all()
-    team_passing = teamPassing.query.filter(teamPassing.Team == Team, teamPassing.season == current_season).all()
-    team_shooting = teamShooting.query.filter(teamShooting.Team == Team, teamShooting.season == current_season).all()
+    team_standard = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).all()
+    team_overview = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).all()
+    team_gsc = teamGSC.query.filter(teamGSC.Team == Team, teamGSC.season == viewed_season).all()
+    team_defense = teamDefense.query.filter(teamDefense.Team == Team, teamDefense.season == viewed_season).all()
+    team_passing = teamPassing.query.filter(teamPassing.Team == Team, teamPassing.season == viewed_season).all()
+    team_shooting = teamShooting.query.filter(teamShooting.Team == Team, teamShooting.season == viewed_season).all()
 
     league = team_gsc[0].league #league the team is in
     tier = team_gsc[0].tier #tier the team is in
     team = team_gsc[0].Team
 
     #Opponent information (Same tier competitors, AVG tier, and everyone else)
-    opp_gsc_query = teamGSC.query.filter(teamGSC.Team != Team, teamGSC.season == current_season, teamGSC.league == league)
-    opp_defense_query = teamDefense.query.filter(teamDefense.Team != Team, teamDefense.season == current_season, teamDefense.league == league)
-    opp_passing_query = teamPassing.query.filter(teamPassing.Team != Team, teamPassing.season == current_season, teamPassing.league == league)
-    opp_shooting_query = teamShooting.query.filter(teamShooting.Team != Team, teamShooting.season == current_season, teamShooting.league == league)
-    opp_team_overview = combinedLeagues.query.filter(combinedLeagues.Team != Team, combinedLeagues.season == current_season, combinedLeagues.League == league)
+    opp_gsc_query = teamGSC.query.filter(teamGSC.Team != Team, teamGSC.season == viewed_season, teamGSC.league == league)
+    opp_defense_query = teamDefense.query.filter(teamDefense.Team != Team, teamDefense.season == viewed_season, teamDefense.league == league)
+    opp_passing_query = teamPassing.query.filter(teamPassing.Team != Team, teamPassing.season == viewed_season, teamPassing.league == league)
+    opp_shooting_query = teamShooting.query.filter(teamShooting.Team != Team, teamShooting.season == viewed_season, teamShooting.league == league)
+    opp_team_overview = combinedLeagues.query.filter(combinedLeagues.Team != Team, combinedLeagues.season == viewed_season, combinedLeagues.League == league)
     
     
     #print("Tier: " + str(tier))
@@ -1526,8 +1526,8 @@ def recommendDef(Team, priority):
     return players
 
 #generates all types of signings for a team
-def generateSignings(Team):
-    analysis_lst = analyzeTeam(Team)
+def generateSignings(Team, viewed_season):
+    analysis_lst = analyzeTeam(Team, viewed_season)
     #print(analysis_lst)
     analysis_pts = analysis_lst[0]
     analysis_indices = analysis_lst[1]
@@ -2131,18 +2131,71 @@ def test(viewed_season, Team):
 
     # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
     # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
-    teamRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-    League = teamRow.League
+    teamOverviewRow = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+    teamCLRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = teamOverviewRow.league
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-    teamPos = ((teamRow.index % 98) % 20) + 1
+    teamPos = ((teamCLRow.index % 98) % 20) + 1
     teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
-    # print(teamPos)
+    Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season, playerOverview.Team == Team).order_by(playerOverview.Gls.desc()).limit(5)
+    Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season, playerOverview.Team == Team).order_by(playerOverview.Ast.desc()).limit(5)
     
+    
+    # Anaylsis portion of the team area
+    analysis_lst = analyzeTeam(Team, viewed_season)
+    analysis_pts = analysis_lst[0]
+    analysis_indices = analysis_lst[1]
+    teamDict = analysis_lst[2]
+
+    best_category = teamDict[analysis_indices[0]]
+    worst_category = teamDict[analysis_indices[len(analysis_indices)-1]]
+    bc_val = analysis_pts[analysis_indices[0]]
+    wc_val = analysis_pts[analysis_indices[len(analysis_indices)-1]]
+    
+    #print(analysis_lst)
+    def genMsg(val, category):
+            if val in range(-2,3):
+                return f"{category} is at or hovering around their rivals"
+            elif val < -2 and val > -5:
+                return f"{category} is below their rivals and could use improvements"
+            elif val < -5:
+                return f"{category} is considerably below their rivals and need improvement"
+            elif val > 2 and val < 5:
+                return f"{category} is above their rivals"
+            else:
+                return f"{category} is considerably above their rivals"
+        
+    bc_msg = genMsg(bc_val, best_category)
+    wc_msg = genMsg(wc_val, worst_category)
+
+    graphLabels = [Team, "Rival Averages"]
+
+
+    rival_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season, 
+                                                combinedLeagues.tier == teamCLRow.tier, combinedLeagues.Team != Team).all()
+    
+    rival_cat_avgs = [[], [], [], []]
+    for team in rival_teams:
+        analysis = analyzeTeam(team.Team, viewed_season)[0]
+        for i in range(len(analysis)):
+            rival_cat_avgs[i].append(analysis[i])
+
+    graph_lst = []
+    for i in range(len(analysis_pts)):
+        graph_lst.append([analysis_pts[i], sum(rival_cat_avgs[i])/len(rival_cat_avgs[i])])
+    
+    
+
+    
+
+    #print(analysis_pts, analysis_indices, teamDict, bc_msg, wc_msg)
     # Test link for prem: http://localhost:5000/test/Premier%20League/
     return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons, team = Team, 
-                            teamRow = teamRow, position = teamPos, teamPlayers = teamPlayers, league = League)
+                            teamORow = teamOverviewRow, teamCLRow = teamCLRow, position = teamPos, teamPlayers = teamPlayers, league = League
+                            , goals = Goals, assists = Assists, graphLabels = graphLabels, bc_msg = bc_msg, wc_msg = wc_msg, bc = best_category
+                            , wc = worst_category, graphData = graph_lst)
 
 
 # TEST USER username: test, password: 1234

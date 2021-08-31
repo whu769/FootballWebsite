@@ -13,11 +13,12 @@
     </div>
 
     <!-- Right side content also dependent will change when teamBS gets setup-->
-    <div class="banner-item nation">
-        <p>Nation</p>
-    </div>
+    
 
     {% if team == "" %}
+        <div class="banner-item nation">
+            <p>Nation</p>
+        </div>
         <div class="banner-item numteams">
             <p class="val">{{teams|length}}</p>
         </div>
@@ -31,6 +32,9 @@
             <p>players</p>
         </div>
     {% else %}
+        <div class="banner-item Tier">
+            <p>Tier #{{teamPlayers[0].tier}}</p>
+        </div>
         <div class="banner-item numposition">
             <p class="val">#{{position}}</p>
         </div>

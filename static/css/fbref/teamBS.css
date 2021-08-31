@@ -1,0 +1,88 @@
+h1.h1-title{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+    color: #242417;
+    text-align: left;
+}
+
+/* Tale css stuff */
+#playerLink{
+    font-family: Inria Sans;
+    font-weight: 700;
+    font-size: 21px;
+    color: #63635E;
+    text-decoration: none;
+}
+
+#playerLink:hover{
+    text-decoration: underline;
+}
+
+td, th{
+    text-align: left;
+}
+
+/* Quicklinks Css */
+.links{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.links a{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 20px;
+    color: #63635E;
+    text-decoration: none;
+}
+
+.links a:hover{
+    text-decoration: underline;
+}
+
+/* Superlatives Section */
+.categories{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+h1.category{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 25px;
+    color: #63635E;
+}
+
+h1.cat-msg{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 20px;
+    color: #63635E;
+}
+
+.categories.msg{
+    border-bottom: 2px;
+    border-bottom-style: ridge;
+    color: #B5B574;
+}
+
+.cat-row p{
+    font-family: Blinker;
+    font-weight: 200;
+    font-size: 20px;
+    color: #63635E;
+}
+
+.graph-container{
+    width: 100%;
+}
+
+canvas#analysisbar{
+    width: 100%;
+    height: 100%;
+
+}

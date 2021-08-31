@@ -18,9 +18,204 @@
         {{breadcrumbs(league, team)}}
     </div>
     <div class="row banner">
-       {{banner(league, teams, players, team, position, teamPlayers)}}
+        {{banner(league, teams, players, team, position, teamPlayers)}}
+    </div>
+    <div class="row main-content">
+        <div class="col col-8 left-col">
+            <h1 class="h1-title">Quick Stats</h1>
+            <div class="row table-responsive">
+                <div class="league-table">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>M</th>
+                                <th>W</th>
+                                <th>D</th>
+                                <th>L</th>
+                                <th>PTS</th>
+                                <th>GF</th>
+                                <th>GA</th>
+                                <th>xG</th>
+                                <th>xGA</th>
+                                <th>Players Used</th>
+                                <th>Average Age</th>
+                                <th>Possession</th>
+                                <th>GP90</th>
+                                <th>xGP90</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{teamORow.MP}}</td>
+                                <td>{{teamCLRow.W}}</td>
+                                <td>{{teamCLRow.D}}</td>
+                                <td>{{teamCLRow.L}}</td>
+                                <td>{{teamCLRow.Pts}}</td>
+                                <td>{{teamCLRow.GF}}</td>
+                                <td>{{teamCLRow.GA}}</td>
+                                <td>{{teamCLRow.xG}}</td>
+                                <td>{{teamCLRow.xGA}}</td>
+                                <td>{{teamORow.PlayersUsed}}</td>
+                                <td>{{teamORow.Age}}</td>
+                                <td>{{teamORow.Possession}}</td>
+                                <td>{{teamORow.GlsP90}}</td>
+                                <td>{{teamORow.xGP90}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <h1 class="h1-title">Team Members</h1>
+            <div class="row table-responsive">
+                <div class="league-table">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Nation</th>
+                                <th>Position</th>
+                                <th>Age</th>
+                                <th>Minutes</th>
+                                <th>Games</th>
+                                <th>Goals</th>
+                                <th>xG</th>
+                                <th>Assists</th>
+                                <th>xA</th>
+                                <th>Yellow Cards</th>
+                                <th>Red Cards</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in teamPlayers %}
+                            <tr>
+                                <td>
+                                    <a id="playerLink" href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                                </td>
+                                <td>{{row.Country}}</td>
+                                <td>{{row.Position}}</td>
+                                <td>{{row.Age}}</td>
+                                <td>{{row.minutes|round|int}}</td>
+                                <td>{{row.Nineties}}</td>
+                                <td>{{row.Gls}}</td>
+                                <td>{{ "%.2f"|format(row.xG)}}</td>
+                                <td>{{row.Ast}}</td>
+                                <td>{{ "%.2f"|format(row.xA)}}</td>
+                                <td>{{row.YCrd}}</td>
+                                <td>{{row.RCrd}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row superlatives">
+                <h1 class="h1-title">Superlatives</h1>
+                <div class="graph-container shadow-sm">
+                    <div class="categories strength">
+                        <div class="cat-row">
+                            <h1 class="category">Best Category</h1>
+                        </div>
+                        <div class="cat-row">
+                            <h1 class="cat-msg">{{bc}}</h1>
+                        </div>
+                        <div class="cat-row">
+                            <h1 class="cat-msg dummy"></h1>
+                        </div>
+                    </div>
+                    <div class="categories msg">
+                        <div class="cat-row">
+                            <p>{{bc_msg}}</p>
+                        </div>
+                    </div>
+                    <div class="categories weakness">
+                        <div class="cat-row">
+                            <h1 class="category">Worst Category</h1>
+                        </div>
+                        <div class="cat-row">
+                            <h1 class="cat-msg">{{wc}}</h1>
+
+                        </div>
+                        <div class="cat-row">
+                            <h1 class="cat-msg dummy"></h1>
+                        </div>
+                    </div>
+                    <div class="categories msg">
+                        <div class="cat-row">
+                            <p>{{wc_msg}}</p>
+                        </div>
+                    </div>
+
+                    <div class="row graph">
+                        <canvas id="analysisbar"></canvas>
+                        <script>
+                            var ctx = document.getElementById("analysisbar").getContext("2d")
+                            var agebar = new Chart(ctx, {
+                                type: "bar",
+                                data: {
+                                    labels: {{graphLabels | safe}},
+                                    datasets: [
+                                        {
+                                            label: "Chance Creation",
+                                            data: {{graphData[0] | safe}},
+                                            borderWidth: 2,
+                                            backgroundColor: 'rgba(54, 162, 235)'
+                                        },
+                                        {
+                                            label: "Shooting",
+                                            data: {{graphData[1] | safe}},
+                                            borderWidth: 2,
+                                            backgroundColor: 'rgba(255, 99, 132)'
+                                        },
+                                        {
+                                            label: "Passing",
+                                            data: {{graphData[2] | safe}},
+                                            borderWidth: 2,
+                                            backgroundColor: 'rgba(255, 206, 86)'
+                                        },
+                                        {
+                                            label: "Defending",
+                                            data: {{graphData[3] | safe}},
+                                            borderWidth: 2,
+                                            backgroundColor: 'rgb(50,205,50)'
+                                        }
+                                    ]
+            
+                                }
+                                ,
+                                options: {
+                                    responsive: false
+                                }
+                            })
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col col-4 right-col">
+            <div class="row quicklinks">
+                <h1 class="h1-title">Quick Links »</h1>
+                <div class="links">
+                    <a href="">Graphs</a>
+                    <a href="">Recommended Signings</a>
+                    <a href="">Season Performance</a>
+                    <!-- SEASON PERFORMANCE TO BE ADDED -->
+                </div>
+            </div>
+
+            <div class="row top-striker">
+                {{toptable("Goals", goals)}}
+            </div>
+
+            <div class="row top-assists">
+                {{toptable("Assists", assists)}}
+            </div>
+
+
+
+        </div>
+
     </div>
 
-</div>
-
-{% endblock %}
+    {% endblock %}
