@@ -23,7 +23,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_name
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
-tweetscraper = TS()
+
 
 # variable of the most current season
 current_season = '2020-2021'
@@ -658,6 +658,7 @@ def register():
 @app.route('/dashboard/<user_id>', methods = ["GET", "POST"])
 @login_required
 def dashboard(user_id):
+    tweetscraper = TS()
     # print(form.username)
     user = User.query.get(user_id)
     followed_teams = user.teams
@@ -2115,6 +2116,9 @@ def genesis():
 @app.route("/test/<Team>/", defaults={'viewed_season':'2020-2021'})
 @app.route('/test/<Team>/<viewed_season>', methods = ["GET", "POST"])
 def test(viewed_season, Team):
+    if viewed_season == "...":
+        viewed_season = current_season
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
@@ -2127,16 +2131,18 @@ def test(viewed_season, Team):
 
     # players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
     # cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
-    Team = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-    League = Team.League
+    teamRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = teamRow.League
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-    teamPos = ((Team.index % len(combinedLeagues.query.filter(combinedLeagues.season == viewed_season).all())) + 1)
+    teamPos = ((teamRow.index % 98) % 20) + 1
+    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
     # print(teamPos)
     
     # Test link for prem: http://localhost:5000/test/Premier%20League/
-    return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons)
+    return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons, team = Team, 
+                            teamRow = teamRow, position = teamPos, teamPlayers = teamPlayers, league = League)
 
 
 # TEST USER username: test, password: 1234
