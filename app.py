@@ -27,6 +27,14 @@ db = SQLAlchemy(app)
 
 # variable of the most current season
 current_season = '2020-2021'
+flag_dict = {
+    "Bundesliga" : "🇩🇪" ,
+    "Premier League" : "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    "Ligue 1" : "🇫🇷",
+    "La Liga" : "🇪🇸",
+    "Serie A" : "🇮🇹"
+}
+
 
 #Setup for login and registration features
 app.config['SECRET_KEY'] = 'secretkey'
@@ -847,9 +855,12 @@ def leagues(League, viewed_season):
         highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
 
         players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+
+        flag_emoji = flag_dict[League]
+        # print(flag_emoji)
         # Test link for prem: http://localhost:5000/test/Premier%20League/
         return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons
-                                , teams = teams, league = League, goals = Goals, assists = Assists, bo = bestOffensively, bd = bestDefensively,
+                                , teams = teams, league = League, flag_emoji = flag_emoji, goals = Goals, assists = Assists, bo = bestOffensively, bd = bestDefensively,
                                 wo = worstOffensively, wd = worstDefensively, ggd = highestGD, players = players)
 
     except Exception as e:
@@ -916,6 +927,7 @@ def teams(Team, viewed_season):
     wc_msg = genMsg(wc_val, worst_category)
 
     graphLabels = [Team, "Rival Averages"]
+    flag_emoji = flag_dict[League]
 
 
     rival_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season, 
@@ -934,7 +946,7 @@ def teams(Team, viewed_season):
     return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons, team = Team, 
                             teamORow = teamOverviewRow, teamCLRow = teamCLRow, position = teamPos, teamPlayers = teamPlayers, league = League
                             , goals = Goals, assists = Assists, graphLabels = graphLabels, bc_msg = bc_msg, wc_msg = wc_msg, bc = best_category
-                            , wc = worst_category, graphData = graph_lst)
+                            , wc = worst_category, graphData = graph_lst, flag_emoji=flag_emoji)
 
 
 #Page of recommended signings for a specific team
@@ -2151,9 +2163,12 @@ def test(viewed_season, Player):
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
 
-    # leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
-    # seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
-    
+    playerORow = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season==viewed_season).first()
+    League = playerORow.Team
+
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    # print(playerORow.Name, League)
 
     #print(analysis_pts, analysis_indices, teamDict, bc_msg, wc_msg)
     # Test link for prem: http://localhost:5000/test/Premier%20League/
