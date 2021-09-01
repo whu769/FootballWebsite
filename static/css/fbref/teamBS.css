@@ -1,15 +1,13 @@
-h1.h1-title{
+/* h1.h1-title{
     font-family: Blinker;
     font-weight: 600;
     font-size: 36px;
     color: #242417;
     text-align: left;
-}
+} */
 
 /* Table css stuff */
-.row.table-responsive{
-    width: 90%;
-}
+
 
 #playerLink{
     font-family: Inria Sans;
@@ -23,9 +21,9 @@ h1.h1-title{
     text-decoration: underline;
 }
 
-td, th{
+/* td, th{
     text-align: left;
-}
+} */
 
 /* Quicklinks Css */
 .links{

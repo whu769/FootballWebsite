@@ -23,25 +23,30 @@ class tweetscraper:
     def __init__(self):
         # self.count = count
         self.usernames = tweetscraper.usernames
-        self.obtainWeekTweets()
+        self.weekObtained = False
     
     #Method to take all tweets from the usernames sent in the past two weeks
     def obtainWeekTweets(self):
-        end_date = datetime.utcnow() - timedelta(days=7)
-        tweet_lst = []
-        for username in self.usernames:
-            tweets = []
-            for status in Cursor(api.user_timeline, id = self.usernames[0], include_rts = False, exclude_replies = True, tweet_mode = 'extended').items():
-                tweets.append('@' + username + ": " + status.full_text)
+        if not self.weekObtained:
+            end_date = datetime.utcnow() - timedelta(days=7)
+            tweet_lst = []
+            for username in self.usernames:
+                tweets = []
+                for status in Cursor(api.user_timeline, id = username, include_rts = False, exclude_replies = True, tweet_mode = 'extended').items():
+                    tweets.append('@' + username + ": " + status.full_text)
 
-                if status.created_at < end_date:
-                    break
+                    if status.created_at < end_date:
+                        break
+                
+                tweet_lst.append(tweets)
             
-            tweet_lst.append(tweets)
-        
-        # print(len(tweet_lst))
-        self.weekTweets = tweet_lst
+            # print(len(tweet_lst))
+            self.weekTweets = tweet_lst
+            self.weekObtained = True
     
+    def reSearchTweets(self):
+        self.weekObtained = False
+
     #Returns all tweets that have mentioned the team name
     def findRelevantTeamTweets(self, Team):
         rel_tweets = []
@@ -61,9 +66,27 @@ class tweetscraper:
                     rel_tweets.append(tweet)
         
         return rel_tweets
+    
+    def obtainTweetsAboutPlayer(self, Player):
+        search_word = Player + " -filter:retweets" + " -filter:replies"
+        today = date.today()
+        week_ago = today - timedelta(days=7)
+        # print(week_ago)
+        tweets = Cursor(api.search, q=search_word, lang = "en", since = week_ago).items(20)
 
+        tweet_dict = dict()
+        for tweet in tweets:
+            # print(tweet.user.screen_name)
+            # print(tweet.text)
+            # tweet_lst.append(f'@{tweet.user.screen_name}: {tweet.text}')
+            tweet_dict[f'@{tweet.user.screen_name}'] = tweet.text
+            # print("-------------------------------------------------")
+
+        # print(tweet_lst)
+        return tweet_dict
 #TESTER CODE
 # ts = tweetscraper()
+# ts.obtainTweetsAboutPlayer("Neymar")
 # ts.obtaintweets()
 # ts.obtainWeekTweets()
 # ts.findRelevantTeamTweets('Chelsea')

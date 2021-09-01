@@ -1,0 +1,32 @@
+.row.graphs{
+    width: 90%;
+}
+
+.graph-title{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 25px;
+    color: #63635E;
+    text-align: left;
+    border-bottom-style: solid;
+    border-bottom-width: .05em;
+    border-bottom-color: #DADAB9;
+}
+
+canvas{
+    max-height: 400px;
+    max-width: 400px;
+    margin: auto;
+}
+
+.graph-item{
+    margin-bottom: 1em;
+}
+
+#MissingInfo{
+    font-family: Blinker;
+    font-weight: 600;
+    color: #242417;
+    font-size: 40px;
+    width: 90%;
+}

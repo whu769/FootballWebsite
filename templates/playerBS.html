@@ -2,6 +2,7 @@
 {% from 'toptable-macro.html' import toptable %}
 {% from 'breadcrumbs-macro.html' import breadcrumbs %}
 {% from 'banner-macro.html' import banner %}
+{% from 'tweets-macro.html' import tweettable %}
 {% extends 'base.html' %}
 
 {% block head %}
@@ -19,7 +20,302 @@
         {{banner(league, teams, players, flag_emoji,team, position, teamPlayers, player, playerORow)}}
     </div>
     <div class="row main-content">
-        
+        <div class="col col-8 left-col">
+            <h1 class="h1-title">Quick Stats</h1>
+            <div class="row table-responsive">
+                <div class="league-table">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Nationality</th>
+                                <th>Team</th>
+                                <th>Position</th>
+                                <th>Minutes</th>
+                                <th>Goals</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{playerORow.Name}}</td>
+                                <td>{{playerORow.Age}}</td>
+                                <td>{{playerORow.Country}}</td>
+                                <td>{{playerORow.Team}}</td>
+                                <td>{{playerORow.Position}}</td>
+                                <td>{{playerORow.minutes}}</td>
+                                <td>{{playerORow.Gls}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <h1 class="h1-title">Statistics</h1>
+            {% if hasGraphs %}
+                <div class="row graphs">
+                    <div class="row graph-item shadow-sm">
+                        <h1 class="graph-title">Graph - Shot Radar</h1>
+                        <canvas id="shotRadar"></canvas>
+                        <script>
+                            var ctx = document.getElementById("shotRadar").getContext("2d")
+                            var shotRadar = new Chart(ctx, {
+                                type: "radar",
+                                data: {
+                                    labels: {{ pOLabels| safe}},
+                            datasets: [
+                                {
+                                    label: "Player Stat",
+                                    data: {{ pOData }},
+                                fill: true,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgb(54, 162, 235)',
+                                pointBackgroundColor: 'rgb(54, 162, 235)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                    }, {
+                                    label: "T1 Avg",
+                                    data: {{ pOT1Data }},
+                                fill: true,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132)',
+                                pointBackgroundColor: 'rgba(255, 99, 132)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgba(255, 99, 132)'
+                                    }, {
+                                    label: "Players in the same position",
+                                    data: {{ oPOData }},
+                                fill: true,
+                                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                                borderColor: 'rgba(255, 206, 86)',
+                                pointBackgroundColor: 'rgba(255, 206, 86)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgba(255, 206, 86)'
+                                    }
+                            ]
+                                }
+                                ,
+                            options: {
+                                responsive: true
+                            }
+                                })
+                        </script>
+                    </div>
+                </div>
+                <div class="row graphs">
+                    <h1 class="graph-title">Graph-Goal/Shot Creation</h1>
+                    <canvas id="SGCRadar"></canvas>
+                    <script>
+                        var ctx = document.getElementById("SGCRadar").getContext("2d")
+                        var shotRadar = new Chart(ctx, {
+                            type: "radar",
+                            data: {
+                                labels: {{ pGSCLabels| safe}},
+                        datasets: [
+                            {
+                                label: "Player Stat",
+                                data: {{ pGSCData }},
+                            fill: true,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                        }, {
+                                label: "T1 Stat",
+                                data: {{ pGSCT1Data }},
+                            fill: true,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132)',
+                            pointBackgroundColor: 'rgba(255, 99, 132)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(255, 99, 132)'
+                                        },
+                            {
+                                label: "Players in the same position",
+                                data: {{ oppGSCData }},
+                            fill: true,
+                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                            borderColor: 'rgba(255, 206, 86)',
+                            pointBackgroundColor: 'rgba(255, 206, 86)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(255, 206, 86)'
+                                        }
+                        ]
+                                }
+                                ,
+                        options: {
+                            responsive: true
+                        }
+                            })
+                    </script>
+                </div>
+                <div class="row graphs">
+                    <h1 class="graph-title">Graph-Defending</h1>
+                    <canvas id="defRadar"></canvas>
+                    <script>
+                        var ctx = document.getElementById("defRadar").getContext("2d")
+                        var shotRadar = new Chart(ctx, {
+                            type: "radar",
+                            data: { //replace pOLabels and pOData
+                                labels: {{ pDLabels| safe}},
+                        datasets: [
+                            {
+                                label: "Player Stat",
+                                data: {{ pDData }},
+                            fill: true,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                        }, {
+                                label: "T1 Avg",
+                                data: {{ pDT1Data }},
+                            fill: true,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132)',
+                            pointBackgroundColor: 'rgba(255, 99, 132)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(255, 99, 132)'
+                                        }, {
+                                label: "Players in the same position",
+                                data: {{ oPDData }},
+                            fill: true,
+                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                            borderColor: 'rgba(255, 206, 86)',
+                            pointBackgroundColor: 'rgba(255, 206, 86)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(255, 206, 86)'
+                                        }
+                        ]
+                                }
+                                ,
+                        options: {
+                            responsive: true
+                        }
+                            })
+                    </script>
+                </div>
+                <div class="row graphs">
+                    <h1 class="graph-title">Graph-Passing Percentages</h1>
+                    <canvas id="passRadar"></canvas>
+                    <script>
+                        var ctx = document.getElementById("passRadar").getContext("2d")
+                        var shotRadar = new Chart(ctx, {
+                            type: "radar",
+                            data: { //replace pOLabels and pOData
+                                labels: {{ pPLabels| safe}},
+                        datasets: [
+                            {
+                                label: "Player Stats",
+                                data: {{ pPData }},
+                            fill: true,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                        },
+                            {
+                                label: "T1 Avg",
+                                data: {{ pPT1Data }},
+                            fill: true,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132)',
+                            pointBackgroundColor: 'rgba(255, 99, 132)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(255, 99, 132)'
+                                        }, {
+                                label: "Players in the same position",
+                                data: {{ oPPData }},
+                            fill: true,
+                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                            borderColor: 'rgba(255, 206, 86)',
+                            pointBackgroundColor: 'rgba(255, 206, 86)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(255, 206, 86)'
+                                        }
+                        ]
+                                }
+                                ,
+                        options: {
+                            responsive: true
+                        }
+                            })
+                    </script>
+                </div>
+                <div class="row graphs">
+                <h1 class="graph-title">Graph-Passing Stats</h1>
+                <canvas id="passRadar2"></canvas>
+                <script>
+                    var ctx = document.getElementById("passRadar2").getContext("2d")
+                    var shotRadar = new Chart(ctx, {
+                        type: "radar",
+                        data: { //replace pOLabels and pOData
+                            labels: {{ pPLabels2| safe}},
+                    datasets: [
+                        {
+                            label: "Player Stats",
+                            data: {{ pPData2 }},
+                        fill: true,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        pointBackgroundColor: 'rgb(54, 162, 235)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                    },
+                        {
+                            label: "T1 Avg",
+                            data: {{ pPT1Data2 }},
+                        fill: true,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132)',
+                        pointBackgroundColor: 'rgba(255, 99, 132)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 99, 132)'
+                                    }, {
+                            label: "Players in the same position",
+                            data: {{ oPPData2 }},
+                        fill: true,
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgba(255, 206, 86)',
+                        pointBackgroundColor: 'rgba(255, 206, 86)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 206, 86)'
+                                    }
+                    ]
+                            }
+                            ,
+                    options: {
+                        responsive: true
+                    }
+                        })
+                </script>
+                </div>
+            {% else %}
+                <h1 id="MissingInfo">Unfortunately, player has no graphs</h1>
+            {% endif %}
+        </div>
+        <div class="col-4 right-col">
+            <div class="row tweets">
+                {{tweettable(tweets)}}
+            </div>
+        </div>
     </div>
 </div>
 

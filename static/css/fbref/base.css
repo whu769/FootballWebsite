@@ -250,6 +250,10 @@ li.dropdown .dropdown-menu.show {
 
 
 /* Css for tables */
+.row.table-responsive{
+    width: 90%;
+}
+
 h1#combined-league, h1#best-strikers{
     font-family: Blinker;
     font-weight: 600;
@@ -260,6 +264,7 @@ h1#combined-league, h1#best-strikers{
     font-family: Inria Sans;
     font-weight: 400;
     font-size: 21px;
+    text-align: left;
 }
 
 .table-responsive table.table-striped thead tr th{
@@ -267,6 +272,7 @@ h1#combined-league, h1#best-strikers{
     font-weight: 400;
     font-size: 21px;
     color: rgb(36, 36, 23);
+    text-align: left;
 }
 
 .row-3 .col{
@@ -505,4 +511,13 @@ a.table-link:hover{
     font-weight: 700;
     font-size: 48px;
     color: #78784D;
+}
+
+/* Css h1 tags */
+h1.h1-title{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+    color: #242417;
+    text-align: left;
 }

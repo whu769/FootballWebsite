@@ -1,0 +1,21 @@
+{% macro tweettable(tweets) %}
+<div class="top-table shadow-sm">
+    <div class="header">
+        <h1 id="topscorers">Tweets</h1>
+    </div>
+    <!-- jinja this bit  -->
+    {% for key, value in tweets.items() %}
+        <div class="topcard">
+            <div class="topcard-1">
+                <div class="top-metric">
+                    <p>{{key}}</p>
+                </div>
+            </div>
+            <div class="topcard-2 team-info">
+                <p>{{value}}</p>
+            </div>
+            
+        </div>
+    {% endfor %}
+</div>
+{% endmacro %}
