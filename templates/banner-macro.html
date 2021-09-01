@@ -1,11 +1,13 @@
-{% macro banner(league, teams, players, flag_emoji,team="",position="", teamPlayers="")%}
+{% macro banner(league, teams, players, flag_emoji,team="",position="", teamPlayers="", player="", playerORow = "")%}
 <div class="banner">
     <!-- Left side dependent on page -->
     <div class="banner-item league-img">
         {% if team=="" %}
             <img src="" class="img-responsive" alt="{{league}}">
-        {% else %}
+        {% elif player == "" %}
             <p class="team-title">{{team}}</p>
+        {% else %}
+            <p class="team-title">{{player}}</p>
         {% endif %}
     </div>
     <div class="banner-item divider">
@@ -31,7 +33,7 @@
         <div class="banner-item players">
             <p>players</p>
         </div>
-    {% else %}
+    {% elif player == "" %}
         <div class="banner-item Tier">
             <p>Tier #{{teamPlayers[0].tier}}</p>
         </div>
@@ -46,6 +48,16 @@
         </div>
         <div class="banner-item players">
             <p>players</p>
+        </div>
+    {% else %}
+        <div class="banner-item nation">
+            <p>{{flag_emoji}}</p>
+        </div>
+        <div class="banner-item team">
+            <p>{{playerORow.Team}}</p>
+        </div>
+        <div class="banner-item playerPosition">
+            <p>{{playerORow.Position}}</p>
         </div>
     {% endif %}
 </div>

@@ -6,9 +6,21 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/playerBS.css') }}">
-<title>PLAYER</title>
+<title>{{player}}</title>
 {% endblock %}
 
 {% block body %}
+{{navbar(leagues, seasons, form, viewed_season,league, team, player)}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs(league, team, player)}}
+    </div>
+    <div class="row banner">
+        {{banner(league, teams, players, flag_emoji,team, position, teamPlayers, player, playerORow)}}
+    </div>
+    <div class="row main-content">
+        
+    </div>
+</div>
 
 {% endblock %}

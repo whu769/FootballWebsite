@@ -1,4 +1,4 @@
-{% macro navbar(leagues, seasons, form, viewed_season,league = "", team = "") %}
+{% macro navbar(leagues, seasons, form, viewed_season,league = "", team = "", player ="") %}
 <div class="row navbar-top shadow-sm">
     <nav class="navbar navbar-expand-lg navbar-light">
         {% if team =="" %}
@@ -42,6 +42,13 @@
                         </li>
 
                     {% else %}
+                        {% if player != "" %}
+                            <li class="nav-item active back-team">
+                                <a class="nav-link" href="{{url_for('leagues', League = league, viewed_season = viewed_season)}}">« Team</a>
+                            </li>
+                        {% else %}
+                            
+                        {% endif %}
                         <li class="nav-item active back-league">
                             <a class="nav-link" href="{{url_for('leagues', League = league, viewed_season = viewed_season)}}">« League</a>
                         </li>

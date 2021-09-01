@@ -2164,15 +2164,18 @@ def test(viewed_season, Player):
                 return redirect(url_for('dashboard', user_id = user.id))
 
     playerORow = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season==viewed_season).first()
-    League = playerORow.Team
+    League = playerORow.League
+    Team = playerORow.Team
 
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     # print(playerORow.Name, League)
+    flag_emoji = flag_dict[League]
 
     #print(analysis_pts, analysis_indices, teamDict, bc_msg, wc_msg)
     # Test link for prem: http://localhost:5000/test/Premier%20League/
-    return render_template('playerBS.html', viewed_season = viewed_season, form = form)
+    return render_template('playerBS.html', viewed_season = viewed_season, form = form, playerORow = playerORow, league = League, team = Team,
+                            leagues = leagues, seasons = seasons, player = Player, flag_emoji = flag_emoji, teamPlayers = "")
 
 
 # TEST USER username: test, password: 1234
