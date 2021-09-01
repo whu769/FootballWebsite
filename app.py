@@ -1906,71 +1906,166 @@ def obtainAvgGKStats(oppGKStats):
     return [gkAvgShotData, gkAvgMiscData]
 
 #Page to a player, includes graphs of shooting, passing, and defense
-@app.route('/player/<Player>')
-def players(Player, viewed_season = current_season):
+@app.route("/player/<Player>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route('/player/<Player>/<viewed_season>', methods = ["GET", "POST"])
+def players(Player, viewed_season):
     try:
-        #print("The page is working")
+        # #print("The page is working")
         
-        pO = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()[0]
+        # pO = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()[0]
         
-        primaryPosition = pO.Position.split(",")[0]
+        # primaryPosition = pO.Position.split(",")[0]
         
-        if primaryPosition != "GK":
-            pOffense = playerOffensive.query.filter(playerOffensive.Name == Player, playerOffensive.Team == pO.Team, playerOffensive.season == viewed_season).first()
-            pDefense = playerDefensive.query.filter(playerDefensive.Name == Player, playerDefensive.Team == pO.Team, playerDefensive.season == viewed_season).first()
-            pPass = playerPassing.query.filter(playerPassing.Name == Player, playerPassing.Team == pO.Team, playerPassing.season == viewed_season).first()
-            pGSCreation = gsCreation.query.filter(gsCreation.Name == Player, gsCreation.Team == pO.Team, gsCreation.season == viewed_season).first()
-            #print(pGSCreation.Name)
+        # if primaryPosition != "GK":
+        #     pOffense = playerOffensive.query.filter(playerOffensive.Name == Player, playerOffensive.Team == pO.Team, playerOffensive.season == viewed_season).first()
+        #     pDefense = playerDefensive.query.filter(playerDefensive.Name == Player, playerDefensive.Team == pO.Team, playerDefensive.season == viewed_season).first()
+        #     pPass = playerPassing.query.filter(playerPassing.Name == Player, playerPassing.Team == pO.Team, playerPassing.season == viewed_season).first()
+        #     pGSCreation = gsCreation.query.filter(gsCreation.Name == Player, gsCreation.Team == pO.Team, gsCreation.season == viewed_season).first()
+        #     #print(pGSCreation.Name)
             
-            #No longer used
+        #     #No longer used
             
-            t1Def = playerDefensive.query.filter(playerDefensive.tier == 1, playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
-                    playerDefensive.season == viewed_season)
-            t1Att = playerOffensive.query.filter(playerOffensive.tier == 1, playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
-                    playerOffensive.season == viewed_season)
-            t1Pass = playerPassing.query.filter(playerPassing.tier == 1, playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
-                    playerPassing.season == viewed_season)
-            t1GSC = gsCreation.query.filter(gsCreation.tier == 1, gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
-                    gsCreation.season == viewed_season)
-            # for player in t1GSC:
-            #     print(player.Name)
+        #     t1Def = playerDefensive.query.filter(playerDefensive.tier == 1, playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
+        #             playerDefensive.season == viewed_season)
+        #     t1Att = playerOffensive.query.filter(playerOffensive.tier == 1, playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
+        #             playerOffensive.season == viewed_season)
+        #     t1Pass = playerPassing.query.filter(playerPassing.tier == 1, playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
+        #             playerPassing.season == viewed_season)
+        #     t1GSC = gsCreation.query.filter(gsCreation.tier == 1, gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
+        #             gsCreation.season == viewed_season)
+        #     # for player in t1GSC:
+        #     #     print(player.Name)
 
             
-            oppDef = playerDefensive.query.filter(playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
-                    playerDefensive.season == viewed_season)
-            oppAtt = playerOffensive.query.filter(playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
-                    playerOffensive.season == viewed_season)
-            oppPass = playerPassing.query.filter(playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
-                    playerPassing.season == viewed_season)
-            oppGSC = gsCreation.query.filter(gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
-                    gsCreation.season == viewed_season)
+        #     oppDef = playerDefensive.query.filter(playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
+        #             playerDefensive.season == viewed_season)
+        #     oppAtt = playerOffensive.query.filter(playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
+        #             playerOffensive.season == viewed_season)
+        #     oppPass = playerPassing.query.filter(playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
+        #             playerPassing.season == viewed_season)
+        #     oppGSC = gsCreation.query.filter(gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
+        #             gsCreation.season == viewed_season)
             
-            playerData = obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation)
-            #teamData = obtainAvgStats(teamDef, teamAtt, teamPass)
-            oppData = obtainAvgStats(oppDef, oppAtt, oppPass, oppGSC)
-            t1Data = obtainAvgStats(t1Def, t1Att, t1Pass, t1GSC)
-            #print(oppData[3])
+        #     playerData = obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation)
+        #     #teamData = obtainAvgStats(teamDef, teamAtt, teamPass)
+        #     oppData = obtainAvgStats(oppDef, oppAtt, oppPass, oppGSC)
+        #     t1Data = obtainAvgStats(t1Def, t1Att, t1Pass, t1GSC)
+        #     #print(oppData[3])
             
 
-            return render_template("player.html", pO = pO, pOLabels = playerData[0][0], pOData = playerData[0][1], pDLabels = playerData[1][0], pDData = playerData[1][1]
-            , pPLabels = playerData[2][0], pPData = playerData[2][1], pPLabels2 = playerData[3][0], pPData2 = playerData[3][1], pDT1Data = t1Data[0]
-            , pOT1Data = t1Data[1], pPT1Data = t1Data[2][0:4], pPT1Data2 = t1Data[2][4:], oPDData = oppData[0], oPOData = oppData[1],
-            oPPData = oppData[2][0:4], oPPData2 = oppData[2][4:], pGSCLabels = playerData[4][0], pGSCData = playerData[4][1], pGSCT1Data = t1Data[3]
-            , oppGSCData = oppData[3])
-        else:
-            GKStats = goalkeeping.query.filter(goalkeeping.Name == pO.Name, goalkeeping.season == viewed_season).first()
-            oppGKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.season == viewed_season)
-            oppT1GKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.tier == 1, goalkeeping.season == viewed_season)
-            # for player in oppGKStats:
-            #     print(player.Name)
-            GKData = obtainGKStats(GKStats)
-            oppGKData = obtainAvgGKStats(oppGKStats)
-            oppGKT1Data = obtainAvgGKStats(oppT1GKStats)
+        #     return render_template("player.html", pO = pO, pOLabels = playerData[0][0], pOData = playerData[0][1], pDLabels = playerData[1][0], pDData = playerData[1][1]
+        #     , pPLabels = playerData[2][0], pPData = playerData[2][1], pPLabels2 = playerData[3][0], pPData2 = playerData[3][1], pDT1Data = t1Data[0]
+        #     , pOT1Data = t1Data[1], pPT1Data = t1Data[2][0:4], pPT1Data2 = t1Data[2][4:], oPDData = oppData[0], oPOData = oppData[1],
+        #     oPPData = oppData[2][0:4], oPPData2 = oppData[2][4:], pGSCLabels = playerData[4][0], pGSCData = playerData[4][1], pGSCT1Data = t1Data[3]
+        #     , oppGSCData = oppData[3])
+        # else:
+        #     GKStats = goalkeeping.query.filter(goalkeeping.Name == pO.Name, goalkeeping.season == viewed_season).first()
+        #     oppGKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.season == viewed_season)
+        #     oppT1GKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.tier == 1, goalkeeping.season == viewed_season)
+        #     # for player in oppGKStats:
+        #     #     print(player.Name)
+        #     GKData = obtainGKStats(GKStats)
+        #     oppGKData = obtainAvgGKStats(oppGKStats)
+        #     oppGKT1Data = obtainAvgGKStats(oppT1GKStats)
            
-            return render_template("goalie.html", pO = pO, gkPassLabels = GKData[0][0], gkPassData = GKData[0][1]
-            , gkShotLabels = GKData[1][0], gkShotData = GKData[1][1], oppgkShotData = oppGKData[0]
-            , gkMiscLabels =GKData[2][0], gkMiscData = GKData[2][1], oppgkMiscData = oppGKData[1]
-            , oppT1ShotData = oppGKT1Data[0], oppT1MiscData = oppGKT1Data[1])
+        #     return render_template("goalie.html", pO = pO, gkPassLabels = GKData[0][0], gkPassData = GKData[0][1]
+        #     , gkShotLabels = GKData[1][0], gkShotData = GKData[1][1], oppgkShotData = oppGKData[0]
+        #     , gkMiscLabels =GKData[2][0], gkMiscData = GKData[2][1], oppgkMiscData = oppGKData[1]
+        #     , oppT1ShotData = oppGKT1Data[0], oppT1MiscData = oppGKT1Data[1])
+        if viewed_season == "...":
+            viewed_season = current_season
+
+        form = LoginForm()
+        if form.validate_on_submit():
+            user = User.query.filter_by(username = form.username.data).first()
+            if user:
+                if bcrypt.check_password_hash(user.password, form.password.data):
+                    login_user(user)
+                    print(user.id)
+                    return redirect(url_for('dashboard', user_id = user.id))
+
+        playerORow = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season==viewed_season).first()
+        League = playerORow.League
+        Team = playerORow.Team
+
+        leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+        # seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+        seasons = playerOverview.query.filter(playerOverview.season != viewed_season, playerOverview.Name == Player).with_entities(playerOverview.season).distinct()
+        # print(playerORow.Name, League)
+        flag_emoji = flag_dict[League]
+
+        primaryPosition = playerORow.Position.split(",")[0]
+
+        tweets = tweetscraper.obtainTweetsAboutPlayer(Player)
+        #print(tweets)
+        hasGraphs = False
+        if playerORow.minutes > 0:
+            hasGraphs = True
+        if hasGraphs:
+            if primaryPosition != "GK":
+                isGK = False
+                pOffense = playerOffensive.query.filter(playerOffensive.Name == Player, playerOffensive.Team == playerORow.Team, playerOffensive.season == viewed_season).first()
+                pDefense = playerDefensive.query.filter(playerDefensive.Name == Player, playerDefensive.Team == playerORow.Team, playerDefensive.season == viewed_season).first()
+                pPass = playerPassing.query.filter(playerPassing.Name == Player, playerPassing.Team == playerORow.Team, playerPassing.season == viewed_season).first()
+                pGSCreation = gsCreation.query.filter(gsCreation.Name == Player, gsCreation.Team == playerORow.Team, gsCreation.season == viewed_season).first()
+                #print(pGSCreation.Name)
+                
+                #No longer used
+                
+                t1Def = playerDefensive.query.filter(playerDefensive.tier == 1, playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
+                        playerDefensive.season == viewed_season)
+                t1Att = playerOffensive.query.filter(playerOffensive.tier == 1, playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
+                        playerOffensive.season == viewed_season)
+                t1Pass = playerPassing.query.filter(playerPassing.tier == 1, playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
+                        playerPassing.season == viewed_season)
+                t1GSC = gsCreation.query.filter(gsCreation.tier == 1, gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
+                        gsCreation.season == viewed_season)
+                # for player in t1GSC:
+                #     print(player.Name)
+
+                
+                oppDef = playerDefensive.query.filter(playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
+                        playerDefensive.season == viewed_season)
+                oppAtt = playerOffensive.query.filter(playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
+                        playerOffensive.season == viewed_season)
+                oppPass = playerPassing.query.filter(playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
+                        playerPassing.season == viewed_season)
+                oppGSC = gsCreation.query.filter(gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
+                        gsCreation.season == viewed_season)
+                
+                playerData = obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation)
+                
+                oppData = obtainAvgStats(oppDef, oppAtt, oppPass, oppGSC)
+                t1Data = obtainAvgStats(t1Def, t1Att, t1Pass, t1GSC)
+                
+                return render_template('playerBS.html', viewed_season = viewed_season, form = form, playerORow = playerORow, league = League, team = Team, isGK = isGK,
+                                    leagues = leagues, seasons = seasons, player = Player, hasGraphs = hasGraphs, flag_emoji = flag_emoji, teamPlayers = "", tweets = tweets,
+                                    pOLabels = playerData[0][0], pOData = playerData[0][1], pDLabels = playerData[1][0], pDData = playerData[1][1]
+                                    , pPLabels = playerData[2][0], pPData = playerData[2][1], pPLabels2 = playerData[3][0], pPData2 = playerData[3][1], pDT1Data = t1Data[0]
+                                    , pOT1Data = t1Data[1], pPT1Data = t1Data[2][0:4], pPT1Data2 = t1Data[2][4:], oPDData = oppData[0], oPOData = oppData[1],
+                                    oPPData = oppData[2][0:4], oPPData2 = oppData[2][4:], pGSCLabels = playerData[4][0], pGSCData = playerData[4][1], pGSCT1Data = t1Data[3]
+                                    , oppGSCData = oppData[3])
+            else:
+                isGK = True
+                GKStats = goalkeeping.query.filter(goalkeeping.Name == playerORow.Name, goalkeeping.season == viewed_season).first()
+                oppGKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != playerORow.Name, goalkeeping.season == viewed_season)
+                oppT1GKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != playerORow.Name, goalkeeping.tier == 1, goalkeeping.season == viewed_season)
+                
+                GKData = obtainGKStats(GKStats)
+                oppGKData = obtainAvgGKStats(oppGKStats)
+                oppGKT1Data = obtainAvgGKStats(oppT1GKStats)
+
+                return render_template('playerBS.html', viewed_season = viewed_season, form = form, playerORow = playerORow, league = League, team = Team,
+                                    leagues = leagues, seasons = seasons, player = Player, hasGraphs = hasGraphs, flag_emoji = flag_emoji, isGK = isGK
+                                    , teamPlayers = "", tweets = tweets, gkPassLabels = GKData[0][0], gkPassData = GKData[0][1]
+                                    , gkShotLabels = GKData[1][0], gkShotData = GKData[1][1], oppgkShotData = oppGKData[0]
+                                    , gkMiscLabels =GKData[2][0], gkMiscData = GKData[2][1], oppgkMiscData = oppGKData[1]
+                                    , oppT1ShotData = oppGKT1Data[0], oppT1MiscData = oppGKT1Data[1])
+        else:
+        #print(analysis_pts, analysis_indices, teamDict, bc_msg, wc_msg)
+        # Test link for prem: http://localhost:5000/test/Premier%20League/
+            return render_template('playerBS.html', viewed_season = viewed_season, form = form, playerORow = playerORow, league = League, team = Team, tweets = tweets,
+                                leagues = leagues, seasons = seasons, player = Player, flag_emoji = flag_emoji, teamPlayers = "", hasGraphs = hasGraphs)
     except Exception as e:
         # e holds description of the error
         error_text = "<p>The error:<br>" + str(e) + "</p>"
@@ -2149,82 +2244,8 @@ def genesis():
 @app.route("/test/<Player>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
 @app.route('/test/<Player>/<viewed_season>', methods = ["GET", "POST"])
 def test(viewed_season, Player):
-    if viewed_season == "...":
-        viewed_season = current_season
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username = form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                print(user.id)
-                return redirect(url_for('dashboard', user_id = user.id))
-
-    playerORow = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season==viewed_season).first()
-    League = playerORow.League
-    Team = playerORow.Team
-
-    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
-    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
-    # print(playerORow.Name, League)
-    flag_emoji = flag_dict[League]
-
-    primaryPosition = playerORow.Position.split(",")[0]
-
-    tweets = tweetscraper.obtainTweetsAboutPlayer(Player)
-    #print(tweets)
-        
-    if primaryPosition != "GK" and playerORow.minutes > 0:
-        hasGraphs = True
-        pOffense = playerOffensive.query.filter(playerOffensive.Name == Player, playerOffensive.Team == playerORow.Team, playerOffensive.season == viewed_season).first()
-        pDefense = playerDefensive.query.filter(playerDefensive.Name == Player, playerDefensive.Team == playerORow.Team, playerDefensive.season == viewed_season).first()
-        pPass = playerPassing.query.filter(playerPassing.Name == Player, playerPassing.Team == playerORow.Team, playerPassing.season == viewed_season).first()
-        pGSCreation = gsCreation.query.filter(gsCreation.Name == Player, gsCreation.Team == playerORow.Team, gsCreation.season == viewed_season).first()
-        #print(pGSCreation.Name)
-        
-        #No longer used
-        
-        t1Def = playerDefensive.query.filter(playerDefensive.tier == 1, playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
-                playerDefensive.season == viewed_season)
-        t1Att = playerOffensive.query.filter(playerOffensive.tier == 1, playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
-                playerOffensive.season == viewed_season)
-        t1Pass = playerPassing.query.filter(playerPassing.tier == 1, playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
-                playerPassing.season == viewed_season)
-        t1GSC = gsCreation.query.filter(gsCreation.tier == 1, gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
-                gsCreation.season == viewed_season)
-        # for player in t1GSC:
-        #     print(player.Name)
-
-        
-        oppDef = playerDefensive.query.filter(playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
-                playerDefensive.season == viewed_season)
-        oppAtt = playerOffensive.query.filter(playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
-                playerOffensive.season == viewed_season)
-        oppPass = playerPassing.query.filter(playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
-                playerPassing.season == viewed_season)
-        oppGSC = gsCreation.query.filter(gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
-                gsCreation.season == viewed_season)
-        
-        playerData = obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation)
-        
-        oppData = obtainAvgStats(oppDef, oppAtt, oppPass, oppGSC)
-        t1Data = obtainAvgStats(t1Def, t1Att, t1Pass, t1GSC)
-        
-        return render_template('playerBS.html', viewed_season = viewed_season, form = form, playerORow = playerORow, league = League, team = Team,
-                            leagues = leagues, seasons = seasons, player = Player, hasGraphs = hasGraphs, flag_emoji = flag_emoji, teamPlayers = "", tweets = tweets,
-                            pOLabels = playerData[0][0], pOData = playerData[0][1], pDLabels = playerData[1][0], pDData = playerData[1][1]
-                            , pPLabels = playerData[2][0], pPData = playerData[2][1], pPLabels2 = playerData[3][0], pPData2 = playerData[3][1], pDT1Data = t1Data[0]
-                            , pOT1Data = t1Data[1], pPT1Data = t1Data[2][0:4], pPT1Data2 = t1Data[2][4:], oPDData = oppData[0], oPOData = oppData[1],
-                            oPPData = oppData[2][0:4], oPPData2 = oppData[2][4:], pGSCLabels = playerData[4][0], pGSCData = playerData[4][1], pGSCT1Data = t1Data[3]
-                            , oppGSCData = oppData[3])
-
-
-
-    #print(analysis_pts, analysis_indices, teamDict, bc_msg, wc_msg)
-    # Test link for prem: http://localhost:5000/test/Premier%20League/
-    return render_template('playerBS.html', viewed_season = viewed_season, form = form, playerORow = playerORow, league = League, team = Team,
-                            leagues = leagues, seasons = seasons, player = Player, flag_emoji = flag_emoji, teamPlayers = "")
+    # Empty rn for future testing
+    return render_template("base.html")
 
 
 # TEST USER username: test, password: 1234

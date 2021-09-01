@@ -17,7 +17,7 @@
             <p>Choose team!</p>
         {% else %}
             {% if player != "" %}
-                <a href="">{{team}}</a>
+                <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
             {% else %}
                 <p>{{team}}</p>
             {% endif %}

@@ -72,14 +72,15 @@ class tweetscraper:
         today = date.today()
         week_ago = today - timedelta(days=7)
         # print(week_ago)
-        tweets = Cursor(api.search, q=search_word, lang = "en", since = week_ago).items(20)
+        tweets = Cursor(api.search, q=search_word, lang = "en", since = week_ago).items(15)
 
         tweet_dict = dict()
         for tweet in tweets:
             # print(tweet.user.screen_name)
             # print(tweet.text)
             # tweet_lst.append(f'@{tweet.user.screen_name}: {tweet.text}')
-            tweet_dict[f'@{tweet.user.screen_name}'] = tweet.text
+            tweet_dict[f'@{tweet.user.screen_name}'] = [tweet.text, tweet.created_at]
+            
             # print("-------------------------------------------------")
 
         # print(tweet_lst)

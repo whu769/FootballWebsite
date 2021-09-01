@@ -44,20 +44,29 @@
                     {% else %}
                         {% if player != "" %}
                             <li class="nav-item active back-team">
-                                <a class="nav-link" href="{{url_for('leagues', League = league, viewed_season = viewed_season)}}">« Team</a>
+                                <a class="nav-link" href="{{url_for('teams', Team = team, viewed_season = viewed_season)}}">« Team</a>
+                            </li>
+                            <li class="nav-item active back-league">
+                                <a class="nav-link" href="{{url_for('leagues', League = league, viewed_season = viewed_season)}}">« League</a>
+                            </li>
+                            <li class="nav-item back-main">
+                                <a class="nav-link" href="{{url_for('index')}}">« Main</a>
+                            </li>
+                            <li class="nav-item glossary">
+                                <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
                             </li>
                         {% else %}
-                            
+                            <li class="nav-item active back-league">
+                                <a class="nav-link" href="{{url_for('leagues', League = league, viewed_season = viewed_season)}}">« League</a>
+                            </li>
+                            <li class="nav-item back-main">
+                                <a class="nav-link" href="{{url_for('index')}}">« Main</a>
+                            </li>
+                            <li class="nav-item glossary">
+                                <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
+                            </li>
                         {% endif %}
-                        <li class="nav-item active back-league">
-                            <a class="nav-link" href="{{url_for('leagues', League = league, viewed_season = viewed_season)}}">« League</a>
-                        </li>
-                        <li class="nav-item back-main">
-                            <a class="nav-link" href="{{url_for('index')}}">« Main</a>
-                        </li>
-                        <li class="nav-item glossary">
-                            <a class="nav-link" href="{{url_for('terms')}}">Glossary</a>
-                        </li>
+                        
                     {% endif %}
 
 
@@ -72,19 +81,24 @@
                             {% for season in seasons %}
                             <!-- WHEN MIGRATING CHANGE URL_FOR TO INDEX -->
                             <!-- Need to do something about this for the base template -->
-                            {% if team|length %}
-                            <a class="dropdown-item" href="{{url_for('teams', Team = team, viewed_season = season.season)}}">
-                                {{season.season}}
-                            </a>
-                            {% elif league|length %}
-                            <a class="dropdown-item" href="{{url_for('leagues', League = league,viewed_season = season.season)}}">
-                                {{season.season}}
-                            </a>
-                            {% else %}
-                            <a class="dropdown-item" href="{{url_for('index', viewed_season = season.season)}}">
-                                {{season.season}}
-                            </a>
-                            {% endif %}
+                                {% if player|length %}
+                                
+                                <a class="dropdown-item" href="{{url_for('players', Player = player, viewed_season = season.season)}}">
+                                    {{season.season}}
+                                </a>
+                                {% elif team|length %}
+                                <a class="dropdown-item" href="{{url_for('teams', Team = team, viewed_season = season.season)}}">
+                                    {{season.season}}
+                                </a>
+                                {% elif league|length %}
+                                <a class="dropdown-item" href="{{url_for('leagues', League = league,viewed_season = season.season)}}">
+                                    {{season.season}}
+                                </a>
+                                {% else %}
+                                <a class="dropdown-item" href="{{url_for('index', viewed_season = season.season)}}">
+                                    {{season.season}}
+                                </a>
+                                {% endif %}
                             
                             {% endfor %}
                         </div>
@@ -126,10 +140,7 @@
                             </div>
                         </form>
                     </div>
-                    <!-- <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary btn-sm">Save changes</button>
-          </div> -->
+                   
                 </div>
             </div>
         </div>

@@ -30,3 +30,15 @@ canvas{
     font-size: 40px;
     width: 90%;
 }
+
+.topcard-1 p{
+    font-weight: 600;
+}
+
+.topcard-2.team-info p{
+    font-weight: 400;
+}
+
+.topcard-2 p{
+    font-weight: 200;
+}
