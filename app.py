@@ -2241,11 +2241,11 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/<Player>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route('/test/<Player>/<viewed_season>', methods = ["GET", "POST"])
-def test(viewed_season, Player):
+@app.route("/test/genesis2/",  methods = ["GET", "POST"])
+def test():
     # Empty rn for future testing
-    return render_template("base.html")
+
+    return render_template("glossaryBS.html")
 
 
 # TEST USER username: test, password: 1234
