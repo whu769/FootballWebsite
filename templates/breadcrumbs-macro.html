@@ -1,4 +1,4 @@
-{% macro breadcrumbs(league, team="", player="", glossary=False)%}
+{% macro breadcrumbs(league, team="", player="", glossary=False, lgPlayers = False)%}
 <div class="breadcrumbs">
     <div class="main crumb-option">
         <a href="{{url_for('index')}}">Main</a>
@@ -13,25 +13,31 @@
         <div class="arrow crumb-option">
             <p>»</p>
         </div>
-        <div class="choose-team crumb-option">
-            {% if team == "" %}
-                <p>Choose team!</p>
-            {% else %}
-                {% if player != "" %}
-                    <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
-                {% else %}
-                    <p>{{team}}</p>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% if player != "" %}
-            <div class="arrow crumb-option">
-                <p>»</p>
-            </div>
+        {% if lgPlayer == False %}
             <div class="choose-team crumb-option">
-                <p>{{player}}</p>
+                {% if team == "" %}
+                    <p>Choose team!</p>
+                {% else %}
+                    {% if player != "" %}
+                        <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
+                    {% else %}
+                        <p>{{team}}</p>
+                    {% endif %}
+                {% endif %}
             </div>
+            {% if player != "" %}
+                <div class="arrow crumb-option">
+                    <p>»</p>
+                </div>
+                <div class="choose-team crumb-option">
+                    <p>{{player}}</p>
+                </div>
+            {% else %}
+            {% endif %}
         {% else %}
+                <div class="lgPlayer crumb-option">
+                    <p>All Players</p>
+                </div>
         {% endif %}
     {% else %}
         <div class="glossary crumb-option">

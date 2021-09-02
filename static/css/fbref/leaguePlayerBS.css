@@ -1,0 +1,52 @@
+td a{
+    font-family: Inria Sans;
+    font-weight: 700;
+    font-size: 21px;
+    color: #63635E;
+    text-decoration: none;
+}
+
+td a:hover{
+    text-decoration: underline;
+}
+
+#leaguePlayers{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 30px;
+    color: #242417;
+}
+
+.row.table-responsive{
+    margin: auto;
+    width: 90%;
+}
+
+label{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: baseline;
+}
+
+.form-select-sm, .form-control-sm{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.dataTables_info{
+    font-family: Blinker;
+    font-weight: 400;
+    font-size: 15px;
+    color: #63635E;
+}
+
+.paginate_button a{
+    font-family: Blinker;
+    font-weight: 400;
+    font-size: 15px;
+    color: #63635E;
+}

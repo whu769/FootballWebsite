@@ -1,0 +1,104 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% from 'banner-macro.html' import banner %}
+
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/leaguePlayerBS.css') }}">
+<title>{{league}} Players</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(leagues, seasons, form, viewed_season,league, "", "", False, True)}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs(league, "", "", False, True)}}
+    </div>
+    <div class="row banner">
+        {{banner(league, teams, players, flag_emoji)}}
+    </div>
+    <div class="row main-content">
+        <div class="row table-container">
+            <div class="row top">
+                <div class="col">
+                    <h1 id="leaguePlayers">{{league}} players</h1>
+                </div>
+            </div>
+            <div class="row table-responsive">
+                <table class="table table-sm table-striped" id="data">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Team</th>
+                            <th>Nation</th>
+                            <th>Position</th>
+                            <th>Age</th>
+                            <th>Minutes</th>
+                            <th>Games</th>
+                            <th>Goals</th>
+                            
+                            <th>Assists</th>
+                            
+                            <th>YCards</th>
+                            <th>RCards</th>
+                            <th>NPGs</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in players %}
+                        <tr>
+                            <td>
+                                <a href="{{url_for('players', Player = row.Name)}}">{{row.Name}}</a>
+                            </td>
+                            <td><a href="{{url_for('teams', Team = row.Team)}}">{{row.Team}}</a></td>
+                            <td>{{row.Country}}</td>
+                            <td>{{row.Position}}</td>
+                            <td>{{row.Age}}</td>
+                            <td>{{row.minutes|round|int}}</td>
+                            <td>{{row.Nineties}}</td>
+                            <td>{{row.Gls}}</td>
+                            
+                            <td>{{row.Ast}}</td>
+                            
+                            <td>{{row.YCrd}}</td>
+                            <td>{{row.RCrd}}</td>
+                            <td>{{row.nPG}}</td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8"
+    src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#data').DataTable({
+            columns: [
+                null,
+                null,
+                null,
+                null,
+                { searchable: false },
+                { searchable: false },
+                { searchable: false },
+                { searchable: false },
+                { searchable: false },
+                { searchable: false },
+                { searchable: false },
+                { searchable: false }
+                ],
+        });
+    });
+</script>
+{% endblock %}

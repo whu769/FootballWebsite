@@ -844,7 +844,7 @@ def leagues(League, viewed_season):
         seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
 
         teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
-
+        players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
         
         Goals = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(5)
         Assists = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).order_by(playerOverview.Ast.desc()).limit(5)
@@ -855,7 +855,6 @@ def leagues(League, viewed_season):
         worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
         highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
 
-        players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
 
         flag_emoji = flag_dict[League]
         # print(flag_emoji)
@@ -1910,68 +1909,6 @@ def obtainAvgGKStats(oppGKStats):
 @app.route('/player/<Player>/<viewed_season>', methods = ["GET", "POST"])
 def players(Player, viewed_season):
     try:
-        # #print("The page is working")
-        
-        # pO = playerOverview.query.filter(playerOverview.Name == Player, playerOverview.season == viewed_season).order_by(playerOverview.minutes.desc()).all()[0]
-        
-        # primaryPosition = pO.Position.split(",")[0]
-        
-        # if primaryPosition != "GK":
-        #     pOffense = playerOffensive.query.filter(playerOffensive.Name == Player, playerOffensive.Team == pO.Team, playerOffensive.season == viewed_season).first()
-        #     pDefense = playerDefensive.query.filter(playerDefensive.Name == Player, playerDefensive.Team == pO.Team, playerDefensive.season == viewed_season).first()
-        #     pPass = playerPassing.query.filter(playerPassing.Name == Player, playerPassing.Team == pO.Team, playerPassing.season == viewed_season).first()
-        #     pGSCreation = gsCreation.query.filter(gsCreation.Name == Player, gsCreation.Team == pO.Team, gsCreation.season == viewed_season).first()
-        #     #print(pGSCreation.Name)
-            
-        #     #No longer used
-            
-        #     t1Def = playerDefensive.query.filter(playerDefensive.tier == 1, playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
-        #             playerDefensive.season == viewed_season)
-        #     t1Att = playerOffensive.query.filter(playerOffensive.tier == 1, playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
-        #             playerOffensive.season == viewed_season)
-        #     t1Pass = playerPassing.query.filter(playerPassing.tier == 1, playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
-        #             playerPassing.season == viewed_season)
-        #     t1GSC = gsCreation.query.filter(gsCreation.tier == 1, gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
-        #             gsCreation.season == viewed_season)
-        #     # for player in t1GSC:
-        #     #     print(player.Name)
-
-            
-        #     oppDef = playerDefensive.query.filter(playerDefensive.Position == primaryPosition, playerDefensive.Nineties >= 8,
-        #             playerDefensive.season == viewed_season)
-        #     oppAtt = playerOffensive.query.filter(playerOffensive.Position == primaryPosition, playerOffensive.Nineties >= 8,
-        #             playerOffensive.season == viewed_season)
-        #     oppPass = playerPassing.query.filter(playerPassing.Position == primaryPosition, playerPassing.Nineties >= 8,
-        #             playerPassing.season == viewed_season)
-        #     oppGSC = gsCreation.query.filter(gsCreation.Position == primaryPosition, gsCreation.Nineties >= 8,
-        #             gsCreation.season == viewed_season)
-            
-        #     playerData = obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation)
-        #     #teamData = obtainAvgStats(teamDef, teamAtt, teamPass)
-        #     oppData = obtainAvgStats(oppDef, oppAtt, oppPass, oppGSC)
-        #     t1Data = obtainAvgStats(t1Def, t1Att, t1Pass, t1GSC)
-        #     #print(oppData[3])
-            
-
-        #     return render_template("player.html", pO = pO, pOLabels = playerData[0][0], pOData = playerData[0][1], pDLabels = playerData[1][0], pDData = playerData[1][1]
-        #     , pPLabels = playerData[2][0], pPData = playerData[2][1], pPLabels2 = playerData[3][0], pPData2 = playerData[3][1], pDT1Data = t1Data[0]
-        #     , pOT1Data = t1Data[1], pPT1Data = t1Data[2][0:4], pPT1Data2 = t1Data[2][4:], oPDData = oppData[0], oPOData = oppData[1],
-        #     oPPData = oppData[2][0:4], oPPData2 = oppData[2][4:], pGSCLabels = playerData[4][0], pGSCData = playerData[4][1], pGSCT1Data = t1Data[3]
-        #     , oppGSCData = oppData[3])
-        # else:
-        #     GKStats = goalkeeping.query.filter(goalkeeping.Name == pO.Name, goalkeeping.season == viewed_season).first()
-        #     oppGKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.season == viewed_season)
-        #     oppT1GKStats = goalkeeping.query.filter(goalkeeping.minutes >= 1000, goalkeeping.Name != pO.Name, goalkeeping.tier == 1, goalkeeping.season == viewed_season)
-        #     # for player in oppGKStats:
-        #     #     print(player.Name)
-        #     GKData = obtainGKStats(GKStats)
-        #     oppGKData = obtainAvgGKStats(oppGKStats)
-        #     oppGKT1Data = obtainAvgGKStats(oppT1GKStats)
-           
-        #     return render_template("goalie.html", pO = pO, gkPassLabels = GKData[0][0], gkPassData = GKData[0][1]
-        #     , gkShotLabels = GKData[1][0], gkShotData = GKData[1][1], oppgkShotData = oppGKData[0]
-        #     , gkMiscLabels =GKData[2][0], gkMiscData = GKData[2][1], oppgkMiscData = oppGKData[1]
-        #     , oppT1ShotData = oppGKT1Data[0], oppT1MiscData = oppGKT1Data[1])
         if viewed_season == "...":
             viewed_season = current_season
 
@@ -2097,16 +2034,44 @@ def terms():
                             , form = form)
 
 #Page that contains a giant table of all the players in a league
-@app.route('/<League>/<viewed_season>/LeaguePlayers')
+@app.route("/leaguePlayers/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/leaguePlayers/<League>/<viewed_season>",  methods = ["GET", "POST"])
 def LeaguePlayers(League, viewed_season):
-    try:
-        leaguePlayers = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
+    # try:
+    #     leaguePlayers = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
     
-        return render_template("leaguePlayers.html", lPlayers = leaguePlayers)
-    except Exception as e:
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+    #     return render_template("leaguePlayers.html", lPlayers = leaguePlayers)
+    # except Exception as e:
+    #     error_text = "<p>The error:<br>" + str(e) + "</p>"
+    #     hed = '<h1>Something is broken.</h1>'
+    #     return hed + error_text
+    if viewed_season == "...":
+            viewed_season = current_season
+
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+
+    
+
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    flag_emoji = flag_dict[League]
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+    
+
+    # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
+
+    return render_template("leaguePlayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players)
 
 #Finds the most lethal forwards, creative forwards, and dribbling/1v1 forwards
 def findBestFW(League, age, tier, minutes, viewed_season):
@@ -2255,10 +2220,14 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/glossary/",  methods = ["GET", "POST"])
-def test():
+@app.route("/test/leaguePlayers/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/test/leaguePlayers/<League>/<viewed_season>",  methods = ["GET", "POST"])
+def test(League, viewed_season):
     # Empty rn for future testing
-    viewed_season = current_season
+    if viewed_season == "...":
+            viewed_season = current_season
+
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
@@ -2271,12 +2240,17 @@ def test():
 
     
 
-    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    flag_emoji = flag_dict[League]
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
     
 
-    return render_template("termsBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form)
+    # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
+
+    return render_template("leaguePlayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players)
 
 
 # TEST USER username: test, password: 1234
