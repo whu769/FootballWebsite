@@ -798,7 +798,7 @@ def logout():
     print("Logged out!")
     return redirect(url_for('index', viewed_season = current_season))
 
-#TRANSPLANT NEWINDEXINTOINDEX
+
 #Index/main page
 @app.route("/", defaults={'viewed_season':'2020-2021'},  methods=["GET", "POST"])
 @app.route('/<viewed_season>', methods=["GET", "POST"])
@@ -2075,12 +2075,26 @@ def players(Player, viewed_season):
 #Page that acts as a legend of terminology
 @app.route('/terms')
 def terms():
-    try:
-        return render_template("terms.html")
-    except Exception as e:
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+     # Empty rn for future testing
+    viewed_season = current_season
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+
+    
+
+    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    
+
+    return render_template("termsBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form)
 
 #Page that contains a giant table of all the players in a league
 @app.route('/<League>/<viewed_season>/LeaguePlayers')
@@ -2241,11 +2255,28 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/genesis2/",  methods = ["GET", "POST"])
+@app.route("/test/glossary/",  methods = ["GET", "POST"])
 def test():
     # Empty rn for future testing
+    viewed_season = current_season
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
 
-    return render_template("glossaryBS.html")
+
+    
+
+    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    
+
+    return render_template("termsBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form)
 
 
 # TEST USER username: test, password: 1234

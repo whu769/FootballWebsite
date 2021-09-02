@@ -72,7 +72,7 @@ class tweetscraper:
         today = date.today()
         week_ago = today - timedelta(days=7)
         # print(week_ago)
-        tweets = Cursor(api.search, q=search_word, lang = "en", since = week_ago).items(15)
+        tweets = Cursor(api.search, q=search_word, lang = "en", since = week_ago).items(10)
 
         tweet_dict = dict()
         for tweet in tweets:

@@ -1,0 +1,234 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+
+{% extends 'base.html' %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/termsBS.css') }}">
+<title>Glossary</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(leagues, seasons, form, viewed_season, "","", "", glossary)}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs("", "", "", True)}}
+    </div>
+    <div class="row main-content">
+        <div class="col glossary-container">
+            
+            <div class="row top-of-table">
+                <div class="col">
+                    <h1 id="table-title">Common Acronyms</h1>
+                </div>
+                <div class="col">
+                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search">
+                </div>
+            </div>
+            <div class="row table-responsive">
+                <table class="table table-sm table-striped" id="glossaryTable">
+                    <thead>
+                        <tr>
+                            <th>Term</th>
+                            <th>Definition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>M/MP</td>
+                            <td>Matches Played</td>
+                        </tr>
+                        <tr>
+                            <td>W</td>
+                            <td>Matches Won</td>
+                        </tr>
+                        <tr>
+                            <td>D</td>
+                            <td>Matches Drawn</td>
+                        </tr>
+                        <tr>
+                            <td>L</td>
+                            <td>Matches Lost</td>
+                        </tr>
+                        <tr>
+                            <td>PTS</td>
+                            <td>Points</td>
+                        </tr>
+                        <tr>
+                            <td>GF</td>
+                            <td>Goals Forward (Goals a team scored)</td>
+                        </tr>
+                        <tr>
+                            <td>GA</td>
+                            <td>Goals Allowed (Goals a team let in)</td>
+                        </tr>
+                        <tr>
+                            <td>xG</td>
+                            <td>Expected goals scored</td>
+                        </tr>
+                        <tr>
+                            <td>xGA</td>
+                            <td>Expected Goals Allowed</td>
+                        </tr>
+                        <tr>
+                            <td>Position</td>
+                            <td>Area the player plays in (FW - Forward, MF - Midfielder, DF - Defender, GK - Goalkeeper)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>xA</td>
+                            <td>Expected Assists</td>
+                        </tr>
+                        <tr>
+                            <td>NPxG</td>
+                            <td>Expected non-penalty goals</td>
+                        </tr>
+                        <tr>
+                            <td>Pos%</td>
+                            <td>Percentage of ball possession a team has on average</td>
+                        </tr>
+                        <tr>
+                            <td>GP90</td>
+                            <td>Average Goals a Team Scores Per 90 (Game)</td>
+                        </tr>
+                        <tr>
+                            <td>xGP90</td>
+                            <td>Expected Average Goals a Team Scores Per 90</td>
+                        </tr>
+                        <tr>
+                            <td>SoTP90</td>
+                            <td>Average Number of Shots on Target Per 90 (in a game)</td>
+                        </tr>
+                        <tr>
+                            <td>GPSoT</td>
+                            <td>Ratio of Goals Per Shot on Target</td>
+                        </tr>
+                        <tr>
+                            <td>ShP90</td>
+                            <td>Average Number of Shots Per 90 (On and Off target)</td>
+                        </tr>
+                        <tr>
+                            <td>GlsP90</td>
+                            <td>Average Goals Scored every 90 minutes</td>
+                        </tr>
+                        <tr>
+                            <td>ClrP90</td>
+                            <td>Number of Clearances Per 90 Minutes (Removing the ball from dangerous areas in which the
+                                opponent can score)</td>
+                        </tr>
+                        <tr>
+                            <td>BlkP90</td>
+                            <td>Number of Blocked Shots Per 90 Minutes</td>
+                        </tr>
+                        <tr>
+                            <td>TklIntP90</td>
+                            <td>Number of Tackles and Interceptions Per 90 Minutes</td>
+                        </tr>
+                        <tr>
+                            <td>Tackles P90</td>
+                            <td>Number of Tackles Per 90 Minutes</td>
+                        </tr>
+                        <tr>
+                            <td>Successful Tackles P90</td>
+                            <td>Number of Successful Tackles Per 90</td>
+                        </tr>
+                        <tr>
+                            <td>Interceptions P90</td>
+                            <td>Number of Interceptions Per 90 (Player 'intercepts' a pass from the opposition and
+                                obtains possession)</td>
+                        </tr>
+                        <tr>
+                            <td>PassP</td>
+                            <td>Overall Percentage of Successful Passes</td>
+                        </tr>
+                        <tr>
+                            <td>LPP</td>
+                            <td>Percentage of Successful Long Passes</td>
+                        </tr>
+                        <tr>
+                            <td>MPP</td>
+                            <td>Percentage of Successful Medium Passes</td>
+                        </tr>
+                        <tr>
+                            <td>SPP</td>
+                            <td>Percentage of Short Passes</td>
+                        </tr>
+                        <tr>
+                            <td>SP90</td>
+                            <td>Number of Short Passes Played Per 90</td>
+                        </tr>
+                        <tr>
+                            <td>MP90</td>
+                            <td>Number of Medium Passes Played Per 90</td>
+                        </tr>
+                        <tr>
+                            <td>LP90</td>
+                            <td>Number of Long Passes Played Per 90</td>
+                        </tr>
+                        <tr>
+                            <td>FTP90</td>
+                            <td>Number of Passes Played in the Opposition's Final Third Per 90</td>
+                        </tr>
+                        <tr>
+                            <td>KP90</td>
+                            <td>Number of Key Passes Played Per 90</td>
+                        </tr>
+                        <tr>
+                            <td>GAP90 (Goalkeeping)</td>
+                            <td>Average Number of Goals a Goalie Concedes Per 90 Minutes</td>
+                        </tr>
+                        <tr>
+                            <td>PSxGP90</td>
+                            <td>PSxG - Post-Shot Expected Goals , The number of Expected Goals a Goalkeeper will concede
+                                per 90 </td>
+                        </tr>
+                        <tr>
+                            <td>PSxG_dP90</td>
+                            <td>Post Shot Expected Goals Minus the Actual Goals Allowed divided by 90 minutes, positive
+                                numbers means the goalkeeper is performing above expectations</td>
+                        </tr>
+                        <tr>
+                            <td>Cross Stop %</td>
+                            <td>Percentage of Crosses Stopped (by the Goalkeeper only)</td>
+                        </tr>
+                        <tr>
+                            <td>AvgDist</td>
+                            <td>Goalkeeper's Average Distance Away From Goal</td>
+                        </tr>
+                        <tr>
+                            <td>Out of Pen Box Actions P90</td>
+                            <td>Average Number of Actions (passes, clearances, blocks, etc) a goalkeeper makes outside
+                                of his penalty box per 90</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("glossaryTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

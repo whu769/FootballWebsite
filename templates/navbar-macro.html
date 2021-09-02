@@ -1,4 +1,4 @@
-{% macro navbar(leagues, seasons, form, viewed_season,league = "", team = "", player ="") %}
+{% macro navbar(leagues, seasons, form, viewed_season, league = "", team = "", player ="", glossary = False) %}
 <div class="row navbar-top shadow-sm">
     <nav class="navbar navbar-expand-lg navbar-light">
         {% if team =="" %}
@@ -95,9 +95,12 @@
                                     {{season.season}}
                                 </a>
                                 {% else %}
-                                <a class="dropdown-item" href="{{url_for('index', viewed_season = season.season)}}">
-                                    {{season.season}}
-                                </a>
+                                    {% if glossary %}
+                                    {% else %}
+                                    <a class="dropdown-item" href="{{url_for('index', viewed_season = season.season)}}">
+                                        {{season.season}}
+                                    </a>
+                                    {% endif %}
                                 {% endif %}
                             
                             {% endfor %}
