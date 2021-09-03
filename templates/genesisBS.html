@@ -1,0 +1,39 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+
+{% extends 'base.html' %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/genesisBS.css') }}">
+<title>Genesis</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(leagues, seasons, form, viewed_season, "","", "", glossary)}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs("", "", "", True, False, "", "", "Genesis")}}
+    </div>
+    <div class="row main-content">
+        <div class="row content intro shadow-sm">
+            <h1 class="header-title">Intro</h1>
+            <p>Ipsum Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium quasi, et voluptas,
+                 beatae nemo eligendi enim accusamus cum earum atque ipsam aut animi nihil. 
+                 Architecto voluptas aut assumenda necessitatibus nemo.</p>
+        </div>
+        <div class="row content features shadow-sm">
+            <h1 class="header-title">Features</h1>
+            <p>Ipsum Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium quasi, et voluptas,
+                beatae nemo eligendi enim accusamus cum earum atque ipsam aut animi nihil. 
+                Architecto voluptas aut assumenda necessitatibus nemo.</p>
+        </div>
+        <div class="row content credits shadow-sm">
+            <h1 class="header-title">Credit To</h1>
+            <p>Ipsum Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium quasi, et voluptas,
+                beatae nemo eligendi enim accusamus cum earum atque ipsam aut animi nihil. 
+                Architecto voluptas aut assumenda necessitatibus nemo.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

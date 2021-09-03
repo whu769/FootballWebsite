@@ -1,4 +1,5 @@
-{% macro breadcrumbs(league, team="", player="", glossary=False, lgPlayers = False, top = "", recs = "")%}
+{% macro breadcrumbs(league, team="", player="", glossary=False, lgPlayers = False, top = "", recs = ""
+                        , genesis="")%}
 <div class="breadcrumbs">
     <div class="main crumb-option">
         <a href="{{url_for('index')}}">Main</a>
@@ -65,9 +66,15 @@
                 </div>
         {% endif %}
     {% else %}
+        {% if genesis=="" %}
         <div class="glossary crumb-option">
             <p>Glossary</p>
         </div>
+        {% else %}
+        <div class="genesis crumb-option">
+            <p>Genesis</p>
+        </div>
+        {% endif %}
     {% endif %}
 </div>
 {% endmacro %}

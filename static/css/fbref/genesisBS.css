@@ -1,0 +1,31 @@
+h1.header-title{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 48px;
+    text-align: left;
+    color: #242417;
+    width: 90%;
+    height: 95%;
+    margin: auto;
+    border-bottom-style: solid;
+    border-bottom-width: 1.5px;
+    border-bottom-color: #78784D;
+}
+
+.main-content{
+    width: 90%;
+    margin: auto;
+    display: flexbox;
+    flex-direction: column;
+}
+
+.row.content{
+    margin-bottom: 1em;
+}
+
+.row.content p{
+    width: 90%;
+    height: 95%;
+    margin: auto;
+    text-align: left;
+}

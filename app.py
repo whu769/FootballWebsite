@@ -2321,20 +2321,10 @@ def leaguestats(League, viewed_season):
 
 
 
-@app.route('/genesis')
+
+@app.route("/genesis", methods = ["GET", "POST"])
 def genesis():
-
-    return render_template('genesis.html')
-
-#Bootstrap-ified pages
-@app.route("/test/teamStats/<Team>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/test/teamStats/<Team>/<viewed_season>",  methods = ["GET", "POST"])
-def test(Team, viewed_season):
-    # Empty rn for future testing
-    if viewed_season == "...":
-            viewed_season = current_season
-
-
+    viewed_season = current_season
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
@@ -2343,54 +2333,40 @@ def test(Team, viewed_season):
                 login_user(user)
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
-    
-    teamORow = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
-    teamCLRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-    League = teamORow.league
-    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+
+
+
+
+    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
-    teams = teamOverview.query.filter(teamOverview.Team != Team, 
-                    teamOverview.league == League, teamOverview.season == viewed_season).all()
-    teamPos = 1
-    league_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).all()
-    for team in league_teams:
-        if team.Team == Team:
-            break
-        else:
-            teamPos += 1
 
-    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
-    t1teams = teamOverview.query.filter(teamOverview.Team != Team, teamOverview.season == viewed_season, teamOverview.tier == 1).all()
+    return render_template("genesisBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                        , form = form)
 
 
-    ageList = []
-    ageDict = dict()
-    minDict = dict()
-    startDict = dict()
-    for tP in teamPlayers:
-        ageList.append(tP.Age)
-        minDict[tP.Name] = tP.minutes
-        startDict[tP.Name] = tP.Starts
-        if(not(tP.Age in ageDict.keys())):
-            ageDict[tP.Age] = 1
-        else:
-            ageDict[tP.Age] = ageDict[tP.Age] + 1
-    
-    team = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
-    teamStats = obtainTeamStats(team)
-    leagueStats = (obtainTeamAvgStats(teams))
-    
-    t1LeagueStats = obtainTeamAvgStats(t1teams)
-    
-    teamLabels = ["GlsP90", "AstP90", "xGP90", "xAP90"]
+#Bootstrap-ified pages
+@app.route("/test/genesis/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/test/genesis/<viewed_season>",  methods = ["GET", "POST"])
+def test(viewed_season):
+    # Empty rn for future testing
+    viewed_season = current_season
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
 
     
-    return render_template("teamGraphBS.html", league = League, team = Team, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form, teams = teams, players = players, position = teamPos, teamPlayers = teamPlayers,
-                            ageLabels = sorted(list(ageDict.keys())), ageData = sorted(list(ageDict.values()))
-                            , minLabels = list(minDict.keys()), minData = list(minDict.values()), startLabels = list(startDict.keys())
-                            , startData = list(startDict.values()), Team = team, teamLabels = teamLabels, teamStats = teamStats
-                            , leagueStats = leagueStats, t1LeagueStats = t1LeagueStats)
+
+    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    
+    return render_template("genesisBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                        , form = form)
 
 
 # TEST USER username: test, password: 1234
