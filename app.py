@@ -2133,39 +2133,76 @@ def findBestDF(League, age, tier, minutes, viewed_season):
     return [dfOPlayers, dfPPlayers, dfDPlayers]
 
 #Page that shows the top players in the league
-@app.route('/<League>/<viewed_season>/TopPlayers')
+@app.route("/topplayers/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/topplayers/<League>/<viewed_season>",  methods = ["GET", "POST"])
 def topplayers(League, viewed_season):
-    try:
-        players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0).all()
-        # Three methods, forwards, midfielders, defenders
-        #age under 50, tier 1 or higher, at least 1000 minutes
-        fwList = findBestFW(League, 50, 1, 1000, viewed_season)
-        mfList = findBestMF(League, 50, 1, 1000, viewed_season)
-        dfList = findBestDF(League, 50, 1, 1000, viewed_season)
+    if viewed_season == "...":
+            viewed_season = current_season
 
-        return render_template("topplayers.html", League = players[0].League, fwList = fwList, mfList = mfList, dfList = dfList)
-    except Exception as e:
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+
+    
+
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    flag_emoji = flag_dict[League]
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+    
+    fwList = findBestFW(League, 50, 1, 1000, viewed_season)
+    mfList = findBestMF(League, 50, 1, 1000, viewed_season)
+    dfList = findBestDF(League, 50, 1, 1000, viewed_season)
+
+    # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
+
+    return render_template("topplayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
+                            dfList = dfList)
 
 #Page that thows the top prospects in the league
-@app.route('/<League>/<viewed_season>/TopProspects')
+@app.route("/topprospects/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/topprospects/<League>/<viewed_season>",  methods = ["GET", "POST"])
 def topprospects(League, viewed_season):
-    try:
-        players = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
-        # Three methods, forwards, midfielders, defenders
+    if viewed_season == "...":
+            viewed_season = current_season
 
-        #age under 50, tier 1 or higher, at least 1000 minutes
-        fwList = findBestFW(League, 23, 2, 700, viewed_season)
-        mfList = findBestMF(League, 23, 2, 700, viewed_season)
-        dfList = findBestDF(League, 23, 2, 700, viewed_season)
 
-        return render_template("topprospects.html", League = players[0].League, fwList = fwList, mfList = mfList, dfList = dfList)
-    except Exception as e:
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+
+    
+
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    flag_emoji = flag_dict[League]
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+    
+    fwList = findBestFW(League, 23, 2, 700, viewed_season)
+    mfList = findBestMF(League, 23, 2, 700, viewed_season)
+    dfList = findBestDF(League, 23, 2, 700, viewed_season)
+
+    # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
+
+    return render_template("topprospectsBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
+                            dfList = dfList)
 
 #Page that shows the league stats
 @app.route('/<League>/<viewed_season>/Stats')
@@ -2220,8 +2257,8 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/leaguePlayers/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/test/leaguePlayers/<League>/<viewed_season>",  methods = ["GET", "POST"])
+@app.route("/test/topprospects/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/test/topprospects/<League>/<viewed_season>",  methods = ["GET", "POST"])
 def test(League, viewed_season):
     # Empty rn for future testing
     if viewed_season == "...":
@@ -2246,11 +2283,15 @@ def test(League, viewed_season):
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
     players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
     
+    fwList = findBestFW(League, 23, 2, 700, viewed_season)
+    mfList = findBestMF(League, 23, 2, 700, viewed_season)
+    dfList = findBestDF(League, 23, 2, 700, viewed_season)
 
     # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
 
-    return render_template("leaguePlayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players)
+    return render_template("topprospectsBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
+                            dfList = dfList)
 
 
 # TEST USER username: test, password: 1234

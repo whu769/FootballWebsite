@@ -1,0 +1,134 @@
+
+[data-tab-content]{
+    display:none;
+}
+
+.active[data-tab-content]{
+    display:block
+}
+
+.tabs{
+    display: flex;
+    justify-content: space-around;
+    list-style-type: none;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    padding: 0;
+   
+}
+
+.tab{
+    cursor: pointer;
+    padding: 10px;
+}
+
+.tab:hover{
+    background-color: #AAA;
+}
+
+
+
+.link-list{
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.link-item{
+    margin: 0 10px;
+}
+
+#tab-title{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 25px;
+    color: #242417;
+    text-align: center;
+}
+
+.row.tabs{
+    display: flex;
+    align-items: baseline;
+}
+
+.row.main-content{
+    margin: auto;
+}
+
+li.tab{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 25px;
+    color: #63635E;
+}
+
+li.tab.active{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 25px;
+    color: #78784D;
+}
+
+.table-list{
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+td a{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 15px;
+    color: #63635E;
+    text-decoration: none;
+}
+
+th{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 15px;
+    text-align: left;
+}
+
+td a:hover{
+    text-decoration: underline;
+}
+
+tbody td{
+    font-size: 15px!important;
+}
+
+h1.table-title{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+    color: #242417;
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
+    border-bottom-color: #78784D;
+}
+
+.row .col{
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table{
+    width: 90%;
+    height: 95%;
+    margin: auto;
+}
+
+ul .col{
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+.table-item{
+    width: 95%;
+    height: 90%;
+    margin: auto;
+}

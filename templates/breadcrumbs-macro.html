@@ -1,4 +1,4 @@
-{% macro breadcrumbs(league, team="", player="", glossary=False, lgPlayers = False)%}
+{% macro breadcrumbs(league, team="", player="", glossary=False, lgPlayers = False, top = "")%}
 <div class="breadcrumbs">
     <div class="main crumb-option">
         <a href="{{url_for('index')}}">Main</a>
@@ -13,26 +13,32 @@
         <div class="arrow crumb-option">
             <p>»</p>
         </div>
-        {% if lgPlayer == False %}
-            <div class="choose-team crumb-option">
-                {% if team == "" %}
-                    <p>Choose team!</p>
-                {% else %}
-                    {% if player != "" %}
-                        <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
-                    {% else %}
-                        <p>{{team}}</p>
-                    {% endif %}
-                {% endif %}
-            </div>
-            {% if player != "" %}
-                <div class="arrow crumb-option">
-                    <p>»</p>
-                </div>
-                <div class="choose-team crumb-option">
-                    <p>{{player}}</p>
+        {% if lgPlayers == False %}
+            {% if top|length%}
+                <div class="crumb-option">
+                    <p>{{top}}</p>
                 </div>
             {% else %}
+                <div class="choose-team crumb-option">
+                    {% if team == "" %}
+                        <p>Choose team!</p>
+                    {% else %}
+                        {% if player != "" %}
+                            <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
+                        {% else %}
+                            <p>{{team}}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% if player != "" %}
+                    <div class="arrow crumb-option">
+                        <p>»</p>
+                    </div>
+                    <div class="choose-team crumb-option">
+                        <p>{{player}}</p>
+                    </div>
+                {% else %}
+                {% endif %}
             {% endif %}
         {% else %}
                 <div class="lgPlayer crumb-option">

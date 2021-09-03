@@ -1,0 +1,30 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% from 'banner-macro.html' import banner %}
+{% from 'topleague-macro.html' import tabtables %}
+
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/topplayersBS.css') }}">
+<script src="{{url_for('static', filename='css/js/playertabs.js')}}" defer></script>
+<title>{{league}} Top Players</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(leagues, seasons, form, viewed_season ,league, "", "", False, False, "Players")}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs(league, "", "", False, False, "Top Players")}}
+    </div>
+    <div class="row banner">
+        {{banner(league, teams, players, flag_emoji)}}
+     </div>
+
+    <div class="row main-content">
+        {{tabtables(fwList, mfList, dfList, "")}}
+    </div>
+     
+</div>
+
+{% endblock %}
