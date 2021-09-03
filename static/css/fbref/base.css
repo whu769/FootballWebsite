@@ -8,6 +8,12 @@
 .row.navbar-top {
     padding-right: 0;
     margin-right: 0;
+    padding-left: 1em;
+}
+
+.main-content {
+    padding: 0 .3em;
+    margin: 0 auto;
 }
 
 head{
@@ -250,9 +256,9 @@ li.dropdown .dropdown-menu.show {
 
 
 /* Css for tables */
-.row.table-responsive{
+/* .row.table-responsive{
     width: 90%;
-}
+} */
 
 h1#combined-league, h1#best-strikers{
     font-family: Blinker;
@@ -306,10 +312,6 @@ a.table-link:hover{
 .table-striped tbody tr td{
     padding-top: 15px;
     color: rgb(99, 99, 94);
-}
-
-.navbar-top{
-    padding-left: .25em;
 }
 
 .navbar-toggler{

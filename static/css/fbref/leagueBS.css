@@ -60,9 +60,9 @@ body, html{
     text-align: left;
 }
 
-.table-responsive{
+/* .table-responsive{
     width: 95%;
-}
+} */
 
 /* quick links css */
 .quicklinks .links{
@@ -77,6 +77,7 @@ body, html{
     font-size: 20px;
     color: #63635E;
     text-decoration: none;
+    text-align: left;
 }
 
 .links a:hover{
@@ -86,7 +87,7 @@ body, html{
 /* Superlatives section css */
 
 .superlatives-table{
-    width: 70%;
+    width: 95%;
     height: 80%;
 }
 
