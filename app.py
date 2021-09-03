@@ -659,7 +659,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         print("Works")
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
 
     return render_template('registration.html', form = form)
 
