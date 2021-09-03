@@ -88,9 +88,15 @@
                                     {{season.season}}
                                 </a>
                                 {% elif team|length %}
-                                <a class="dropdown-item" href="{{url_for('teams', Team = team, viewed_season = season.season)}}">
-                                    {{season.season}}
-                                </a>
+                                    {% if top == "" %}
+                                    <a class="dropdown-item" href="{{url_for('teams', Team = team, viewed_season = season.season)}}">
+                                        {{season.season}}
+                                    </a>
+                                    {% else %}
+                                    <a class="dropdown-item" href="{{url_for('recSignings', Team = team, viewed_season = season.season)}}">
+                                        {{season.season}}
+                                    </a>
+                                    {% endif %}
                                 {% elif league|length %}
                                     {% if lgPlayers %}
                                     <a class="dropdown-item" href="{{url_for('LeaguePlayers', League = league, viewed_season = season.season)}}">

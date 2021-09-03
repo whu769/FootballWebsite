@@ -133,3 +133,10 @@ ul .col{
     height: 90%;
     margin: auto;
 }
+
+.prio-title{
+    font-family: Blinker;
+    font-weight: 700;
+    font-size: 48px;
+    color: #242417;
+}

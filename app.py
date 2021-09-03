@@ -957,10 +957,44 @@ def teams(Team, viewed_season):
 
 
 #Page of recommended signings for a specific team
-@app.route('/<Team>/<viewed_season>/RecommendSignings')
+@app.route("/recsignings/<Team>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/recsignings/<Team>/<viewed_season>",  methods = ["GET", "POST"])
 def recSignings(Team, viewed_season):
+    if viewed_season == "...":
+            viewed_season = current_season
+
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+
+    
+    teamORow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = teamORow.League
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    flag_emoji = flag_dict[League]
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
+
+    teamPos = 1
+    league_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).all()
+    for team in league_teams:
+        if team.Team == Team:
+            break
+        else:
+            teamPos += 1
+    
+
+
     rec_dict = generateSignings(Team, viewed_season)
-    print(rec_dict)
     gsc_dict = rec_dict[0][0]
     gsc_prio = rec_dict[0][1]
     str_dict = rec_dict[1][0]
@@ -969,9 +1003,15 @@ def recSignings(Team, viewed_season):
     mf_prio = rec_dict[2][1]
     df_dict = rec_dict[3][0]
     df_prio = rec_dict[3][1]
-    # print(gsc_dict[0].all())
-    return render_template("recsignings.html", Team = Team, gsc_prio = gsc_prio, str_prio = str_prio, mf_prio = mf_prio, df_prio = df_prio,
+
+
+    return render_template("recSigningsBS.html", league = League, team = Team,leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, teamPlayers = teamPlayers,
+                            position = teamPos, gsc_prio = gsc_prio, str_prio = str_prio, mf_prio = mf_prio, df_prio = df_prio,
                             gsc_dict = gsc_dict, str_dict = str_dict, mf_dict = mf_dict, df_dict = df_dict)
+
+
+
 
 #method to look through the team's general stats GSC, Defense, Passing, shooting and categorizes them
 #contains inner methods of assess the various aspects and returns a value
@@ -2257,9 +2297,9 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/topprospects/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/test/topprospects/<League>/<viewed_season>",  methods = ["GET", "POST"])
-def test(League, viewed_season):
+@app.route("/test/recsignings/<Team>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/test/recsignings/<Team>/<viewed_season>",  methods = ["GET", "POST"])
+def test(Team, viewed_season):
     # Empty rn for future testing
     if viewed_season == "...":
             viewed_season = current_season
@@ -2276,22 +2316,40 @@ def test(League, viewed_season):
 
 
     
-
+    teamORow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = teamORow.League
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     flag_emoji = flag_dict[League]
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
     players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
+    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
+
+    teamPos = 1
+    league_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).all()
+    for team in league_teams:
+        if team.Team == Team:
+            break
+        else:
+            teamPos += 1
     
-    fwList = findBestFW(League, 23, 2, 700, viewed_season)
-    mfList = findBestMF(League, 23, 2, 700, viewed_season)
-    dfList = findBestDF(League, 23, 2, 700, viewed_season)
 
-    # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
 
-    return render_template("topprospectsBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
-                            dfList = dfList)
+    rec_dict = generateSignings(Team, viewed_season)
+    gsc_dict = rec_dict[0][0]
+    gsc_prio = rec_dict[0][1]
+    str_dict = rec_dict[1][0]
+    str_prio = rec_dict[1][1]
+    mf_dict = rec_dict[2][0]
+    mf_prio = rec_dict[2][1]
+    df_dict = rec_dict[3][0]
+    df_prio = rec_dict[3][1]
+
+
+    return render_template("recSigningsBS.html", league = League, team = Team,leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, teamPlayers = teamPlayers,
+                            position = teamPos, gsc_prio = gsc_prio, str_prio = str_prio, mf_prio = mf_prio, df_prio = df_prio,
+                            gsc_dict = gsc_dict, str_dict = str_dict, mf_dict = mf_dict, df_dict = df_dict)
 
 
 # TEST USER username: test, password: 1234

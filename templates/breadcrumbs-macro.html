@@ -1,4 +1,4 @@
-{% macro breadcrumbs(league, team="", player="", glossary=False, lgPlayers = False, top = "")%}
+{% macro breadcrumbs(league, team="", player="", glossary=False, lgPlayers = False, top = "", recs = "")%}
 <div class="breadcrumbs">
     <div class="main crumb-option">
         <a href="{{url_for('index')}}">Main</a>
@@ -25,11 +25,23 @@
                     {% else %}
                         {% if player != "" %}
                             <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
+                        {% elif recs != ""%}
+                            <a href="{{url_for('teams', Team = team)}}">{{team}}</a>
                         {% else %}
                             <p>{{team}}</p>
                         {% endif %}
                     {% endif %}
                 </div>
+                {% if recs|length %}
+                <div class="arrow crumb-option">
+                    <p>»</p>
+                </div>
+                <div class="recs crumb-option">
+                    <p>Recommended Signings</p>
+                </div>
+                {% else %}
+                {% endif %}
+
                 {% if player != "" %}
                     <div class="arrow crumb-option">
                         <p>»</p>
