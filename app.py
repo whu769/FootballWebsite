@@ -1731,58 +1731,71 @@ def obtainTeamAvgStats(teams):
     return lstAvg
 
 #Page of graphs including age, minutes, etc
-@app.route('/team/<Team>/<viewed_season>/graphs')
+@app.route("/teamStats/<Team>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/teamStats/<Team>/<viewed_season>",  methods = ["GET", "POST"])
 def graphs(Team, viewed_season):
-    try:
-        #print("The page is working")
-        team = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
-        teams = teamOverview.query.filter(teamOverview.Team != Team, 
-                    teamOverview.league == team.league, teamOverview.season == viewed_season).all()
+    if viewed_season == "...":
+            viewed_season = current_season
 
-        teamSeasons = teamOverview.query.filter(teamOverview.Team == Team).all()
-        print(len(teamSeasons))
-        # the db is messed up, indices are WRONG
-        
-        t1Teams = combinedLeagues.query.filter(combinedLeagues.League == team.league, combinedLeagues.season == viewed_season).limit(4)
-        t1TLst = []
-        for x in t1Teams:
-            if(x.Team != team.Team):
-                t1TLst.append(x.Team)
-        t1teams = teamOverview.query.filter(teamOverview.Team.in_(t1TLst)).all()
-        
-        teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
-        #print(type(teamPlayers))
-        ageList = []
-        ageDict = dict()
-        minDict = dict()
-        startDict = dict()
-        for tP in teamPlayers:
-            ageList.append(tP.Age)
-            minDict[tP.Name] = tP.minutes
-            startDict[tP.Name] = tP.Starts
-            if(not(tP.Age in ageDict.keys())):
-                ageDict[tP.Age] = 1
-            else:
-                ageDict[tP.Age] = ageDict[tP.Age] + 1
-        
-        teamStats = obtainTeamStats(team)
-        leagueStats = (obtainTeamAvgStats(teams))
-        
-        t1LeagueStats = obtainTeamAvgStats(t1teams)
-        
-        teamLabels = ["GlsP90", "AstP90", "xGP90", "xAP90"]
-        # print(list(minDict.keys()))
-        # print(list(minDict))
-        #print(list(ageDict.keys()))
-        return render_template("teamGraph.html", ageLabels = sorted(list(ageDict.keys())), ageData = sorted(list(ageDict.values()))
-        , minLabels = list(minDict.keys()), minData = list(minDict.values())
-        , startLabels = list(startDict.keys()), startData = list(startDict.values()), Team = team, teamLabels = teamLabels, teamStats = teamStats
-        , leagueStats = leagueStats, t1LeagueStats = t1LeagueStats)
-    except Exception as e:
-        # e holds description of the error
-        error_text = "<p>The error:<br>" + str(e) + "</p>"
-        hed = '<h1>Something is broken.</h1>'
-        return hed + error_text
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+    
+    teamORow = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+    teamCLRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = teamORow.league
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    teams = teamOverview.query.filter(teamOverview.Team != Team, 
+                    teamOverview.league == League, teamOverview.season == viewed_season).all()
+    teamPos = 1
+    league_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).all()
+    for team in league_teams:
+        if team.Team == Team:
+            break
+        else:
+            teamPos += 1
+
+    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
+    t1teams = teamOverview.query.filter(teamOverview.Team != Team, teamOverview.season == viewed_season, teamOverview.tier == 1).all()
+
+
+    ageList = []
+    ageDict = dict()
+    minDict = dict()
+    startDict = dict()
+    for tP in teamPlayers:
+        ageList.append(tP.Age)
+        minDict[tP.Name] = tP.minutes
+        startDict[tP.Name] = tP.Starts
+        if(not(tP.Age in ageDict.keys())):
+            ageDict[tP.Age] = 1
+        else:
+            ageDict[tP.Age] = ageDict[tP.Age] + 1
+    
+    team = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+    teamStats = obtainTeamStats(team)
+    leagueStats = (obtainTeamAvgStats(teams))
+    
+    t1LeagueStats = obtainTeamAvgStats(t1teams)
+    
+    teamLabels = ["GlsP90", "AstP90", "xGP90", "xAP90"]
+
+    
+    return render_template("teamGraphBS.html", league = League, team = Team, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, teams = teams, players = players, position = teamPos, teamPlayers = teamPlayers,
+                            ageLabels = sorted(list(ageDict.keys())), ageData = sorted(list(ageDict.values()))
+                            , minLabels = list(minDict.keys()), minData = list(minDict.values()), startLabels = list(startDict.keys())
+                            , startData = list(startDict.values()), Team = team, teamLabels = teamLabels, teamStats = teamStats
+                            , leagueStats = leagueStats, t1LeagueStats = t1LeagueStats)
+
+    
 
 #returns a nested list w/ offense, defense, and passing stats
 def obtainIndividualStats(pOffense, pDefense, pPass, pGSCreation):
@@ -2077,14 +2090,6 @@ def terms():
 @app.route("/leaguePlayers/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
 @app.route("/leaguePlayers/<League>/<viewed_season>",  methods = ["GET", "POST"])
 def LeaguePlayers(League, viewed_season):
-    # try:
-    #     leaguePlayers = playerOverview.query.filter(playerOverview.League == League, playerOverview.minutes > 0, playerOverview.season == viewed_season).all()
-    
-    #     return render_template("leaguePlayers.html", lPlayers = leaguePlayers)
-    # except Exception as e:
-    #     error_text = "<p>The error:<br>" + str(e) + "</p>"
-    #     hed = '<h1>Something is broken.</h1>'
-    #     return hed + error_text
     if viewed_season == "...":
             viewed_season = current_season
 
@@ -2245,8 +2250,29 @@ def topprospects(League, viewed_season):
                             dfList = dfList)
 
 #Page that shows the league stats
-@app.route('/<League>/<viewed_season>/Stats')
+@app.route("/leagueStats/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/leagueStats/<League>/<viewed_season>",  methods = ["GET", "POST"])
 def leaguestats(League, viewed_season):
+    if viewed_season == "...":
+            viewed_season = current_season
+
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+
+    
+    leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    flag_emoji = flag_dict[League]
+    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
+    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
 
     league_stats = createLeagueAvgs(League, viewed_season)
     gsc_dict = league_stats[0]
@@ -2284,11 +2310,15 @@ def leaguestats(League, viewed_season):
     shot_lists = [gls_lst, xG_lst, xG_diff_lst]
     pass_lists = [kp_lst, ftp_lst, ppa_lst, crspa_lst]
     defense_lists = [tklP_lst, d3pP_lst, m3pP_lst, a3pP_lst]
-    
-    return render_template('leaguestats.html', League = League, gscLabels = list(gsc_dict.keys()), gcaData = gsc_lists[0], scaData = gsc_lists[1], gspropData = gsc_lists[2],
+
+
+
+    return render_template("leaguestatsBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, gscLabels = list(gsc_dict.keys()), gcaData = gsc_lists[0], scaData = gsc_lists[1], gspropData = gsc_lists[2],
                             shotLabels = list(shooting_dict.keys()), glsData = shot_lists[0], xGData = shot_lists[1], xGDiffData = shot_lists[2]
                             , passLabels = list(passing_dict.keys()), kpData = pass_lists[0], ftpData = pass_lists[1], ppaData = pass_lists[2], crsData = pass_lists[3]
                             , defenseLabels = list(defense_dict.keys()), tklPData = defense_lists[0], d3pData = defense_lists[1], m3pData = defense_lists[2], a3pData = defense_lists[3])
+
 
 
 @app.route('/genesis')
@@ -2297,8 +2327,8 @@ def genesis():
     return render_template('genesis.html')
 
 #Bootstrap-ified pages
-@app.route("/test/recsignings/<Team>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/test/recsignings/<Team>/<viewed_season>",  methods = ["GET", "POST"])
+@app.route("/test/teamStats/<Team>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/test/teamStats/<Team>/<viewed_season>",  methods = ["GET", "POST"])
 def test(Team, viewed_season):
     # Empty rn for future testing
     if viewed_season == "...":
@@ -2313,18 +2343,14 @@ def test(Team, viewed_season):
                 login_user(user)
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
-
-
     
-    teamORow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
-    League = teamORow.League
+    teamORow = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+    teamCLRow = combinedLeagues.query.filter(combinedLeagues.Team == Team, combinedLeagues.season == viewed_season).first()
+    League = teamORow.league
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
-    flag_emoji = flag_dict[League]
-    teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
-    players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
-    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
-
+    teams = teamOverview.query.filter(teamOverview.Team != Team, 
+                    teamOverview.league == League, teamOverview.season == viewed_season).all()
     teamPos = 1
     league_teams = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).all()
     for team in league_teams:
@@ -2332,24 +2358,39 @@ def test(Team, viewed_season):
             break
         else:
             teamPos += 1
+
+    teamPlayers = playerOverview.query.filter(playerOverview.Team == Team, playerOverview.season == viewed_season).all()
+    t1teams = teamOverview.query.filter(teamOverview.Team != Team, teamOverview.season == viewed_season, teamOverview.tier == 1).all()
+
+
+    ageList = []
+    ageDict = dict()
+    minDict = dict()
+    startDict = dict()
+    for tP in teamPlayers:
+        ageList.append(tP.Age)
+        minDict[tP.Name] = tP.minutes
+        startDict[tP.Name] = tP.Starts
+        if(not(tP.Age in ageDict.keys())):
+            ageDict[tP.Age] = 1
+        else:
+            ageDict[tP.Age] = ageDict[tP.Age] + 1
     
+    team = teamOverview.query.filter(teamOverview.Team == Team, teamOverview.season == viewed_season).first()
+    teamStats = obtainTeamStats(team)
+    leagueStats = (obtainTeamAvgStats(teams))
+    
+    t1LeagueStats = obtainTeamAvgStats(t1teams)
+    
+    teamLabels = ["GlsP90", "AstP90", "xGP90", "xAP90"]
 
-
-    rec_dict = generateSignings(Team, viewed_season)
-    gsc_dict = rec_dict[0][0]
-    gsc_prio = rec_dict[0][1]
-    str_dict = rec_dict[1][0]
-    str_prio = rec_dict[1][1]
-    mf_dict = rec_dict[2][0]
-    mf_prio = rec_dict[2][1]
-    df_dict = rec_dict[3][0]
-    df_prio = rec_dict[3][1]
-
-
-    return render_template("recSigningsBS.html", league = League, team = Team,leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, teamPlayers = teamPlayers,
-                            position = teamPos, gsc_prio = gsc_prio, str_prio = str_prio, mf_prio = mf_prio, df_prio = df_prio,
-                            gsc_dict = gsc_dict, str_dict = str_dict, mf_dict = mf_dict, df_dict = df_dict)
+    
+    return render_template("teamGraphBS.html", league = League, team = Team, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                            , form = form, teams = teams, players = players, position = teamPos, teamPlayers = teamPlayers,
+                            ageLabels = sorted(list(ageDict.keys())), ageData = sorted(list(ageDict.values()))
+                            , minLabels = list(minDict.keys()), minData = list(minDict.values()), startLabels = list(startDict.keys())
+                            , startData = list(startDict.values()), Team = team, teamLabels = teamLabels, teamStats = teamStats
+                            , leagueStats = leagueStats, t1LeagueStats = t1LeagueStats)
 
 
 # TEST USER username: test, password: 1234

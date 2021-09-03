@@ -1,0 +1,180 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% from 'banner-macro.html' import banner %}
+
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/topplayersBS.css') }}">
+<script src="{{url_for('static', filename='css/js/playertabs.js')}}" defer></script>
+<title>{{team}} Stats</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(leagues, seasons, form, viewed_season , league, team, "",False, False, "teamGraphs")}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs(league, team, "", False, False, "", "graphs")}}
+    </div>
+    <div class="row banner">
+        {{banner(league, teams, players, flag_emoji,team, position, teamPlayers)}}
+    </div>
+
+    <div class="row tabs">
+        <div class="col">
+            <h1 id="tab-title">Categories »</h1>
+        </div>
+        <div class="col">
+            <ul class="tabs">
+                <li data-tab-target="#Age" class="active tab">Age</li>
+                <li data-tab-target="#Min" class="tab">Min</li>
+                <li data-tab-target="#Starts" class="tab">Starts</li>
+                <li data-tab-target="#Stats" class="tab">Stats</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tab-content">
+        <div id="Age" data-tab-content class="active">
+            <div class="grid-item graph-1 shadow-sm">
+                <h1 class="table-title">Age Distribution</h1>
+                <canvas id="agebar"></canvas>
+                <script>
+                    var ctx = document.getElementById("agebar").getContext("2d")
+                    var agebar = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: {{ ageLabels }},
+                    datasets: [
+                        {
+                            label: "# of Players",
+                            data: {{ ageData }},
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                                }
+                    ]
+    
+                        }
+                        ,
+                    options: {
+                        responsive: true
+                    }
+                    })
+                </script>
+            </div>
+        </div>
+
+        <div id="Min" data-tab-content>
+            <div class="grid-item graph-2 shadow-sm">
+                <h1 class="table-title">Minute Distribution</h1>
+                <canvas id="minbar"></canvas>
+                <script>
+                    var ctx = document.getElementById("minbar").getContext("2d")
+                    var minbar = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: {{ minLabels | safe}},
+                    datasets: [
+                        {
+                            label: "Minutes",
+                            data: {{ minData | safe}},
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                                }
+                    ]
+                        }
+                        ,
+                    options: {
+                        responsive: true
+                    }
+                    })
+                </script>
+            </div>
+        </div>
+
+        <div id="Starts" data-tab-content>
+            <div class="grid-item graph-3 shadow-sm">
+                <h1 class="table-title">Starts</h1>
+                <canvas id="startbar"></canvas>
+                <script>
+                    var ctx = document.getElementById("startbar").getContext("2d")
+                    var minbar = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: {{ startLabels | safe}},
+                    datasets: [
+                        {
+                            label: "Starts",
+                            data: {{ startData | safe}},
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                                }
+                    ]
+                        }
+                        ,
+                    options: {
+                        responsive: true
+                    }
+                    })
+                </script>
+            </div>
+        </div>
+
+        <div id="Stats" data-tab-content>
+            <div class="grid-item graph-4 shadow-sm">
+                <h1 class="table-title">Shot Data</h1>
+                <canvas id="offenseRadar"></canvas>
+                <script>
+                    var ctx = document.getElementById("offenseRadar").getContext("2d")
+                    var shotRadar = new Chart(ctx, {
+                        type: "radar",
+                        data: {
+                            labels: {{ teamLabels| safe}},
+                    datasets: [
+                        {
+                            label: "Team Avg",
+                            data: {{ teamStats }},
+                        fill: true,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        pointBackgroundColor: 'rgb(54, 162, 235)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                }, {
+                            label: "League Avg",
+                            data: {{ leagueStats }},
+                        fill: true,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132)',
+                        pointBackgroundColor: 'rgba(255, 99, 132)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 99, 132)'
+                                }, {
+                            label: "T1 Team Avg",
+                            data: {{ t1LeagueStats }},
+                        fill: true,
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgba(255, 206, 86)',
+                        pointBackgroundColor: 'rgba(255, 206, 86)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 206, 86)'
+                                }
+                    ]
+                        }
+                        ,
+                    options: {
+                        responsive: true
+                    }
+                    })
+                </script>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}

@@ -140,3 +140,16 @@ ul .col{
     font-size: 48px;
     color: #242417;
 }
+
+
+.grid-item{
+    width: 70%;
+    margin: auto;
+}
+
+canvas{
+    min-width: 95%;
+    min-height: 95%;
+    margin: auto;
+    display: inherit;
+}

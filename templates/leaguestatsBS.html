@@ -1,0 +1,211 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% from 'banner-macro.html' import banner %}
+
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/topplayersBS.css') }}">
+<script src="{{url_for('static', filename='css/js/playertabs.js')}}" defer></script>
+<title>{{league}} Stats</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(leagues, seasons, form, viewed_season ,league, "", "", False, False, "Graphs")}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs(league, "", "", False, False, "Graphs")}}
+    </div>
+    <div class="row banner">
+        {{banner(league, teams, players, flag_emoji)}}
+    </div>
+    <div class="row main-content">
+        <div class="row tabs">
+            <div class="col">
+                <h1 id="tab-title">Categories »</h1>
+            </div>
+            <div class="col">
+                <ul class="tabs">
+                    <li data-tab-target="#GSC" class="active tab">GSC</li>
+                    <li data-tab-target="#Shot" class="tab">Shot</li>
+                    <li data-tab-target="#Passing" class="tab">Passing</li>
+                    <li data-tab-target="#Defense" class="tab">Defense</li>
+                </ul>
+            </div>
+        </div>
+        <div class="tab-content">
+            <div id="GSC" data-tab-content class="active">
+                <div class="grid-item graph-1 shadow-sm">
+                    <h1 class="table-title">Goal Scoring Chances</h1>
+                    <canvas id="gscbar"></canvas>
+                    <script>
+                        var ctx = document.getElementById("gscbar").getContext("2d")
+                        var agebar = new Chart(ctx, {
+                            type: "bar",
+                            data: {
+                                labels: {{ gscLabels | safe}},
+                        datasets: [
+                            {
+                                label: "Goal Creating Actions",
+                                data: {{ gcaData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(54, 162, 235)'
+                                        }
+                            , {
+                                label: "Shot Creating Actions",
+                                data: {{ scaData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 99, 132)'
+                                        },
+                            {
+                                label: "Goal/Shot Percentage",
+                                data: {{ gspropData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 206, 86)'
+                                        }
+                        ]
+            
+                                }
+                                ,
+                        options: {
+                            responsive: true
+                        }
+                            })
+                    </script>
+                </div>
+            </div>
+
+            <div id="Shot" data-tab-content>
+                <div class="grid-item graph-2 shadow-sm">
+                    <h1 class="table-title">Shooting</h1>
+                    <canvas id="shotbar"></canvas>
+                    <script>
+                        var ctx = document.getElementById("shotbar").getContext("2d")
+                        var minbar = new Chart(ctx, {
+                            type: "bar",
+                            data: {
+                                labels: {{ shotLabels | safe}},
+                        datasets: [
+                            {
+                                label: "Goals",
+                                data: {{ glsData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(54, 162, 235)'
+                                        },
+                            {
+                                label: "xG",
+                                data: {{ xGData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 99, 132)'
+                                        },
+                            {
+                                label: "xG Diff",
+                                data: {{ xGDiffData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 206, 86)'
+                                        }
+                        ]
+                                }
+                                ,
+                        options: {
+                            responsive: true
+                        }
+                            })
+                    </script>
+                </div>
+            </div>
+
+            <div id="Passing" data-tab-content>
+                <div class="grid-item graph-3 shadow-sm">
+                    <h1 class="table-title">Passing</h1>
+                    <canvas id="passbar"></canvas>
+                    <script>
+                        var ctx = document.getElementById("passbar").getContext("2d")
+                        var minbar = new Chart(ctx, {
+                            type: "bar",
+                            data: {
+                                labels: {{ passLabels | safe}},
+                        datasets: [
+                            {
+                                label: "Key Passes",
+                                data: {{ kpData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(54, 162, 235)'
+                                        },
+                            {
+                                label: "Final Third Passes",
+                                data: {{ ftpData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 99, 132)'
+                                        },
+                            {
+                                label: "Passes inside penalty area",
+                                data: {{ ppaData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 206, 86)'
+                                        },
+                            {
+                                label: "Crosses into penalty area",
+                                data: {{ crsData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgb(50,205,50)'
+                                        }
+                        ]
+                                }
+                                ,
+                        options: {
+                            responsive: true
+                        }
+                            })
+                    </script>
+                </div>
+            </div>
+
+            <div id="Defense" data-tab-content>
+                <div class="grid-item graph-4 shadow-sm">
+                    <h1 class="table-title">Passing</h1>
+                    <canvas id="defbar"></canvas>
+                    <script>
+                        var ctx = document.getElementById("defbar").getContext("2d")
+                        var minbar = new Chart(ctx, {
+                            type: "bar",
+                            data: {
+                                labels: {{ defenseLabels | safe}},
+                        datasets: [
+                            {
+                                label: "Tackle Percentage",
+                                data: {{ tklPData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(54, 162, 235)'
+                                        },
+                            {
+                                label: "Defensive 3rd Pressures",
+                                data: {{ d3pData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 99, 132)'
+                                        },
+                            {
+                                label: "Middle 3rd Pressures",
+                                data: {{ m3pData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255, 206, 86)'
+                                        },
+                            {
+                                label: "Offensive 3rd Pressures",
+                                data: {{ a3pData | safe}},
+                            borderWidth: 2,
+                            backgroundColor: 'rgb(50,205,50)'
+                                        }
+                        ]
+                                }
+                                ,
+                        options: {
+                            responsive: true
+                        }
+                            })
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

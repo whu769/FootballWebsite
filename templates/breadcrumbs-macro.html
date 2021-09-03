@@ -36,9 +36,16 @@
                 <div class="arrow crumb-option">
                     <p>»</p>
                 </div>
-                <div class="recs crumb-option">
-                    <p>Recommended Signings</p>
-                </div>
+                    {% if recs == "recs"%}
+                    <div class="recs crumb-option">
+                        <p>Recommended Signings</p>
+                    </div>
+                    {% elif recs == "graphs" %}
+                    <div class="recs crumb-option">
+                        <p>Graphs</p>
+                    </div>
+                    {% else %}
+                    {% endif %}
                 {% else %}
                 {% endif %}
 
