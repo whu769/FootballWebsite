@@ -19,6 +19,8 @@
 
 #playerLink:hover{
     text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 /* td, th{
@@ -43,12 +45,11 @@
 
 .links a:hover{
     text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 /* Superlatives Section */
-.row.superlatives{
-    width: 90%;
-}
 .categories{
     display: flex;
     flex-direction: row;

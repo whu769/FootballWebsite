@@ -24,13 +24,13 @@
         <div class="banner-item numteams">
             <p class="val">{{teams|length}}</p>
         </div>
-        <div class="banner-item teams">
+        <div class="banner-item teams banner-info-text">
             <p>teams</p>
         </div>
         <div class="banner-item numplayers">
             <p class="val">{{players|length}}</p>
         </div>
-        <div class="banner-item players">
+        <div class="banner-item players banner-info-text">
             <p>players</p>
         </div>
     {% elif player == "" %}
@@ -40,13 +40,13 @@
         <div class="banner-item numposition">
             <p class="val">#{{position}}</p>
         </div>
-        <div class="banner-item position">
-            <p>in League</p>
+        <div class="banner-item position banner-info-text">
+            <p>&nbsp in League</p>
         </div>
         <div class="banner-item numplayers">
             <p class="val">{{teamPlayers|length}}</p>
         </div>
-        <div class="banner-item players">
+        <div class="banner-item players banner-info-text">
             <p>players</p>
         </div>
     {% else %}

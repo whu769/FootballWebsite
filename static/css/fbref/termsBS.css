@@ -1,9 +1,16 @@
+.col {
+    padding: 0;
+    margin: 0;
+}
+
 #table-title{
     font-family: Blinker;
     font-weight: 600;
     font-size: 30px;
     color: #242417;
     text-align: left;
+    min-width: max-content;
+    margin-bottom: 0;
 }
 
 .main-content{
@@ -17,17 +24,22 @@
 
 .top-of-table{
     margin-bottom: 1em;
-    width: 90%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
 
 
 input{
-    width: 45%!important;
-    height: 70%;
+    width: 90%!important;
+    height: 80%;
     font-family: Inria Sans;
     font-size: 15px;
+    padding-left: .33em;
+}
+
+input:focus-visible{
+    outline-color: #B5B574;
 }
 
 

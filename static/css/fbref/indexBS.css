@@ -347,6 +347,8 @@ a.table-link{
 
 a.table-link:hover{
     text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 .table-striped thead{

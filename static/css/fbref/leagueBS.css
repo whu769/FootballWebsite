@@ -34,6 +34,7 @@ body, html{
 
 /* main-content css */
 /* left col content */
+
 #teamtable, #superlatives{
     text-align: left;
     font-family: Blinker;
@@ -54,6 +55,8 @@ body, html{
 
 .league-table table tbody tr td a:hover{
     text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 .league-table td, .league-table th{
@@ -82,6 +85,8 @@ body, html{
 
 .links a:hover{
     text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 /* Superlatives section css */
@@ -117,6 +122,8 @@ body, html{
 
 .superlatives-item a:hover{
     text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 .superlative-title, .superlative-team, .superlative-value {

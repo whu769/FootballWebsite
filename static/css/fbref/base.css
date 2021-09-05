@@ -13,7 +13,7 @@
 
 .main-content {
     padding: 0 .3em;
-    margin: 0 auto;
+    margin: 2.5% auto;
 }
 
 head{
@@ -29,6 +29,12 @@ body, html{
     text-align: center;
     color:rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
+}
+
+* a:hover,*a:hover{
+    text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 /* Navbar CSS below */
@@ -295,6 +301,8 @@ a.table-link{
 
 a.table-link:hover{
     text-decoration: underline;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 .table-striped thead{
@@ -336,8 +344,7 @@ a.table-link:hover{
 .top-table{
     width: 85%;
     height: 90%;
-    margin-top: auto;
-    margin-bottom: auto;
+    margin: 5% 0;
     min-width: 330px;
 }
 
@@ -458,6 +465,8 @@ a.table-link:hover{
 .crumb-option a:hover{
     text-decoration: underline;
     color: #63635E;
+    text-decoration-color: #B5B574;
+    text-decoration-thickness: 3px;
 }
 
 .crumb-option p, .crumb-option a{
@@ -482,6 +491,14 @@ a.table-link:hover{
     color: #4E76ED;
 }
 
+.banner-item>p{
+    margin: 0;
+}
+
+.banner-item.banner-info-text{
+    margin-left: -1em;
+}
+
 .banner-item{
     font-family: Blinker;
     font-weight: 600;
@@ -502,10 +519,6 @@ a.table-link:hover{
 
 .banner-item.divider p{
     opacity: 0%;
-}
-
-.banner-item p{
-    margin-top: 1em;
 }
 
 .team-title{
