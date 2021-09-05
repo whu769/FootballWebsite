@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block body %}
-{{navbar(leagues, seasons, form, viewed_season, "","", "", glossary)}}
+{{navbar(current_user, leagues, seasons, form, viewed_season, "","", "", glossary)}}
 <div class="container-fluid">
     <div class="row breadcrumbs">
         {{breadcrumbs("", "", "", True, False, "", "", "Genesis")}}

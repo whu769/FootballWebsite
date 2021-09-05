@@ -1,9 +1,9 @@
-{% macro navbar(leagues, seasons, form, viewed_season, league = "", team = "", player ="", 
+{% macro navbar(current_user, leagues, seasons, form, viewed_season, league = "", team = "", player ="", 
                 glossary = False, lgPlayers = False, top = "") %}
 <div class="row navbar-top shadow-sm">
     <nav class="navbar navbar-expand-lg navbar-light">
         {% if team =="" %}
-            <a class="navbar-brand" href="{{url_for('index')}}">wh-fbtracker</a>
+            <a class="navbar-brand" href="{{url_for('index')}}">wh-fbstats</a>
         {% else %}
             <a class="navbar-brand team-brand" href="">Team Stats</a>
         {% endif %}
@@ -140,12 +140,21 @@
                     </li>
                 </div>
                 <div class="navbar-section auth">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('dashboard', user_id = current_user.id)}}">Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('logout')}}">Log Out</a>
+                    </li>
+                    {% else %}
                     <li class="nav-item login">
                         <a class="nav-link" data-toggle="modal" data-target="#exampleModal" href="#">Log in</a>
                     </li>
                     <li class="nav-item register">
                         <a class="nav-link" href="{{url_for('register')}}">Register</a>
                     </li>
+                    {% endif %}
                 </div>
             </ul>
         </div>

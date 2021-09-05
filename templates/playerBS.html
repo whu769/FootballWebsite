@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-{{navbar(leagues, seasons, form, viewed_season,league, team, player)}}
+{{navbar(current_user, leagues, seasons, form, viewed_season,league, team, player)}}
 <div class="container-fluid">
     <div class="row breadcrumbs">
         {{breadcrumbs(league, team, player)}}

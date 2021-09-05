@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block body %}
-{{navbar(leagues, seasons, form, viewed_season ,league, "", "", False, False, "Prospects")}}
+{{navbar(current_user, leagues, seasons, form, viewed_season ,league, "", "", False, False, "Prospects")}}
 <div class="container-fluid">
     <div class="row breadcrumbs">
         {{breadcrumbs(league, "", "", False, False, "Top Prospects")}}

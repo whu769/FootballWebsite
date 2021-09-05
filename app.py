@@ -810,8 +810,13 @@ def index(viewed_season):
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
                 print(user.id)
+
+
                 return redirect(url_for('dashboard', user_id = user.id))
 
+    print(current_user.is_authenticated)
+    if current_user.is_authenticated:
+        print(current_user.id)
 
     players = playerOverview.query.filter(playerOverview.season == viewed_season).order_by(playerOverview.Gls.desc()).limit(20)
     cL = combinedLeagues.query.filter(combinedLeagues.season == viewed_season).order_by(combinedLeagues.Pts.desc()).limit(20)
@@ -819,7 +824,8 @@ def index(viewed_season):
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-    return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues, seasons = seasons)
+    return render_template('indexBS.html',  form = form, viewed_season = viewed_season, players = players, cL = cL, leagues= leagues, seasons = seasons,
+                            current_user = current_user)
  
 #Pages for the individual leagues
 @app.route("/league/<League>", defaults={'viewed_season':'2020-2021'},  methods=["GET", "POST"])
@@ -833,6 +839,7 @@ def leagues(League, viewed_season):
             if user:
                 if bcrypt.check_password_hash(user.password, form.password.data):
                     login_user(user)
+                    
                     print(user.id)
                     return redirect(url_for('dashboard', user_id = user.id))
 
@@ -861,7 +868,7 @@ def leagues(League, viewed_season):
         # Test link for prem: http://localhost:5000/test/Premier%20League/
         return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons
                                 , teams = teams, league = League, flag_emoji = flag_emoji, goals = Goals, assists = Assists, bo = bestOffensively, bd = bestDefensively,
-                                wo = worstOffensively, wd = worstDefensively, ggd = highestGD, players = players)
+                                wo = worstOffensively, wd = worstDefensively, ggd = highestGD, players = players, current_user = current_user)
 
     except Exception as e:
         error_text = "<p>The error:<br>" + str(e) + "</p>"
@@ -953,7 +960,7 @@ def teams(Team, viewed_season):
     return render_template('teamBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons, team = Team, 
                             teamORow = teamOverviewRow, teamCLRow = teamCLRow, position = teamPos, teamPlayers = teamPlayers, league = League
                             , goals = Goals, assists = Assists, graphLabels = graphLabels, bc_msg = bc_msg, wc_msg = wc_msg, bc = best_category
-                            , wc = worst_category, graphData = graph_lst, flag_emoji=flag_emoji)
+                            , wc = worst_category, graphData = graph_lst, flag_emoji=flag_emoji, current_user = current_user)
 
 
 #Page of recommended signings for a specific team
@@ -1008,7 +1015,7 @@ def recSignings(Team, viewed_season):
     return render_template("recSigningsBS.html", league = League, team = Team,leagues = leagues, seasons = seasons, viewed_season = viewed_season
                             , form = form, flag_emoji = flag_emoji, teams = teams, players = players, teamPlayers = teamPlayers,
                             position = teamPos, gsc_prio = gsc_prio, str_prio = str_prio, mf_prio = mf_prio, df_prio = df_prio,
-                            gsc_dict = gsc_dict, str_dict = str_dict, mf_dict = mf_dict, df_dict = df_dict)
+                            gsc_dict = gsc_dict, str_dict = str_dict, mf_dict = mf_dict, df_dict = df_dict, current_user = current_user)
 
 
 
@@ -1793,7 +1800,7 @@ def graphs(Team, viewed_season):
                             ageLabels = sorted(list(ageDict.keys())), ageData = sorted(list(ageDict.values()))
                             , minLabels = list(minDict.keys()), minData = list(minDict.values()), startLabels = list(startDict.keys())
                             , startData = list(startDict.values()), Team = team, teamLabels = teamLabels, teamStats = teamStats
-                            , leagueStats = leagueStats, t1LeagueStats = t1LeagueStats)
+                            , leagueStats = leagueStats, t1LeagueStats = t1LeagueStats, current_user = current_user)
 
     
 
@@ -2034,7 +2041,7 @@ def players(Player, viewed_season):
                                     , pPLabels = playerData[2][0], pPData = playerData[2][1], pPLabels2 = playerData[3][0], pPData2 = playerData[3][1], pDT1Data = t1Data[0]
                                     , pOT1Data = t1Data[1], pPT1Data = t1Data[2][0:4], pPT1Data2 = t1Data[2][4:], oPDData = oppData[0], oPOData = oppData[1],
                                     oPPData = oppData[2][0:4], oPPData2 = oppData[2][4:], pGSCLabels = playerData[4][0], pGSCData = playerData[4][1], pGSCT1Data = t1Data[3]
-                                    , oppGSCData = oppData[3])
+                                    , oppGSCData = oppData[3], current_user = current_user)
             else:
                 isGK = True
                 GKStats = goalkeeping.query.filter(goalkeeping.Name == playerORow.Name, goalkeeping.season == viewed_season).first()
@@ -2050,12 +2057,12 @@ def players(Player, viewed_season):
                                     , teamPlayers = "", tweets = tweets, gkPassLabels = GKData[0][0], gkPassData = GKData[0][1]
                                     , gkShotLabels = GKData[1][0], gkShotData = GKData[1][1], oppgkShotData = oppGKData[0]
                                     , gkMiscLabels =GKData[2][0], gkMiscData = GKData[2][1], oppgkMiscData = oppGKData[1]
-                                    , oppT1ShotData = oppGKT1Data[0], oppT1MiscData = oppGKT1Data[1])
+                                    , oppT1ShotData = oppGKT1Data[0], oppT1MiscData = oppGKT1Data[1], current_user = current_user)
         else:
         #print(analysis_pts, analysis_indices, teamDict, bc_msg, wc_msg)
         # Test link for prem: http://localhost:5000/test/Premier%20League/
             return render_template('playerBS.html', viewed_season = viewed_season, form = form, playerORow = playerORow, league = League, team = Team, tweets = tweets,
-                                leagues = leagues, seasons = seasons, player = Player, flag_emoji = flag_emoji, teamPlayers = "", hasGraphs = hasGraphs)
+                                leagues = leagues, seasons = seasons, player = Player, flag_emoji = flag_emoji, teamPlayers = "", hasGraphs = hasGraphs, current_user = current_user)
     except Exception as e:
         # e holds description of the error
         error_text = "<p>The error:<br>" + str(e) + "</p>"
@@ -2084,7 +2091,7 @@ def terms():
     
 
     return render_template("termsBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form)
+                            , form = form, current_user = current_user)
 
 #Page that contains a giant table of all the players in a league
 @app.route("/leaguePlayers/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
@@ -2116,7 +2123,7 @@ def LeaguePlayers(League, viewed_season):
     # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
 
     return render_template("leaguePlayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players)
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, current_user = current_user)
 
 #Finds the most lethal forwards, creative forwards, and dribbling/1v1 forwards
 def findBestFW(League, age, tier, minutes, viewed_season):
@@ -2211,7 +2218,7 @@ def topplayers(League, viewed_season):
 
     return render_template("topplayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
                             , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
-                            dfList = dfList)
+                            dfList = dfList, current_user = current_user)
 
 #Page that thows the top prospects in the league
 @app.route("/topprospects/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
@@ -2247,7 +2254,7 @@ def topprospects(League, viewed_season):
 
     return render_template("topprospectsBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
                             , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
-                            dfList = dfList)
+                            dfList = dfList, current_user = current_user)
 
 #Page that shows the league stats
 @app.route("/leagueStats/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
@@ -2317,7 +2324,8 @@ def leaguestats(League, viewed_season):
                             , form = form, flag_emoji = flag_emoji, teams = teams, players = players, gscLabels = list(gsc_dict.keys()), gcaData = gsc_lists[0], scaData = gsc_lists[1], gspropData = gsc_lists[2],
                             shotLabels = list(shooting_dict.keys()), glsData = shot_lists[0], xGData = shot_lists[1], xGDiffData = shot_lists[2]
                             , passLabels = list(passing_dict.keys()), kpData = pass_lists[0], ftpData = pass_lists[1], ppaData = pass_lists[2], crsData = pass_lists[3]
-                            , defenseLabels = list(defense_dict.keys()), tklPData = defense_lists[0], d3pData = defense_lists[1], m3pData = defense_lists[2], a3pData = defense_lists[3])
+                            , defenseLabels = list(defense_dict.keys()), tklPData = defense_lists[0], d3pData = defense_lists[1], m3pData = defense_lists[2], a3pData = defense_lists[3]
+                            , current_user = current_user)
 
 
 
@@ -2341,7 +2349,7 @@ def genesis():
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
 
     return render_template("genesisBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                        , form = form)
+                        , form = form, current_user = current_user)
 
 
 #Bootstrap-ified pages
@@ -2366,7 +2374,7 @@ def test(viewed_season):
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
     return render_template("genesisBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                        , form = form)
+                        , form = form, current_user = current_user)
 
 
 # TEST USER username: test, password: 1234
