@@ -1,9 +1,9 @@
-{% macro banner(league, teams, players, flag_emoji,team="",position="", teamPlayers="", player="", playerORow = "")%}
+{% macro banner(league, teams, players, flag_emoji,team="",position="", teamPlayers="", player="", playerORow = "", league_img = "")%}
 <div class="banner">
     <!-- Left side dependent on page -->
     <div class="banner-item league-img">
         {% if team=="" %}
-            <img src="" class="img-responsive" alt="{{league}}">
+            <img src="{{url_for('static', filename=league_img)}}" class="img-responsive" alt="{{league}}">
         {% elif player == "" %}
             <p class="team-title">{{team}}</p>
         {% else %}

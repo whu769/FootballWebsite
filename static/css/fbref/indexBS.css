@@ -388,7 +388,12 @@ a.table-link:hover{
     width: 55%;
 }
 
-
+.league_img{
+    width: 35%;
+    height: 35%;
+    margin: auto;
+    margin-top: 2em;
+}
 
   
 

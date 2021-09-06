@@ -36,6 +36,14 @@ flag_dict = {
     "Serie A" : "🇮🇹"
 }
 
+league_img_dict = {
+    "Bundesliga" : "bundesliga.svg",
+    "Premier League" : "premier_league.svg",
+    "Ligue 1" : "ligue_1.svg",
+    "La Liga" : "la_liga.svg",
+    "Serie A" : "serie_a.svg"
+}
+
 
 #Setup for login and registration features
 app.config['SECRET_KEY'] = 'secretkey'
@@ -862,11 +870,11 @@ def leagues(League, viewed_season):
         worstOffensively = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GF).first()
         highestGD = combinedLeagues.query.filter(combinedLeagues.League == League, combinedLeagues.season == viewed_season).order_by(combinedLeagues.GD.desc()).first()
 
-
+        league_img = 'img/' + league_img_dict[League]
         flag_emoji = flag_dict[League]
         # print(flag_emoji)
         # Test link for prem: http://localhost:5000/test/Premier%20League/
-        return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons
+        return render_template('leagueBS.html', viewed_season = viewed_season, form = form, leagues = leagues, seasons = seasons, league_img = league_img
                                 , teams = teams, league = League, flag_emoji = flag_emoji, goals = Goals, assists = Assists, bo = bestOffensively, bd = bestDefensively,
                                 wo = worstOffensively, wd = worstDefensively, ggd = highestGD, players = players, current_user = current_user)
 
@@ -2118,12 +2126,12 @@ def LeaguePlayers(League, viewed_season):
     flag_emoji = flag_dict[League]
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
     players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
-    
+    league_img = 'img/' + league_img_dict[League]
 
     # Test link: http://localhost:5000/test/leaguePlayers/Premier%20League/
 
     return render_template("leaguePlayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, current_user = current_user)
+                            , form = form, flag_emoji = flag_emoji, teams = teams, players = players, current_user = current_user, league_img = league_img)
 
 #Finds the most lethal forwards, creative forwards, and dribbling/1v1 forwards
 def findBestFW(League, age, tier, minutes, viewed_season):
@@ -2207,6 +2215,7 @@ def topplayers(League, viewed_season):
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     flag_emoji = flag_dict[League]
+    league_img = 'img/' + league_img_dict[League]
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
     players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
     
@@ -2218,7 +2227,7 @@ def topplayers(League, viewed_season):
 
     return render_template("topplayersBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
                             , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
-                            dfList = dfList, current_user = current_user)
+                            dfList = dfList, current_user = current_user, league_img = league_img)
 
 #Page that thows the top prospects in the league
 @app.route("/topprospects/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
@@ -2243,6 +2252,7 @@ def topprospects(League, viewed_season):
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     flag_emoji = flag_dict[League]
+    league_img = 'img/' + league_img_dict[League]
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
     players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
     
@@ -2254,7 +2264,7 @@ def topprospects(League, viewed_season):
 
     return render_template("topprospectsBS.html", league = League, leagues = leagues, seasons = seasons, viewed_season = viewed_season
                             , form = form, flag_emoji = flag_emoji, teams = teams, players = players, fwList = fwList, mfList = mfList,
-                            dfList = dfList, current_user = current_user)
+                            dfList = dfList, current_user = current_user, league_img = league_img)
 
 #Page that shows the league stats
 @app.route("/leagueStats/<League>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
@@ -2278,6 +2288,7 @@ def leaguestats(League, viewed_season):
     leagues = combinedLeagues.query.filter(combinedLeagues.League != League).with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     flag_emoji = flag_dict[League]
+    league_img = 'img/' + league_img_dict[League]
     teams = combinedLeagues.query.filter(combinedLeagues.season == viewed_season, combinedLeagues.League == League).all() 
     players = playerOverview.query.filter(playerOverview.League == League, playerOverview.season == viewed_season).all()
 
@@ -2325,7 +2336,7 @@ def leaguestats(League, viewed_season):
                             shotLabels = list(shooting_dict.keys()), glsData = shot_lists[0], xGData = shot_lists[1], xGDiffData = shot_lists[2]
                             , passLabels = list(passing_dict.keys()), kpData = pass_lists[0], ftpData = pass_lists[1], ppaData = pass_lists[2], crsData = pass_lists[3]
                             , defenseLabels = list(defense_dict.keys()), tklPData = defense_lists[0], d3pData = defense_lists[1], m3pData = defense_lists[2], a3pData = defense_lists[3]
-                            , current_user = current_user)
+                            , current_user = current_user, league_img = league_img)
 
 
 
