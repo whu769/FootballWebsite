@@ -2402,3 +2402,26 @@ def test(viewed_season):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+# Spain
+# By Source, Fair use, https://sco.wikipedia.org/w/index.php?curid=169801
+# By The logo is from the following website: https://www.realmadrid.com/, Fair use, https://en.wikipedia.org/w/index.php?curid=35239667
+# By http://www.atleticodemadrid.com/, Fair use, https://en.wikipedia.org/w/index.php?curid=55146701
+# England
+# By 2006/07 Corporate Social Responsibility Report, Fair use, https://en.wikipedia.org/w/index.php?curid=22765065
+# By https://www.liverpoolfc.com/emails/pdf/membership_viewing_guide_chelsea_020512.pdf, Fair use, https://en.wikipedia.org/w/index.php?curid=22687343
+# By Source, Fair use, https://sco.wikipedia.org/w/index.php?curid=169810
+# Italy
+# By A.C. MilanUploaded by Vargklo at en.wikipedia - https://www.acmilan.com/, Public Domain, https://commons.wikimedia.org/w/index.php?curid=18780859
+# By FC Internazionale Milano S.p.A. / Bureau Borsche - im.inter.it and @Inter, Public Domain, https://commons.wikimedia.org/w/index.php?curid=102636908
+# By Interbrand - Juventus.com, Public Domain, https://commons.wikimedia.org/w/index.php?curid=61665335
+# France
+# By UEFA Technical Report 2017/18, Fair use, https://en.wikipedia.org/w/index.php?curid=55124716
+# By http://s.asmonaco.com/asm/file/201507/brochure_as_monaco_hospitality_15_16_english.pdf, Fair use, https://en.wikipedia.org/w/index.php?curid=52895333
+# By The logo is from the following website: http://www.losc.fr/ Taken from the French Wikipedia, where it was created and uploaded by Chabe01, Fair use, https://en.wikipedia.org/w/index.php?curid=61790803
+# Germany
+# By FC Bayern Munich - fcbayern.com, Public Domain, https://commons.wikimedia.org/w/index.php?curid=60387182
+# By This W3C-unspecified vector image was created with Inkscape by Lispir (Lispir) . - Own work azulgrana.futbolowo.pl/, Public Domain, https://commons.wikimedia.org/w/index.php?curid=18131689
+# By The logo may be obtained from RB Leipzig., Fair use, https://en.wikipedia.org/w/index.php?curid=52900478
+
