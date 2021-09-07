@@ -1,0 +1,59 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'toptable-macro.html' import toptable %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% from 'banner-macro.html' import banner %}
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/registerBS.css') }}">
+<title>Register</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(current_user, leagues, seasons, form, viewed_season)}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs("", "", "", True, False, "", "", "Sign Up")}}
+    </div>
+    <div class="row main-content">
+        <div class="col login">
+            <div class="form-container shadow-sm login">
+                <div class="form-content">
+                    <form id="loginForm" method="POST" action="">
+                        <img class="d-block club row" src="" alt="Login">
+                        {{form.hidden_tag()}}
+                        <label class="login-label username row">Username: </label>
+                        <span class="text-input row">{{form.username}}</span>
+                        
+                        <label class="login-label password row">Password: </label>
+                        <span class="text-input row">{{form.password}}</span>
+
+                        <div class="login-register">
+                            <div class="item"><span id="submit-info">{{form.submit}}</span></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col register">
+            <div class="form-container shadow-sm register">
+                <div class="form-content">
+                    <form id="regForm" method="POST" action="">
+                        <img class="d-block club row" src="" alt="Register">
+                        {{form2.hidden_tag()}}
+                        <label class="login-label username row">Username: </label>
+                        <span class="text-input row">{{form2.username}}</span>
+                        
+                        <label class="login-label password row">Password: </label>
+                        <span class="text-input row">{{form2.password}}</span>
+
+                        <div class="login-register">
+                            <div class="item"><span id="submit-info">{{form2.submit}}</span></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

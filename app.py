@@ -2364,11 +2364,13 @@ def genesis():
 
 
 #Bootstrap-ified pages
-@app.route("/test/genesis/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/test/genesis/<viewed_season>",  methods = ["GET", "POST"])
+@app.route("/test/register/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/test/register/<viewed_season>", methods = ["GET", "POST"])
 def test(viewed_season):
     # Empty rn for future testing
-    viewed_season = current_season
+    if viewed_season == "...":
+        viewed_season = current_season
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
@@ -2378,14 +2380,22 @@ def test(viewed_season):
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
 
+    form2 = RegisterForm()
 
+    if form2.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form2.password.data)
+        new_user = User(username=form.username.data, password = hashed_password, teams = "", players = "")
+        db.session.add(new_user)
+        db.session.commit()
+        print("Works")
+        return redirect(url_for('index'))
     
 
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-    return render_template("genesisBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                        , form = form, current_user = current_user)
+    return render_template("registerBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                        , form = form, current_user = current_user, form2 = form2)
 
 
 # TEST USER username: test, password: 1234

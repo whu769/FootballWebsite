@@ -1,0 +1,37 @@
+.main-content{
+    width: 75%;
+    height: 75%;
+    flex-wrap: nowrap;
+}
+
+.form-container{
+    width: 90%;
+    margin: auto;
+}
+
+.form-content{
+    width: 80%;
+    margin: auto;
+}
+
+form.row{
+    width: 90%;
+    height: 90%;
+    margin: auto;
+}
+
+label.login-label, img.row{
+    margin: auto;
+    
+}
+
+input{
+    width: max-content;
+    margin: auto;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
