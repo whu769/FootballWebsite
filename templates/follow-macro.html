@@ -1,0 +1,105 @@
+{% macro follow(player_lst, unfollowed_players, team_lst, unfollowed_teams, players = True) %}
+
+{% if players %}
+
+<div class="row followed">
+    {% for player in player_lst %}
+    <div class="item-card shadow-sm">
+        <div class="row top">
+            <a href="#" class="col row-item">{{player}}</a>
+            <h1 class="col following">Following</h1>
+        </div>
+        <div class="row bottom">
+            <h1 class="follow">Follow player's team</h1>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="row thead">
+    <h1 class="table-title">Follow more players</h1>
+</div>
+<div class="row searchbar">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for players...">
+</div>
+<div class="row unfollowed">
+    <div class="content list" id="unfollowed_players">
+        {% for player in unfollowed_players %}
+        <div class="item-card unfollowed shadow-sm">
+                <a class="col row-item" href="#">{{player.Name}}</a>
+                <a class="col follow" href="#">Follow</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+
+<div class="row followed">
+    {% for team in team_lst %}
+    <div class="item-card shadow-sm">
+        <div class="row top">
+            <a href="#" class="col row-item">{{team}}</a>
+            <h1 class="col following">Following</h1>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="row thead">
+    <h1 class="table-title">Follow more teams</h1>
+</div>
+<div class="row searchbar">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for players...">
+</div>
+<div class="row unfollowed">
+    <div class="content list" id="unfollowed_players">
+        {% for team in unfollowed_teams %}
+        <div class="item-card unfollowed shadow-sm">
+                <a class="col row-item" href="#">{{team.Team}}</a>
+                <a class="col follow" href="#">Follow</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+
+<script>
+    function myFunction(){
+        var input, filter, content, listItems;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        if(filter === ""){
+            filter = "!#$%"
+        }
+        content = document.getElementById("unfollowed_players");
+        listItems = content.getElementsByClassName("item-card unfollowed");
+        var filteredListItems = [];
+        for(i = 0; i < listItems.length; i++){
+            var listItem, capLItem, atag;
+            listItem = listItems[i];
+            // console.log(listItem);
+            
+            atag = listItem.getElementsByClassName("col row-item")[0];
+            // console.log(atag);
+            
+            capLItem = atag.innerHTML.toUpperCase();
+            // console.log(capLItem);
+
+            if (capLItem.includes(filter)){
+                console.log(capLItem);
+                filteredListItems.push(listItem);
+                listItem.style.display = "block";
+            }
+            else{
+                listItem.style.display = "none";
+            }
+        }
+        console.log(filteredListItems);
+        
+    }
+
+
+
+    
+</script>
+
+{% endmacro %}

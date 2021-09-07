@@ -1,5 +1,7 @@
 {% from 'navbar-macro.html' import navbar %}
 {% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% from 'tweets-macro.html' import tweettable %}
+{% from 'follow-macro.html' import follow %}
 {% extends 'base.html' %}
 
 {% block head %}
@@ -8,14 +10,39 @@
 {% endblock %}
 
 {% block body %}
+{% set players = True %}
 {{navbar(current_user, leagues, seasons, form, viewed_season)}}
 <div class="container-fluid">
     <div class="row breadcrumbs">
         {{breadcrumbs("", "", "", True, False, "", "", "Account")}}
     </div>
     <div class="row main-content">
-        
+        <div class="col col-8">
+            <div class="row tweet-table">
+                {{tweettable(all_tweets)}}
+            </div>
+        </div>
+        <div class="col col-4 shadow-sm">
+            <div class="row thead">
+                <h1 class="col table-title">Players</h1>
+                <a class="col switch" onclick="togglePlayer()"> Follow teams</a>
+            </div>
+            <div class="row thead">
+                <h1 class="col table-title">Teams</h1>
+                <a class="col switch" onclick="togglePlayer()">Follow players</a>
+            </div>
+            {{follow(player_lst, unfollowed_players, team_lst, unfollowed_teams, players)}}
+        </div>
     </div>
 </div>
+
+<script>
+    function togglePlayer(){
+        
+        let javascript_var = {{ players|tojson|safe }};
+        console.log(javascript_var)
+        return javascript_var;
+    }
+</script>
 
 {% endblock %}

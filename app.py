@@ -699,6 +699,7 @@ def register(viewed_season):
 @app.route("/<user_id>/dashboard/<viewed_season>", methods = ["GET", "POST"])
 @login_required
 def dashboard(user_id, viewed_season):
+    
     tweetscraper.obtainWeekTweets()
     # print(form.username)
     user = User.query.get(user_id)
@@ -721,8 +722,8 @@ def dashboard(user_id, viewed_season):
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
     
-
-    team_tweets = dict()
+    all_tweets = []
+    team_tweets = []
     if followed_teams == "":
         team_lst = []
     else:
@@ -730,10 +731,13 @@ def dashboard(user_id, viewed_season):
         #print("TEAMS")
         for team in team_lst:
             # fix this part
-            team_tweets += (tweetscraper.findRelevantTeamTweets(team))
+            result = tweetscraper.findRelevantTeamTweets(team)
+            for tweet in result.values():
+                team_tweets.append(tweet)
         
-        print(team_tweets)
-            
+    for tweet_lst in team_tweets:
+        for tweet in tweet_lst:
+            all_tweets.append(tweet)    
 
     player_tweets = []
     if followed_players == "":
@@ -743,14 +747,23 @@ def dashboard(user_id, viewed_season):
         #print("PLAYERS")
         for player in player_lst:
             # fix this part
-            player_tweets += (tweetscraper.findRelevantPlayerTweets(player))
+            result = (tweetscraper.findRelevantPlayerTweets(player))
+            for tweet in result.values():
+                player_tweets.append(tweet)
         
-        print(player_tweets)
+    for tweet_lst in player_tweets:
+        for tweet in tweet_lst:
+            all_tweets.append(tweet) 
     
+    # print(all_tweets)
+    # print(player_lst, team_lst)
+    unfollowed_players = playerOverview.query.filter(playerOverview.season == current_season, playerOverview.Name.in_(player_lst) == False).distinct().all()
+    unfollowed_teams = teamOverview.query.filter(teamOverview.season == current_season, teamOverview.Team.in_(team_lst) == False).distinct().all()
+
     # return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst, team_tweets = team_tweets, player_tweets = player_tweets)
     return render_template("dashboardBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
                         , form = form, current_user = current_user, user = user, team_lst = team_lst, player_lst = player_lst, 
-                        team_tweets = team_tweets, player_tweets = player_tweets)
+                        all_tweets = all_tweets, unfollowed_players = unfollowed_players, unfollowed_teams = unfollowed_teams)
 
 
 
@@ -2047,6 +2060,8 @@ def players(Player, viewed_season):
         primaryPosition = playerORow.Position.split(",")[0]
 
         tweets = tweetscraper.obtainTweetsAboutPlayer(Player)
+        for tweet in tweets:
+            print(tweet[0])
         #print(tweets)
         hasGraphs = False
         if playerORow.minutes > 0:

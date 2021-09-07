@@ -4,18 +4,18 @@
         <h1 id="topscorers">Tweets</h1>
     </div>
     <!-- jinja this bit  -->
-    {% for key, value in tweets.items() %}
+    {% for tweet in tweets %}
         <div class="topcard">
             <div class="topcard-1">
                 <div class="top-metric">
-                    <p>{{key}}</p>
+                    <p>{{tweet[0]}}</p>
                 </div>
             </div>
             <div class="topcard-2 team-info">
-                <p>{{value[0]}}</p>
+                <p>{{tweet[1]}}</p>
             </div>
             <div class="topcard-2">
-                <p>{{value[1]}}</p>
+                <p>{{tweet[2]}}</p>
             </div>
         </div>
     {% endfor %}

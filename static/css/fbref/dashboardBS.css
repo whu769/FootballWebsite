@@ -1,0 +1,89 @@
+.main-content{
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    display: flex;
+}
+
+.table-title{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 36px;
+    color: #242417;
+    margin-bottom: 0;
+    
+}
+
+.row.thead{
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color:#B5B574;
+    text-align: left;
+    width: 90%;
+    margin: auto;
+}
+
+.row.top{
+    display: flex;
+    justify-content: space-between;
+}
+
+.row-item{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 20px;
+    text-align: left;
+    color:#63635E;
+}
+
+.following{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 18px;
+    text-align: left;
+    color: #63635E;
+}
+
+.follow{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 15px;
+    text-align: left;
+}
+
+.item-card.unfollowed{
+    display: none;
+}
+
+.item-card.unfollowed:nth-child(-n + 9){
+    display: block;
+    margin-bottom: 1em;
+}
+
+.row.unfollowed{
+    display: flex;
+    align-items: baseline;
+}
+
+.row.searchbar{
+    width: 80%;
+    margin: auto;
+    margin-top: .5em;
+}
+
+input{
+    font-family: Inria Sans;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.row.thead{
+    align-items: baseline;
+}
+
+.switch{
+    font-family: Blinker;
+    font-weight: 600;
+    font-size: 18px;
+    color: #63635E;
+}
