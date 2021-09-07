@@ -29,19 +29,19 @@ class tweetscraper:
     def obtainWeekTweets(self):
         if not self.weekObtained:
             end_date = datetime.utcnow() - timedelta(days=7)
-            tweet_lst = []
+            tweet_dict = dict()
             for username in self.usernames:
                 tweets = []
                 for status in Cursor(api.user_timeline, id = username, include_rts = False, exclude_replies = True, tweet_mode = 'extended').items():
-                    tweets.append('@' + username + ": " + status.full_text)
-
+                    tweets.append([username, status.full_text, status.created_at])
                     if status.created_at < end_date:
                         break
                 
-                tweet_lst.append(tweets)
+                tweet_dict[username] = tweets
             
             # print(len(tweet_lst))
-            self.weekTweets = tweet_lst
+            # print(tweet_dict)
+            self.weekTweets = tweet_dict
             self.weekObtained = True
     
     def reSearchTweets(self):
@@ -49,22 +49,40 @@ class tweetscraper:
 
     #Returns all tweets that have mentioned the team name
     def findRelevantTeamTweets(self, Team):
-        rel_tweets = []
-        for lst in self.weekTweets:
-            for tweet in lst:
-                if Team.lower() in tweet.lower():
-                    rel_tweets.append(tweet)
+        rel_tweets = dict()
+        # for lst in self.weekTweets:
+        #     for tweet in lst:
+        #         if Team.lower() in tweet.lower():
+        #             rel_tweets.append(tweet)
                 
+        # return rel_tweets
+        for user in self.usernames:
+            lst_of_tweets = []
+            user_tweets = self.weekTweets[user]
+            for lst in user_tweets:
+                
+                if Team.lower() in lst[1].lower():
+                    # print(lst)
+                    lst_of_tweets.append(lst)
+            # print(lst_of_tweets)
+            rel_tweets[user] = lst_of_tweets
+        # print(rel_tweets)
         return rel_tweets
-                    
+
     #Returns all tweets that have mentioned the player name
     def findRelevantPlayerTweets(self, Player):
-        rel_tweets = []
-        for lst in self.weekTweets:
-            for tweet in lst:
-                if Player.lower() in tweet.lower():
-                    rel_tweets.append(tweet)
-        
+        rel_tweets = dict()
+        for user in self.usernames:
+            lst_of_tweets = []
+            user_tweets = self.weekTweets[user]
+            for lst in user_tweets:
+                
+                if Player.lower() in lst[1].lower():
+                    #print(lst)
+                    lst_of_tweets.append(lst)
+            rel_tweets[user] = lst_of_tweets
+        # print(lst_of_tweets)
+        # print(rel_tweets)
         return rel_tweets
     
     def obtainTweetsAboutPlayer(self, Player):
@@ -87,7 +105,9 @@ class tweetscraper:
         return tweet_dict
 #TESTER CODE
 # ts = tweetscraper()
-# ts.obtainTweetsAboutPlayer("Neymar")
+# ts.obtainWeekTweets()
+# ts.findRelevantTeamTweets("Arsenal")
+# ts.findRelevantPlayerTweets("Messi")
 # ts.obtaintweets()
 # ts.obtainWeekTweets()
 # ts.findRelevantTeamTweets('Chelsea')

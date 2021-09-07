@@ -1,0 +1,21 @@
+{% from 'navbar-macro.html' import navbar %}
+{% from 'breadcrumbs-macro.html' import breadcrumbs %}
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fbref/dashboardBS.css') }}">
+<title>Dashboard</title>
+{% endblock %}
+
+{% block body %}
+{{navbar(current_user, leagues, seasons, form, viewed_season)}}
+<div class="container-fluid">
+    <div class="row breadcrumbs">
+        {{breadcrumbs("", "", "", True, False, "", "", "Account")}}
+    </div>
+    <div class="row main-content">
+        
+    </div>
+</div>
+
+{% endblock %}

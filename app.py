@@ -657,43 +657,82 @@ def login():
     return render_template('login.html', form = form)
 
 #Registration page and makes an account if the requirements go through
-@app.route('/register', methods = ["GET", "POST"])
-def register():
-    form = RegisterForm()
 
+@app.route("/register/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/register/<viewed_season>", methods = ["GET", "POST"])
+def register(viewed_season):
+    
+    if viewed_season == "...":
+        viewed_season = current_season
+
+    form = LoginForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+    form2 = RegisterForm()
+
+    if form2.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form2.password.data)
         new_user = User(username=form.username.data, password = hashed_password, teams = "", players = "")
         db.session.add(new_user)
         db.session.commit()
         print("Works")
         return redirect(url_for('index'))
+    
 
-    return render_template('registration.html', form = form)
+    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    
+    return render_template("registerBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                        , form = form, current_user = current_user, form2 = form2)
+
+
 
 #Once logged in, user is taken to their dashboard page
-@app.route('/dashboard/<user_id>', methods = ["GET", "POST"])
+# @app.route('/dashboard/<user_id>', methods = ["GET", "POST"])
+@app.route("/<user_id>/dashboard/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/<user_id>/dashboard/<viewed_season>", methods = ["GET", "POST"])
 @login_required
-def dashboard(user_id):
+def dashboard(user_id, viewed_season):
     tweetscraper.obtainWeekTweets()
     # print(form.username)
     user = User.query.get(user_id)
     followed_teams = user.teams
     followed_players = user.players
 
-    # print(f'TEAMS: {followed_teams}')
-    # print(f'PLAYERS: {followed_players}')
+    if viewed_season == "...":
+        viewed_season = current_season
 
-    team_tweets = []
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                print(user.id)
+                return redirect(url_for('dashboard', user_id = user.id))
+
+    leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
+    seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
+    
+    
+
+    team_tweets = dict()
     if followed_teams == "":
         team_lst = []
     else:
         team_lst = followed_teams.split(',')
         #print("TEAMS")
         for team in team_lst:
+            # fix this part
             team_tweets += (tweetscraper.findRelevantTeamTweets(team))
         
-        #print(team_tweets)
+        print(team_tweets)
             
 
     player_tweets = []
@@ -703,11 +742,17 @@ def dashboard(user_id):
         player_lst = followed_players.split(',')
         #print("PLAYERS")
         for player in player_lst:
+            # fix this part
             player_tweets += (tweetscraper.findRelevantPlayerTweets(player))
         
-        #print(player_tweets)
+        print(player_tweets)
     
-    return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst, team_tweets = team_tweets, player_tweets = player_tweets)
+    # return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst, team_tweets = team_tweets, player_tweets = player_tweets)
+    return render_template("dashboardBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                        , form = form, current_user = current_user, user = user, team_lst = team_lst, player_lst = player_lst, 
+                        team_tweets = team_tweets, player_tweets = player_tweets)
+
+
 
 #Page that allows users to follow teams
 @app.route('/<user_id>/followteams', methods = ["GET", "POST"])
@@ -2364,8 +2409,8 @@ def genesis():
 
 
 #Bootstrap-ified pages
-@app.route("/test/register/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/test/register/<viewed_season>", methods = ["GET", "POST"])
+@app.route("/test/dashboard/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
+@app.route("/test/dashboard/<viewed_season>", methods = ["GET", "POST"])
 def test(viewed_season):
     # Empty rn for future testing
     if viewed_season == "...":
@@ -2380,22 +2425,11 @@ def test(viewed_season):
                 print(user.id)
                 return redirect(url_for('dashboard', user_id = user.id))
 
-    form2 = RegisterForm()
-
-    if form2.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form2.password.data)
-        new_user = User(username=form.username.data, password = hashed_password, teams = "", players = "")
-        db.session.add(new_user)
-        db.session.commit()
-        print("Works")
-        return redirect(url_for('index'))
-    
-
     leagues = combinedLeagues.query.with_entities(combinedLeagues.League).distinct()
     seasons = combinedLeagues.query.filter(combinedLeagues.season != viewed_season).with_entities(combinedLeagues.season).distinct()
     
-    return render_template("registerBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
-                        , form = form, current_user = current_user, form2 = form2)
+    return render_template("dashboardBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
+                        , form = form, current_user = current_user)
 
 
 # TEST USER username: test, password: 1234
