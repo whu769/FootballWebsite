@@ -87,3 +87,8 @@ input{
     font-size: 18px;
     color: #63635E;
 }
+
+.item-card{
+    width: 80%;
+    margin: auto;
+}
