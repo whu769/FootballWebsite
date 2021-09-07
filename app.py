@@ -21,6 +21,7 @@ db_name = "fbref.db"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_name 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 db = SQLAlchemy(app)
 
@@ -695,10 +696,10 @@ def register(viewed_season):
 
 #Once logged in, user is taken to their dashboard page
 # @app.route('/dashboard/<user_id>', methods = ["GET", "POST"])
-@app.route("/<user_id>/dashboard/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/<user_id>/dashboard/<viewed_season>", methods = ["GET", "POST"])
+@app.route("/<user_id>/<toggle>/dashboard/", defaults={'viewed_season':'2020-2021', 'toggle' : False}, methods = ["GET", "POST"])
+@app.route("/<user_id>/<toggle>/dashboard/<viewed_season>",methods = ["GET", "POST"])
 @login_required
-def dashboard(user_id, viewed_season):
+def dashboard(user_id, toggle, viewed_season):
     
     tweetscraper.obtainWeekTweets()
     # print(form.username)
@@ -763,7 +764,7 @@ def dashboard(user_id, viewed_season):
     # return render_template("dashboard.html", user = user, team_lst = team_lst, player_lst = player_lst, team_tweets = team_tweets, player_tweets = player_tweets)
     return render_template("dashboardBS.html", glossary = True, leagues = leagues, seasons = seasons, viewed_season = viewed_season
                         , form = form, current_user = current_user, user = user, team_lst = team_lst, player_lst = player_lst, 
-                        all_tweets = all_tweets, unfollowed_players = unfollowed_players, unfollowed_teams = unfollowed_teams)
+                        all_tweets = all_tweets, unfollowed_players = unfollowed_players, unfollowed_teams = unfollowed_teams, toggle = toggle, user_id = user_id)
 
 
 

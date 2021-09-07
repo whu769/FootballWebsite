@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block body %}
-{% set players = True %}
 {{navbar(current_user, leagues, seasons, form, viewed_season)}}
 <div class="container-fluid">
     <div class="row breadcrumbs">
@@ -23,26 +22,21 @@
             </div>
         </div>
         <div class="col col-4 shadow-sm">
+            {% if toggle %}
             <div class="row thead">
                 <h1 class="col table-title">Players</h1>
-                <a class="col switch" onclick="togglePlayer()"> Follow teams</a>
+                <a class="col switch" href="{{url_for('dashboard', user_id = user_id, toggle = False, viewed_season  = viewed_season)}}"> Follow teams</a>
             </div>
+            {% else %}
             <div class="row thead">
                 <h1 class="col table-title">Teams</h1>
-                <a class="col switch" onclick="togglePlayer()">Follow players</a>
+                <a class="col switch" href="{{url_for('dashboard', user_id = user_id, toggle = True, viewed_season  = viewed_season)}}">Follow players</a>
             </div>
-            {{follow(player_lst, unfollowed_players, team_lst, unfollowed_teams, players)}}
+            {% endif %}
+            {{follow(player_lst, unfollowed_players, team_lst, unfollowed_teams, user_id,toggle)}}
         </div>
     </div>
 </div>
 
-<script>
-    function togglePlayer(){
-        
-        let javascript_var = {{ players|tojson|safe }};
-        console.log(javascript_var)
-        return javascript_var;
-    }
-</script>
 
 {% endblock %}
