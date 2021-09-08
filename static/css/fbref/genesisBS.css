@@ -28,15 +28,23 @@ h1.header-title{
     height: 95%;
     margin: auto;
     text-align: left;
+    margin-bottom: 1em;
 }
 
-p, li, a{
+p{
     font-family: Inria Sans;
     font-size: 18px;
     font-weight: 400;
+   
 }
 
 ul{
     list-style: outside;
     text-align: left;
+}
+
+li, a{
+    font-family: Inria Sans;
+    font-size: 18px;
+    font-weight: 400;
 }

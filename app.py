@@ -943,7 +943,7 @@ def leagues(League, viewed_season):
         return hed + error_text
 
 #Pages for the teams
-@app.route("/team/<Team>/", defaults={'viewed_season':'2020-2021'})
+@app.route("/team/<Team>/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
 @app.route('/team/<Team>/<viewed_season>', methods = ["GET", "POST"])
 def teams(Team, viewed_season):
     if viewed_season == "...":
@@ -2425,8 +2425,6 @@ def genesis():
 
 
 #Bootstrap-ified pages
-@app.route("/test/dashboard/", defaults={'viewed_season':'2020-2021'}, methods = ["GET", "POST"])
-@app.route("/test/dashboard/<viewed_season>", methods = ["GET", "POST"])
 def test(viewed_season):
     # Empty rn for future testing
     if viewed_season == "...":
