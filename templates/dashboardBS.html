@@ -25,12 +25,12 @@
             {% if toggle %}
             <div class="row thead">
                 <h1 class="col table-title">Players</h1>
-                <a class="col switch" href="{{url_for('dashboard', user_id = user_id, toggle = False, viewed_season  = viewed_season)}}"> Follow teams</a>
+                <a class="col switch" href="{{url_for('dashboard', user_id = user_id, toggle = False, viewed_season  = viewed_season)}}">teams »</a>
             </div>
             {% else %}
             <div class="row thead">
                 <h1 class="col table-title">Teams</h1>
-                <a class="col switch" href="{{url_for('dashboard', user_id = user_id, toggle = True, viewed_season  = viewed_season)}}">Follow players</a>
+                <a class="col switch" href="{{url_for('dashboard', user_id = user_id, toggle = True, viewed_season  = viewed_season)}}">players »</a>
             </div>
             {% endif %}
             {{follow(player_lst, unfollowed_players, team_lst, unfollowed_teams, user_id,toggle)}}

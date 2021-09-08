@@ -24,9 +24,11 @@ class tweetscraper:
         # self.count = count
         self.usernames = tweetscraper.usernames
         self.weekObtained = False
+        self.lastUpdated = datetime.now()
     
     #Method to take all tweets from the usernames sent in the past two weeks
     def obtainWeekTweets(self):
+        self.shouldUpdate()
         if not self.weekObtained:
             end_date = datetime.utcnow() - timedelta(days=7)
             tweet_dict = dict()
@@ -43,9 +45,14 @@ class tweetscraper:
             # print(tweet_dict)
             self.weekTweets = tweet_dict
             self.weekObtained = True
+            self.lastUpdated = datetime.now()
     
-    def reSearchTweets(self):
-        self.weekObtained = False
+    def shouldUpdate(self):
+        print(datetime.now() - self.lastUpdated)
+        if datetime.now() - self.lastUpdated > timedelta(minutes=10): 
+            self.weekObtained = False
+            print("RERUNNING")
+
 
     #Returns all tweets that have mentioned the team name
     def findRelevantTeamTweets(self, Team):

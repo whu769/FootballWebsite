@@ -6,11 +6,8 @@
     {% for player in player_lst %}
     <div class="item-card shadow-sm">
         <div class="row top">
-            <a href="{{url_for('players', Player = player)}}" class="col row-item">{{player}}</a>
-            <a href="{{url_for('removeplayer', user_id = user_id, playerName = player)}}" class="col following">Following</a>
-        </div>
-        <div class="row bottom">
-            <h1 class="follow">Follow player's team</h1>
+            <a href="{{url_for('players', Player = player)}}" class="col row-item card-name">{{player}}</a>
+            <a href="{{url_for('removeplayer', user_id = user_id, playerName = player)}}" class="col following action-item">Following</a>
         </div>
     </div>
     {% endfor %}
@@ -25,8 +22,8 @@
     <div class="content list" id="unfollowed_players">
         {% for player in unfollowed_players %}
         <div class="item-card unfollowed shadow-sm">
-                <a class="col row-item" href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
-                <a class="col follow" href="{{url_for('addplayer', user_id = user_id, playerName = player.Name)}}">Follow</a>
+            <a class="col row-item card-name" href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
+            <a class="col follow action-item" href="{{url_for('addplayer', user_id = user_id, playerName = player.Name)}}">Follow</a>
         </div>
         {% endfor %}
     </div>
@@ -37,8 +34,8 @@
     {% for team in team_lst %}
     <div class="item-card shadow-sm">
         <div class="row top">
-            <a href="{{url_for('teams', Team = team)}}" class="col row-item">{{team}}</a>
-            <a href="{{url_for('addteam', user_id = user_id, teamName = team)}}" class="col following">Following</a>
+            <a href="{{url_for('teams', Team = team)}}" class="col row-item card-name">{{team}}</a>
+            <a href="{{url_for('removeteam', user_id = user_id, teamName = team)}}" class="col following action-item">Following</a>
         </div>
     </div>
     {% endfor %}
@@ -53,8 +50,8 @@
     <div class="content list" id="unfollowed_players">
         {% for team in unfollowed_teams %}
         <div class="item-card unfollowed shadow-sm">
-                <a class="col row-item" href="{{url_for('teams', Team = team.Team)}}">{{team.Team}}</a>
-                <a class="col follow" href="{{url_for('addteam', user_id = user_id, teamName = team.Team)}}">Follow</a>
+            <a class="col row-item card-name" href="{{url_for('teams', Team = team.Team)}}">{{team.Team}}</a>
+            <a class="col follow action-item" href="{{url_for('addteam', user_id = user_id, teamName = team.Team)}}">Follow</a>
         </div>
         {% endfor %}
     </div>
