@@ -18,15 +18,15 @@
 <div class="row searchbar">
     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for players...">
 </div>
-<div class="row unfollowed">
-    <div class="content list" id="unfollowed_players">
+<div class="row unfollowed content list" id="unfollowed_player">
+    <!-- <div class="content list" id="unfollowed_players"> -->
         {% for player in unfollowed_players %}
         <div class="item-card unfollowed shadow-sm">
             <a class="col row-item card-name" href="{{url_for('players', Player = player.Name)}}">{{player.Name}}</a>
             <a class="col follow action-item" href="{{url_for('addplayer', user_id = user_id, playerName = player.Name)}}">Follow</a>
         </div>
         {% endfor %}
-    </div>
+    <!-- </div> -->
 </div>
 {% else %}
 
@@ -46,15 +46,15 @@
 <div class="row searchbar">
     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for players...">
 </div>
-<div class="row unfollowed">
-    <div class="content list" id="unfollowed_players">
+<div class="row top unfollowed content list" id="unfollowed_teams">
+    <!-- <div class="content list" id="unfollowed_players"> -->
         {% for team in unfollowed_teams %}
         <div class="item-card unfollowed shadow-sm">
             <a class="col row-item card-name" href="{{url_for('teams', Team = team.Team)}}">{{team.Team}}</a>
             <a class="col follow action-item" href="{{url_for('addteam', user_id = user_id, teamName = team.Team)}}">Follow</a>
         </div>
         {% endfor %}
-    </div>
+    <!-- </div> -->
 </div>
 {% endif %}
 
