@@ -145,11 +145,11 @@ ul .col{
 .grid-item{
     width: 70%;
     margin: auto;
+    overflow-x: scroll;
 }
 
 canvas{
     min-width: 95%;
     min-height: 95%;
     margin: auto;
-    display: inherit;
 }

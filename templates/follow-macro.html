@@ -12,13 +12,14 @@
     </div>
     {% endfor %}
 </div>
+<div class="dashboard spacer-vert"></div>
 <div class="row thead">
     <h1 class="table-title">Follow more players</h1>
 </div>
 <div class="row searchbar">
     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for players...">
 </div>
-<div class="row unfollowed content list" id="unfollowed_player">
+<div class="row unfollowed content list" id="unfollowed_players">
     <!-- <div class="content list" id="unfollowed_players"> -->
         {% for player in unfollowed_players %}
         <div class="item-card unfollowed shadow-sm">
@@ -40,13 +41,14 @@
     </div>
     {% endfor %}
 </div>
+<div class="dashboard spacer-vert"></div>
 <div class="row thead">
     <h1 class="table-title">Follow more teams</h1>
 </div>
 <div class="row searchbar">
     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for players...">
 </div>
-<div class="row top unfollowed content list" id="unfollowed_teams">
+<div class="row top unfollowed content list" id="unfollowed_players">
     <!-- <div class="content list" id="unfollowed_players"> -->
         {% for team in unfollowed_teams %}
         <div class="item-card unfollowed shadow-sm">
